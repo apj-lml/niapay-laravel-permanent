@@ -1,0 +1,11 @@
+{
+    "heebo": {
+        "normal": "C:\\xampp\\htdocs\\niapay-laravel\\storage\\fonts\/heebo_normal_0ed87c53870f348cb4247fdad96e86a9",
+        "500": "C:\\xampp\\htdocs\\niapay-laravel\\storage\\fonts\/heebo_500_cc1508a764fab0a7d7d5ef40a9798122",
+        "600": "heebo_600_dc631f8f3fd3d823b0cf9a0cece18027"
+    },
+    "inter": {
+        "bold": "C:\\xampp\\htdocs\\niapay-laravel\\storage\\fonts\/inter_bold_c57a050bb9f74fe1522e9f687ba11188",
+        "800": "inter_800_d0a767ffeda1c5c5782aa5e0f854b616"
+    }
+}
