@@ -74,14 +74,14 @@ class ListOfEmployees extends Component
 
     public function render()
     {
-        $users = User::where('employment_status', 'CASUAL')
+        $users = User::where('employment_status', 'PERMANENT')
+        ->orWhere('employment_status', 'COTERMINOUS')
         ->where(DB::raw("CONCAT(first_name, ' ', middle_name, ' ', last_name)"), 'like', "%{$this->searchVal}%")
         ->orderby('last_name')
         ->orderby('first_name')
         ->paginate(20);
 
         return view('livewire.list-of-employees',[
-            // 'users' => User::where('last_name', 'like', "%{$this->searchVal}%")->where('employment_status', 'CASUAL')->paginate(20),
             'users' => $users
         ]);
     }

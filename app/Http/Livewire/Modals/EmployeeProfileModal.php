@@ -207,9 +207,9 @@ class EmployeeProfileModal extends Component
 
 
 
-    public function dailyOrMonthly($employmentStatus = "CASUAL")
+    public function dailyOrMonthly($employmentStatus = "PERMANENT")
     {
-        if($employmentStatus == 'CASUAL'){
+        if($employmentStatus == 'PERMANENT' || $employmentStatus == 'COTERMINOUS'){
             $this->isStepDisabled = '';
         }else{
             $this->isStepDisabled = 'disabled';

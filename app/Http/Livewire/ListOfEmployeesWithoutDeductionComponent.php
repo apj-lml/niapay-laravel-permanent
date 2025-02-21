@@ -25,13 +25,8 @@ class ListOfEmployeesWithoutDeductionComponent extends Component
 
     public function render()
     {
-        // $listOfUsers = User::
-        // ->whereDoesntHave('employeeDeductions')
-        // ->orderby('last_name')
-        // ->orderby('first_name')
-        // ->paginate(20);
-
-        $listOfUsers = NewPayrollIndex::where('employment_status', 'CASUAL')
+        $listOfUsers = NewPayrollIndex::where('employment_status', 'PERMANENT')
+        ->orWhere('employment_status', 'COTERMINOUS')
         ->where('period_covered_from', $this->payrollDateFrom)
         ->where('period_covered_to', $this->payrollDateTo)
         ->whereDoesntHave('newPayrollIndexAllDed', function ($query) {
@@ -40,13 +35,7 @@ class ListOfEmployeesWithoutDeductionComponent extends Component
         })
         ->paginate(12);
 
-        // ->whereDoesntHave('newPayrollIndexAllDed')
-        // ->orderby('name')
-        // ->get();
-
         $listOfDeductions = Deduction::all();
-
-        // dd($listOfUsers);
 
         return view('livewire.list-of-employees-without-deduction-component', ['listOfUsers' => $listOfUsers, 'listOfDeductions' => $listOfDeductions]);
     }

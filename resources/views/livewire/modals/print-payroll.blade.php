@@ -11,7 +11,7 @@
             <div class="container">
                 <div class="mx-auto text-center" style="max-width: 600px;">
                     {{-- <div class="d-inline-block border rounded-pill text-primary px-4 mb-3">Testimonial</div> --}}
-                    <h3 class="">Process Casual Payroll for the Period:</h3>
+                    <h3 class="">Process Permanent & Coterminous Payroll for the Period:</h3>
                     <div class="row wow fadeInUp" data-wow-delay="0.1s">
                       <div class="col-md-6">
                         <input type="hidden" wire:model="payrollFrequency" id="payrollFrequency">
@@ -62,7 +62,7 @@
         {{-- </div> --}}
         <div class="modal-footer justify-content-center">
           {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> --}}
-          <button type="button" class="btn btn-primary" wire:click="processPayroll('Casual')"><i class="fas fa-file-invoice"></i> Process</button>
+          <button type="button" class="btn btn-primary" wire:click="processPayroll('Permanent')"><i class="fas fa-file-invoice"></i> Process</button>
           @livewire('add-attendance', ['startDate' => $payrollDateFrom, 'endDate' => $payrollDateTo, 'isLessFifteen' => $isLessFifteen])
 
 

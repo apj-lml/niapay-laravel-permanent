@@ -84,7 +84,7 @@ class UniformAllowanceComponent extends Component
             foreach($funds as $fund){
                 $fund->sections = AgencySection::with(['users' => function ($query) use ($fund){
                     $query->where('fund_id', '=', $fund->id); 
-                    $query->where('employment_status', '=', 'CASUAL'); 
+                    $query->where('employment_status', '=', 'PERMANENT')->orWhere('employment_status', '=', 'COTERMINOUS'); 
                     $query->where('is_active', '=', 1); 
                     $query->where('include_to_payroll', '=', 1); 
                 }])->select('*')->get()->groupBy('office');

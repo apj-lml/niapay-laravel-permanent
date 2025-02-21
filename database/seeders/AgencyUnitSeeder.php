@@ -32,7 +32,6 @@ class AgencyUnitSeeder extends Seeder
             ['id'=>13, 'unit_code'=>'SFDRIS', 'unit_description'=>'SAN FABIAN-DUMOLOC RIS', 'agency_section_id' => 9],
             ['id'=>14, 'unit_code'=>'LARIS', 'unit_description'=>'LOWER AGNO RIS', 'agency_section_id' => 8],
             ['id'=>15, 'unit_code'=>'ADRIS', 'unit_description'=>'AMBAYOAN-DIPALO RIS', 'agency_section_id' => 11],
-            ['id'=>16, 'unit_code'=>'OM-N/A', 'unit_description'=>'N/A', 'agency_section_id' => 23],
             ['id'=>17, 'unit_code'=>'SUR', 'unit_description'=>'SURVEY TEAM', 'agency_section_id' => 2],
             ['id'=>18, 'unit_code'=>'CARP-N/A', 'unit_description'=>'N/A', 'agency_section_id' => 14],
             ['id'=>19, 'unit_code'=>'OIM-N/A', 'unit_description'=>'N/A', 'agency_section_id' => 12],

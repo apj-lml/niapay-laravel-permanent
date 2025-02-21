@@ -43,7 +43,7 @@
 
     <div class="container-fluid">
         <div class="card wow fadeInUp shadow-sm" data-wow-delay="0.1s">
-            <div class="card-header bg-primary text-white fw-1">{{ __('Casual') }}</div>
+            <div class="card-header bg-primary text-white fw-1">{{ __('Permanent & Coterminous') }}</div>
 
             <div class="card-body">
                 @livewire('process-payroll-job-order-component')

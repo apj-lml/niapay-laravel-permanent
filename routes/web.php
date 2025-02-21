@@ -48,23 +48,13 @@ Route::get('/process-payslip', function () {
     return view('process-payslip');
 })->name('process-payslip');
 
-// Route::get('/test-payslip', function () {
-//     return view('payslip-template-jo-test');
-// })->name('test-payslip');
-
-
 Auth::routes();
-
-
-// Route::get('process-payroll-jo/{payrollEmploymentStatus?}/{payrollDateFrom?}/{payrollDateTo?}', App\Http\Livewire\ProcessPayrollJobOrderComponent::class)->name('process-payroll-jo');
 
 
 Auth::routes(['register' => false]);
 
-// Route::middleware(['auth'])->group(function () {
-    Route::get('/custom-register', 'App\Http\Controllers\Auth\RegisterController@showRegistrationForm')->name('register');
-    Route::post('/custom-register', 'App\Http\Controllers\Auth\RegisterController@create');
-// });
+Route::get('/custom-register', 'App\Http\Controllers\Auth\RegisterController@showRegistrationForm')->name('register');
+Route::post('/custom-register', 'App\Http\Controllers\Auth\RegisterController@create');
 
 
 Route::get('/showpayslip/{filename}', 'App\Http\Controllers\PayslipController@show')->name('showpayslip');

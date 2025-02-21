@@ -691,11 +691,11 @@
               </tr>
               <tr>
                 {{-- <td height="40" style="vertical-align: bottom;"><b>EDNA V. NANALES</b></td> --}}
-                <td height="40" style="vertical-align: bottom; text-align:center"><b>RYAN A. RIVERA</b></td>
+                <td height="40" style="vertical-align: bottom; text-align:center"><b>MARILYN D. BAUTISTA</b></td>
               </tr>
               <tr>
                 {{-- <td><i>Data Encoder</i></td> --}}
-                <td style="vertical-align: bottom; text-align:center"><i>Chief, Administrative and Finance Section</i></td>
+                <td style="vertical-align: bottom; text-align:center"><i>Collection Representative A</i></td>
               </tr>
             </table>
           </td>

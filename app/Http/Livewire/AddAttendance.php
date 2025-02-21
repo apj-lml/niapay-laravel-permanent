@@ -236,12 +236,14 @@ class AddAttendance extends Component
         
         // dd($this->daysRendered);
         if($isLessFifteen == 'full_month'){
-            $employeeByEmploymentStatus = User::where('employment_status', '=', 'CASUAL')
+            $employeeByEmploymentStatus = User::where('employment_status', '=', 'PERMANENT')
+            ->where('employment_status', '=', 'COTERMINOUS')
             ->where('is_active', '=', 1)
             ->where('include_to_payroll', '=', 1)
             ->get();
         }else{
-            $employeeByEmploymentStatus = User::where('employment_status', '=', 'CASUAL')
+            $employeeByEmploymentStatus = User::where('employment_status', '=', 'PERMANENT')
+            ->where('employment_status', '=', 'COTERMINOUS')
             ->where('is_active', '=', 1)
             ->where('include_to_payroll', '=', 1)
             ->where('is_less_fifteen', '=', 1)

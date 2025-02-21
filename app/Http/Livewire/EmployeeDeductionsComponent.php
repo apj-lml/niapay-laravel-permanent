@@ -24,27 +24,14 @@ class EmployeeDeductionsComponent extends Component
     public function openEmployeeDeductionsTab($userId)
     {
         $this->employee = User::find($userId);
-        if ($this->employee->employment_status != "CASUAL") {
-            $this->listOfDeductions = Deduction::
-                // where('status', 'ACTIVE')
-                orderBy('deduction_group')
-                ->orderBy('description')
-                ->get();
-        } else {
-            $this->listOfDeductions = Deduction::
-                // where('status', 'ACTIVE')
-                // where('deduction_group', '<>', 'GSIS')
-                orderBy('deduction_group')
-                ->orderBy('description')
-                ->get();
-        }
 
-        // if(!$this->listOfDeductions){
+            $this->listOfDeductions = Deduction::
+                // where('status', 'ACTIVE')
+                orderBy('deduction_group')
+                ->orderBy('description')
+                ->get();
+
             $this->deduction = $this->listOfDeductions[0]['id'];
-        // }else{
-        //     $this->deduction = null;
-        // }
-
 
         $this->userId = $userId;
     }

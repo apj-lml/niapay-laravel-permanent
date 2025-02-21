@@ -34,18 +34,11 @@ class ProcessPayrollJobOrderComponent extends Component
             $payrollDateTo,
             $payrollDateFrom,
             $isLessFifteen,
-            // $totalDeduction,
             $additionalDeductions,
-            // $deductionGroups,
             $uniqueAdditionalDeductionGroups,
-            // $typeOfDeductions,
             $joDeductions,
             $joAllowances,
-            // $countCols,
-            // $deductionCollection,
-            // $payrollUsers,
             $payrollFunds,
-            // $payrollUserSections,
             $mypdf,
             $isEmptyFund,
             $overflow = 'auto';
@@ -357,19 +350,6 @@ class ProcessPayrollJobOrderComponent extends Component
                                 
                                     if(isset($user->user_allowances)){
 
-                                        // $userAllowances = $user->user_allowances->filter(function ($mydeduction) {
-                                        //     foreach($userAllowances as $allow){
-                                        //         if($allow->pivot){
-                                        //             if($allow->pivot->active_status == 1){
-                                        //                 return $allow;
-                                        //             }
-    
-                                        //         }
-                                        //     }
-    
-                                        // });
-             
-                                        
                                         $userAllowances = $user->user_allowances->filter(function ($allow) {
                                             // dd($allow[0]['status']);
                                             return $allow[0]['status'] === 'ACTIVE'; // Assuming 'status' field indicates active or not
@@ -580,16 +560,18 @@ class ProcessPayrollJobOrderComponent extends Component
         DB::statement("SET SQL_MODE=''"); //this is the trick, use it just before your query to be able to GROUP
             $funds = Fund::with(['users' => function ($query) use ($filterSection, $filterAttendance, $from, $to, $inputIsLessFifteen) {
 
-                if($this->isLessFifteen == 'all'){
+                if($this->isLessFifteen == 'full_month'){
                     $query->where('include_to_payroll', 1)
                     ->where('is_active', 1)
                     ->orderBy('last_name', 'asc');
                 }else{
+
                     $query->where('include_to_payroll', 1)
                     ->where('is_active', 1)
                     ->where('is_less_fifteen', $inputIsLessFifteen)
                     ->orderBy('last_name', 'asc');
                 }
+
                 if ($filterSection !== null) {
                     // dd($filterSection);
                     $query->whereHas('agencyUnit.agencySection', function ($subQuery) use ($filterSection) {
@@ -647,15 +629,11 @@ class ProcessPayrollJobOrderComponent extends Component
 
             foreach($funds as $fund){
                     $fund->sections = AgencySection::whereHas('unit.user', function ($query) {
-                        $query->where('employment_status', '=', 'CASUAL');
+                        $query->where('employment_status', '=', 'PERMANENT')
+                            ->orWhere('employment_status', '=', 'COTERMINOUS');
                     })->select('*')->get()->groupBy('office');
 
-                if($this->payrollEmploymentStatus == "Casual"){
-                    $JOUsers = $fund->users->where('employment_status', strtoupper($this->payrollEmploymentStatus));
-                }else{
-                    $JOUsers = $fund->users->where('employment_status', '<>', 'CASUAL');
-                }
-
+                $JOUsers = $fund->users->where('employment_status', 'PERMANENT')->where('employment_status', 'COTERMINOUS');
 
                 foreach($JOUsers as $key => $JOUser){
                         $JOUser->total_user_deduction = 0;

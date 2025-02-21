@@ -25,7 +25,6 @@ class CnaLandingPageComponent extends Component
 
         $cna = intval(preg_replace('/[^\d.]/', '', $this->cna));
 
-        // if($payrollEmploymentStatus == 'Casual'){
             return redirect()->route('cna', [
                 'year' => $this->year,
                 'mc' => $this->mc,

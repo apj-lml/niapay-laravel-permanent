@@ -53,10 +53,7 @@
                                 <div class="form-floating">
                                     <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" aria-label="role" onchange="roleChange(this);">
                                         <option value="0" selected>N/A</option>
-                                        <option value="1">PAYROLL CLERK (CASUAL / PERMANENT)</option>
-                                        {{-- <option value="2">PAYROLL CLERK (CASUAL)</option> --}}
-                                        {{-- <option value="3">PAYROLL CLERK (PERMANENT / COTERMINOUS)</option> --}}
-                                        {{-- <option value="5">TRUST</option> --}}
+                                        <option value="1">PAYROLL CLERK (PERMANENT / COTERMINOUS)</option>
                                     </select>
                                     <label for="role">Role</label>
                                     @error('role')
@@ -212,12 +209,7 @@
                             <div class="col-md-6 p-1">
                                 <div class="form-floating">
                                     <select class="form-select @error('employment_status') is-invalid @enderror" id="employment_status" name="employment_status" aria-label="employment_status" value="{{ old('employment_status') }}" onchange="dailyOrMonthly(this)">
-                                        <option value="CASUAL" selected>CASUAL</option>
-                                        {{-- <option value="PERMANENT">PERMANENT</option>
-                                        <option value="TEMPORARY">TEMPORARY</option>
-                                        <option value="CASUAL">CASUAL</option>
-                                        <option value="COTERMINOUS">COTERMINOUS</option> --}}
-                                        {{-- <option value="PERMANENT">PERMANENT</option> --}}
+                                        <option value="PERMANENT" selected>PERMANENT</option>
                                     </select>
                                     <label for="floatingSelect">Employment Status</label>
                                     @error('employment_status')
@@ -261,14 +253,14 @@
                                         <option value="11">11</option>
                                         <option value="12">12</option>
                                         <option value="13">13</option>
-                                        {{-- <option value="14">14</option>
+                                        <option value="14">14</option>
                                         <option value="15">15</option>
-                                        <option value="16">16</option> --}}
-                                        {{-- <option value="17">17</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
                                         <option value="18">18</option>
                                         <option value="19">19</option>
                                         <option value="20">20</option>
-                                        <option value="21">21</option>
+                                        {{-- <option value="21">21</option>
                                         <option value="22">22</option>
                                         <option value="23">23</option>
                                         <option value="24">24</option>
@@ -288,13 +280,13 @@
                                         <option value="" hidden selected>-</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
-                                        {{-- <option value="3">3</option>
+                                        <option value="3">3</option>
                                         <option value="4">4</option>
                                         <option value="5">5</option>
                                         <option value="6">6</option>
                                         <option value="7">7</option>
-                                        <option value="8">8</option> --}}
-                   
+                                        <option value="8">8</option>
+                                        
                                     </select>
                                     <label for="floatingSelect">Step</label>
                                     @error('step')
@@ -398,84 +390,6 @@
                                     @enderror
                                 </div>
                             </div>
-                            {{-- <div class="col-md-6 mb-3 p-1">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('sss') is-invalid @enderror" id="sss" name="sss" placeholder="SSS No." value="{{ old('sss') }}" required>
-                                    <label for="sss">SSS No.</label>
-                                    @error('sss')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div> --}}
-                            {{-- <div class="d-flex justify-content-center py-3">
-                                <div class="flex-fill"><hr></div>
-                                <div class="d-inline-flex px-2 py-1"><h4 class="text-muted mx-auto">DEDUCTIONS</h4></div>
-                                <div class="flex-fill"><hr></div>
-                            </div> --}}
-                            {{-- <div class="row mx-auto">
-                                <div class="col-md-6 p-1">
-                                    <div class="form-floating">
-                                        <input type="hidden" id="ded_phic_id" name="ded_phic_id" value="27">
-                                        <input type="text" class="form-control @error('ded_phic') is-invalid @enderror" id="ded_phic" name="ded_phic" placeholder="PHIC" value="{{ old('ded_phic') }}" onkeyup="validateDedInput(this)" onchange="validateDedInput(this)">
-                                        <label for="ded_phic">PHIC</label>
-                                        @error('ded_phic')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div> --}}
-                                {{-- <div class="col-md-6 p-1">
-                                    <div class="form-floating">
-                                        <input type="hidden" id="ded_pagibig_id" name="ded_pagibig_id" value="23">
-                                        <input type="text" class="form-control @error('ded_pagibig') is-invalid @enderror" id="ded_pagibig" name="ded_pagibig" placeholder="pag-IBIG" value="{{ old('ded_pagibig') }}" onkeyup="validateDedInput(this)" onchange="validateDedInput(this)">
-                                        <label for="ded_pagibig">Pag-IBIG</label>
-                                        @error('ded_pagibig')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div> --}}
-                                {{-- <div class="col-md-6 p-1">
-                                    <div class="form-floating">
-                                        <input type="hidden" id="ded_wht_id" name="ded_wht_id" value="30">
-                                        <input type="text" class="form-control @error('ded_wht') is-invalid @enderror" id="ded_wht" name="ded_wht" placeholder="WHT" value="{{ old('ded_wht') }}" onkeyup="validateDedInput(this)" onchange="validateDedInput(this)" readonly>
-                                        <label for="ded_wht">WHT</label>
-                                        @error('ded_wht')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div> --}}
-                                {{-- <div class="col-md-6 p-1">
-                                    <div class="form-floating">
-                                        <input type="hidden" id="ded_sss_id" name="ded_sss_id" value="31">
-                                        <input type="text" class="form-control @error('ded_sss') is-invalid @enderror" id="ded_sss" name="ded_sss" placeholder="SSS" value="{{ old('ded_sss') }}" onkeyup="validateDedInput(this)" onchange="validateDedInput(this)">
-                                        <label for="ded_sss">SSS</label>
-                                        @error('ded_sss')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div> --}}
-                                {{-- <div class="col-md-6 p-1">
-                                    <div class="form-floating">
-                                        <input type="hidden" id="ded_disallow_id" name="ded_disallow_id" value="29">
-                                        <input type="text" class="form-control @error('ded_disallow') is-invalid @enderror" id="ded_disallow" name="ded_disallow" placeholder="DISALLOWANCE" value="{{ old('ded_disallow') }}" onkeyup="validateDedInput(this)" onchange="validateDedInput(this)">
-                                        <label for="ded_disallow">DISALLOWANCE</label>
-                                        @error('ded_disallow')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div> 
-                            </div> --}}
                         </div>
                         <div class="row mb-0 mt-3">
                             <div class="col-md-12 text-center">
@@ -595,12 +509,6 @@ function dailyOrMonthly(el){
         step.readOnly = false;
     }
 
-    if(el.value == "CASUAL" ){
-        step.disabled = true;
-    }else{
-        step.disabled = false;
-
-    }
 }
 
 function getDeductionRate(daily_rate){
@@ -688,12 +596,8 @@ function myRate(){
         daily_rate.value = daily_rate_casual[sg_jg][step];
         var temp_m_rate = parseFloat(daily_rate.value.replace(/,/g, ''));
         daily_rate.value = temp_m_rate.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    //   daily_rate.value = daily_rate_casual[job_grade][step];
         monthly_rate.value = "";
-        // monthly_rate.disabled = true;
     }
-
-    // getDeductionRate(daily_rate_jo[sg_jg])
 }
 
 function disableCasualSgJgStep(isDisabled){

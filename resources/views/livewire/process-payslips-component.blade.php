@@ -50,16 +50,10 @@
   </div>
     <div class="col-md-12">
       <div class="mb-3 wow fadeInUp" data-wow-delay="0.5s">
-        {{-- <h4 class="mb-1">Casual</h4> --}}
         <div class="alert alert-warning text-start" role="alert">
           <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Read me</h4>
           <hr>
           Reprocessing will override the previously generated payslips on the specific Payroll Period you have provided above.
-        </div>
-        <div class="d-flex align-items-center">
-            <div class="ps-3">
-                {{-- <button class="btn btn-sm btn-primary" wire:click="processPayroll('Casual')"><i class="fas fa-file-invoice"></i> Process</button> --}}
-            </div>
         </div>
 
       </div>

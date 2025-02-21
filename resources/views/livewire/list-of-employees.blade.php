@@ -49,7 +49,7 @@
                     <td scope="row">{{ $user->employment_status }}</td>
                     <td scope="row">{{ $user->sg_jg }}</td>
                     {{-- <td scope="row">{{ $user->step }}</td> --}}
-                    <td scope="row">{{ number_format((float)$user->daily_rate, 2) }}</td>
+                    <td scope="row">{{ number_format((float)$user->monthly_rate, 2) }}</td>
                     {{-- <td scope="row">{{ number_format((float)$user->monthly_rate, 2) }}</td> --}}
                     <td scope="row">
                       <div class="d-flex flex-row justify-content-evenly">

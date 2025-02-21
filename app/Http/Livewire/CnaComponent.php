@@ -87,7 +87,8 @@ class CnaComponent extends Component
             foreach($funds as $fund){
                 $fund->sections = AgencySection::with(['signatories', 'users' => function ($query) use ($fund){
                     $query->where('fund_id', '=', $fund->id); 
-                    $query->where('employment_status', '=', 'CASUAL'); 
+                    $query->where('employment_status', '=', 'PERMANENT'); 
+                    $query->where('employment_status', '=', 'COTERMINOUS');
                     $query->where('is_active', '=', 1); 
                     $query->where('include_to_payroll', '=', 1); 
                 }, 'users.cnas' => function ($query){

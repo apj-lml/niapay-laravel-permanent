@@ -37,7 +37,7 @@ class ShowIndexModal extends Component
     $payrollsByYear = [];
     $payrollsByYearAndMonth = [];
 
-    $this->userId = 24;
+    $this->userId = 73;
 
     if(isset($this->userId)){
 

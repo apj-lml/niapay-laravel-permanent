@@ -11,7 +11,6 @@ class PrintPayroll extends Component
             $payrollDateTo,
             $isLessFifteen,
             $payrollFrequency;
-            // $payrollEmploymentStatus;
 
     protected $validationAttributes = [
         'payrollDateFrom' => 'Date From',
@@ -32,23 +31,13 @@ class PrintPayroll extends Component
             'payrollDateTo' => 'required',
         ]);
 
-        // if($payrollEmploymentStatus == 'Casual'){
             return redirect()->route('process-payroll-jo', [
                 'payrollEmploymentStatus'=> $payrollEmploymentStatus,
                 'payrollDateFrom' => $this->payrollDateFrom,
                 'payrollDateTo' => $this->payrollDateTo,
                 'isLessFifteen' => $this->isLessFifteen
              ]);
-        // }
-        // else if($payrollEmploymentStatus == 'Casual'){
-        //     return redirect()->route('process-payroll-jo', [
-        //         'payrollEmploymentStatus'=> $payrollEmploymentStatus,
-        //         'payrollDateFrom' => $this->payrollDateFrom,
-        //         'payrollDateTo' => $this->payrollDateTo
-        //      ]);
-        // }
         
-
     }
 
     public function render()

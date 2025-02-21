@@ -43,7 +43,7 @@
                           </div> --}}
                           <div class="col-md-8">
                             <div class="form-floating">
-                                <select class="form-select js-choice @error('allowance') is-invalid @enderror" aria-label="section" wire:model="allowance">
+                                <select class="form-select @error('allowance') is-invalid @enderror" aria-label="section" wire:model="allowance">
                                     @isset($listOfAllowances)
                                         @foreach ($listOfAllowances as $allowance)
                                             @if ($allowance === reset( $listOfAllowances ))

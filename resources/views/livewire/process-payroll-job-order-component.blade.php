@@ -222,7 +222,7 @@
                                                     }
                                                     if (
                                                         $hasGSIS == false &&
-                                                        strtoupper($payrollEmploymentStatus) != 'CASUAL' &&
+                                                        strtoupper($payrollEmploymentStatus) != 'COTERMINOUS' &&
                                                         strtoupper($payrollEmploymentStatus) != 'PERMANENT'
                                                     ) {
                                                         $gsisCol = 1;
@@ -625,18 +625,14 @@
                                                     <tbody>
                                                         @php
                                                             if (
-                                                                $this->payrollEmploymentStatus == 'Casual' ||
+                                                                $this->payrollEmploymentStatus == 'Coterminous' ||
                                                                 $this->payrollEmploymentStatus == 'Permanent'
                                                             ) {
-                                                                // $payrollUsers = $payrollFund->users
-                                                                // ->where('employment_status', 'CASUAL')
-                                                                // ->where('employment_status', 'PERMANENT')
-                                                                // ->sortBy('full_name');
 
                                                                 $payrollUsers = $payrollFund->users
                                                                     ->where(function ($query) {
                                                                         return $query
-                                                                            ->where('employment_status', 'CASUAL')
+                                                                            ->where('employment_status', 'COTERMINOUS')
                                                                             ->orWhere('employment_status', 'PERMANENT');
                                                                     })
                                                                     ->where('is_active', 1)
@@ -645,7 +641,7 @@
                                                                 $payrollUsers = $payrollFund->users
                                                                     ->where(function ($query) {
                                                                         $query
-                                                                            ->where('employment_status', '<>', 'CASUAL')
+                                                                            ->where('employment_status', '<>', 'COTERMINOUS')
                                                                             ->orWhere(
                                                                                 'employment_status',
                                                                                 '<>',
@@ -1165,32 +1161,6 @@
                                                             @else
                                                                 <td></td>
                                                             @endif
-
-                                                            {{-- TOTAL GSIS --}}
-                                                            {{-- @if (strtoupper($payrollUser->employment_status) != 'CASUAL' && strtoupper($payrollUser->employment_status) != 'PERMANENT')
-                                                              @if ($hasGSIS)
-                                                                @if (isset($payrollUserSection->grand_total_deduction))
-                                                                  @for ($y = 0; $y < $joDeductions->countBy('deduction_group')['GSIS']; $y++)
-                                                                  <td>  
-                                                                    @foreach ($payrollUserSection->grand_total_deduction as $grandTotalDeduction)
-                                                                      @if ($grandTotalDeduction['deduction_group'] == 'GSIS')
-                                                                        @if ($grandTotalDeduction['sort_position'] == $y + 1)
-                                                                          {{ number_format(bcdiv((float)$grandTotalDeduction['total'], 1, 2), 2) }}
-
-                                                                        @endif
-                                                                      @endif
-                                                                    @endforeach
-                                                                  </td>
-                                                                  @endfor
-                                                                @else
-                                                                  @for ($y = 1; $y <= $joDeductions->countBy('deduction_group')['GSIS']; $y++)
-                                                                    <td></td>
-                                                                  @endfor
-                                                                @endif
-                                                              @else
-                                                                  <td></td>
-                                                              @endif
-                                                            @endif --}}
 
 
                                                             {{-- TOTAL HDMF --}}

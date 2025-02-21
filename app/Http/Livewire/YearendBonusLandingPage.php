@@ -21,8 +21,6 @@ class YearendBonusLandingPage extends Component
     public function processCashGift()
     {
         $this->validate();
-
-        // if($payrollEmploymentStatus == 'Casual'){
             return redirect()->route('year-end-bonus', [
                 'year' => $this->year,
                 'mc' => $this->mc,

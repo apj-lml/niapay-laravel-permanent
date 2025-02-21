@@ -58,13 +58,13 @@
                     <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="selected">Profile</button>
                 </li>
 
-                @if(isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'CASUAL' || isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'PERMANENT')
+                @if(isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'PERMANENT' || isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'COTERMINOUS')
                 <li class="nav-item" role="presentation">
                     <button class="nav-link " id="allowances-tab" data-bs-toggle="tab" data-bs-target="#allowances" type="button" role="tab" aria-controls="allowances" aria-selected="false" wire:click="clickEmployeeAllowancesTab(@isset($employeeProfile) {{ $employeeProfile['id'] }} @endisset)" > Allowances</button>
                 </li>
                 @endif
 
-                @if(isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'CASUAL')
+                @if(isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'PERMANENT' || isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'COTERMINOUS')
 
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="deduction-tab" data-bs-toggle="tab" data-bs-target="#deduction" type="button" role="tab" aria-controls="deduction" aria-selected="false" wire:click="clickEmployeeDeductionsTab(@isset($employeeProfile) {{ $employeeProfile['id'] }} @endisset)">Deductions</button>
