@@ -255,12 +255,9 @@
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <select class="form-select @error('employeeProfile.employment_status') is-invalid @enderror" id="employment_status" aria-label="employment_status" wire:model="employeeProfile.employment_status" wire:change="dailyOrMonthly($event.target.value)">
-                                                <option value="CASUAL" selected>CASUAL</option>
-                                                {{-- <option value="PERMANENT">PERMANENT</option>
-                                                <option value="TEMPORARY">TEMPORARY</option>
-                                                <option value="CASUAL">CASUAL</option>
-                                                <option value="COTERMINOUS">COTERMINOUS</option> --}}
-                                                <option value="PERMANENT">PERMANENT</option>
+                                 
+                                                <option value="PERMANENT" selected>PERMANENT</option>
+                                                <option value="COTERMINOUS">COTERMINOUS</option>
                                             </select>
                                             <label for="floatingSelect">Employment Status</label>
                                             @error('employeeProfile.employment_status')
@@ -271,7 +268,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                @if(isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'CASUAL' || isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'PERMANENT')
+                                @if(isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'COTERMINOUS' || isset($employeeProfile->employment_status) && $employeeProfile->employment_status == 'PERMANENT')
         
                                 <div class="row mb-3">
                                     <div class="col-md-6">
@@ -346,20 +343,9 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    {{-- <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control @error('employeeProfile.daily_rate') is-invalid @enderror" id="daily_rate" placeholder="Daily Rate" wire:model.lazy="userDailyRate" readonly>
-                                            <label for="daily_rate">Daily Rate</label>
-                                            @error('userDailyRate')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                    </div> --}}
-                                    <div class="col-md-6 d-none">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control @error('employeeProfile.monthly_rate') is-invalid @enderror" id="monthly_rate" placeholder="Monthly Rate" wire:model="employeeProfile.monthly_rate" wire:change="employeeProfile.monthly_rate" readonly>
+                                            <input type="text" class="form-control @error('employeeProfile.monthly_rate') is-invalid @enderror" id="monthly_rate" placeholder="Monthly Rate" wire:model="employeeProfile.monthly_rate" readonly>
                                             <label for="monthly_rate">Monthly Rate</label>
                                             @error('employeeProfile.monthly_rate')
                                                 <span class="invalid-feedback" role="alert">
@@ -546,13 +532,27 @@ var daily_rate_jo = {
         13:{1:4667.72, 2:4844.81}
       }
 
+function formatMonthlyRate(input) {
+    // Remove any non-digit characters except the decimal point
+    let value = input.value.replace(/[^0-9.]/g, '');
+
+    // Format the number as currency with 2 decimal places
+    let formattedValue = parseFloat(value).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    // Update the input value with the formatted value
+    input.value = formattedValue;
+}
+
 function dailyOrMonthly(el){
     var monthly_rate =  document.getElementById('monthly_rate');
     var daily_rate =  document.getElementById('daily_rate');
     var sg_jg = document.getElementById('sg_jg');
     var step = document.getElementById("step");
 
-    if(el.value == "CASUAL" || el.value == "PERMANENT" || el.value == "CASUAL"){
+    if(el.value == "CASUAL" || el.value == "JOB ORDER" || el.value == "CONTRACT OF SERVICE"){
         monthly_rate.readOnly = true;
         monthly_rate.value = "";
         daily_rate.value = "";
@@ -570,54 +570,13 @@ function dailyOrMonthly(el){
         step.selectedIndex = 0;
     }
 
-    if(el.value == "CASUAL" || el.value == "PERMANENT"){
+    if(el.value == "COTERMINOUS" || el.value == "PERMANENT"){
         step.disabled = true;
     }else{
         step.disabled = false;
 
     }
 }
-// function myRate(){
-//     var sg_jg = document.getElementById('sg_jg').value;
-//     var step = document.getElementById("step").value;
-//     var monthly_rate =  document.getElementById('monthly_rate');
-//     var daily_rate =  document.getElementById('daily_rate');
-//     var emp_status = document.getElementById('employment_status').value;
-//     // monthly_rate.disabled = false;
-//     // daily_rate.disabled = false;
-
-//     // step = 1;
-
-//     if (emp_status == "PERMANENT" || emp_status == "COTERMINOUS" || emp_status == "TEMPORARY"){
-//         monthly_rate.value = monthly_rate_permanent[sg_jg][step];
-//         var temp_m_rate = parseFloat(monthly_rate.value.replace(/,/g, ''));
-//         monthly_rate.value = temp_m_rate.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
-//         @this.set('employeeProfile.monthly_rate', monthly_rate.value);
-
-//         daily_rate.value = "";
-//         // daily_rate.disabled = true;
-
-//     }else if (emp_status == "CASUAL" || emp_status == "PERMANENT"){
-//         daily_rate.value = daily_rate_jo[sg_jg];
-//         var temp_m_rate = parseFloat(daily_rate.value.replace(/,/g, ''));
-//         daily_rate.value = temp_m_rate.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-//         @this.set('employeeProfile.daily_rate', daily_rate.value);
-
-//         monthly_rate.value = "";
-//         // monthly_rate.disabled = true;
-
-    
-//     }else if (emp_status == "CASUAL"){
-//         daily_rate.value = daily_rate_casual[sg_jg][step];
-//         var temp_m_rate = parseFloat(daily_rate.value.replace(/,/g, ''));
-//         daily_rate.value = temp_m_rate.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-//         @this.set('employeeProfile.daily_rate', daily_rate.value);
-//     //   daily_rate.value = daily_rate_casual[job_grade][step];
-//         monthly_rate.value = "";
-//         // monthly_rate.disabled = true;
-//     }
-// }
 
 
 function myRate(){

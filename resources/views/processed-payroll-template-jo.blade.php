@@ -192,7 +192,7 @@
                     <th scope="col" rowspan="3" style="">DAILY RATE</th>
                     <th scope="col" rowspan="3" style="border-right: 1.5px solid black;">BASIC PAY</th>
 
-                    @if (strtoupper($payrollEmploymentStatus) != 'CASUAL' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
+                    @if (strtoupper($payrollEmploymentStatus) != 'COTERMINOUS' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
                     <th scope="col" colspan="{{ $joAllowances->count() }}" >A L L O W A N C E S</th>
                     @endif
                     <th scope="col" colspan="{{ $joDeductions->count() }}"> D E D U C T I O N S</th>
@@ -202,7 +202,7 @@
                   </tr>
     
                   <tr>
-                    @if (strtoupper($payrollEmploymentStatus) != 'CASUAL' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
+                    @if (strtoupper($payrollEmploymentStatus) != 'COTERMINOUS' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
                     <th scope="col"
                       @if ($joAllowances->countBy('allowance_group')['PERA'] <= 1)
                         rowspan="2" 
@@ -297,7 +297,7 @@
                   </tr>
     
                   <tr>
-                    @if (strtoupper($payrollEmploymentStatus) != 'CASUAL' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
+                    @if (strtoupper($payrollEmploymentStatus) != 'COTERMINOUS' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
                       @if ($joAllowances->countBy('allowance_group')['PERA'] > 1)
                         @foreach ($joAllowances->where('allowance_group', '=', 'PERA')->sortBy('sort_position')->all() as $peraAllowance)
                         <th scope="col" class="text-center align-middle ">{{ $peraAllowance->description }}</th>
@@ -358,7 +358,7 @@
                 <tr>
                   <td colspan="4" style="font-size: 8px; height:2px; padding:0px;"></td>
                   <td style="border-right: 1.5px solid black; text-align:center; font-size: 8px; height:2px; padding:0px;">A</td>
-                  @if (strtoupper($payrollEmploymentStatus) != 'CASUAL' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
+                  @if (strtoupper($payrollEmploymentStatus) != 'COTERMINOUS' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
                     <td colspan="{{ $joAllowances->count() }}" style="font-size: 8px; height:2px; padding:0px;"></td>
                   @endif
                   <td colspan="{{ $joDeductions->count() }}" style="font-size: 8px; height:2px; padding:0px;"></td>
@@ -402,7 +402,7 @@
                                   {{-- <td scope="row" style="border-right: 1.5px solid black;">{{ number_format((float)$payrollUser->basic_pay, 2) }}</td> --}}
                                   
 
-                                  @if (strtoupper($payrollEmploymentStatus) != 'CASUAL' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
+                                  @if (strtoupper($payrollEmploymentStatus) != 'COTERMINOUS' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
                                   {{-- TOTAL PERA --}}
                                     @if(isset($payrollUserSection->grand_total_allowance))
                                       @for($y=0; $y<$joAllowances->countBy('allowance_group')['PERA']; $y++)
@@ -602,7 +602,7 @@
                         <td colspan="3" style="font-size:9px; text-align:left;"><strong>{{ strtoupper(Helper::numberToWord(sprintf("%.2f", $payrollUserSection->total_net_pay)))}}</strong></td>
                         <td style="border-right: 1.5px solid black; background-color: #b4e3b9f1;"><strong>{{ number_format((float)sprintf("%.2f", $payrollUserSection->total_basic_pay),2)}}</strong></td>
     
-                        @if (strtoupper($payrollEmploymentStatus) != 'CASUAL' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
+                        @if (strtoupper($payrollEmploymentStatus) != 'COTERMINOUS' && strtoupper($payrollEmploymentStatus) != 'PERMANENT')
                         {{-- TOTAL PERA --}}
                           @if(isset($payrollUserSection->grand_total_allowance))
                             @for($y=0; $y<$joAllowances->countBy('allowance_group')['PERA']; $y++)

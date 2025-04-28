@@ -53,7 +53,7 @@
  
     <style>
         .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-            background-color: #fadee8;
+            background-color: #e7f9ff;
         }
     </style>
 

@@ -67,11 +67,20 @@
 
 
 
-    <div class="container-fluid mb-3">
+    {{-- <div class="container-fluid mb-3">
         <div class="card wow fadeInUp shadow-sm" data-wow-delay="0.1s">
             <div class="card-header bg-primary text-white fw-1">{{ __('Processed Payrolls') }}</div>
             <div class="card-body">
                 @livewire('list-of-processed-payrolls-component')
+            </div>
+        </div>
+    </div> --}}
+
+     <div class="container-fluid mb-3">
+        <div class="card wow fadeInUp shadow-sm" data-wow-delay="0.1s">
+            <div class="card-header bg-primary text-white fw-1">{{ __('Processed Payrolls') }}</div>
+            <div class="card-body">
+                @livewire('payroll-files-component')
             </div>
         </div>
     </div>

@@ -85,7 +85,9 @@
                                 <label for="employmentStatus" class="form-label">Employment Status</label>
 
                                 <select class="form-select @error('employmentStatus') is-invalid @enderror" wire:model="employmentStatus" aria-label="employmentStatus">
-                                    <option value="CASUAL" selected>CASUAL</option>
+                                    <option value="PERMANENT" selected>PERMANENT</option>
+                                    <option value="COTERMINOUS">COTERMINOUS</option>
+
                                     {{-- <option value="PERMANENT">PERMANENT</option>
                                     <option value="TEMPORARY">TEMPORARY</option>
                                     <option value="CASUAL">CASUAL</option>

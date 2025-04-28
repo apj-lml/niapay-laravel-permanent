@@ -218,7 +218,8 @@
                 $total_uniform_allowance = 0;
 
                 $payrollUsers = $payrollFund->users(null, false, null, null, $office)
-                    ->where('employment_status', 'CASUAL') // Filter by employment_status
+                    ->where('employment_status', 'PERMANENT') // Filter by employment_status
+                    ->orWhere('employment_status', 'COTERMINOUS') // Filter by employment_status
                     ->where('is_active', 1) // Filter by active users
                     ->get()
                     ->sortBy('full_name'); // Sort by full name
@@ -333,7 +334,7 @@
                                             <tfoot>
                                                 <tr>
                                                     <td colspan=3 style="text-align: right;"><b>TOTAL</b></td>
-                                                    <td colspan=2><b>{{ number_format(bcdiv((float) $total_uniform_allowance, 1, 2), 2) }}</b></td>
+                                                    <td colspan=2 style="padding-left: 46px;"><b>{{ number_format(bcdiv((float) $total_uniform_allowance, 1, 2), 2) }}</b></td>
                                                 </tr>
                                             </tfoot>
                                         </table>

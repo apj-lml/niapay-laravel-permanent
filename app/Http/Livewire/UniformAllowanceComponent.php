@@ -58,46 +58,102 @@ class UniformAllowanceComponent extends Component
         }
     }
 
-    public function processUniformAllowancePayroll($filterSection = null, $filterFund = null){
+    // public function processUniformAllowancePayroll($filterSection = null, $filterFund = null){
 
-        DB::statement("SET SQL_MODE=''"); //this is the trick, use it just before your query to be able to GROUP
-            $funds = Fund::with(['users' => function ($query) use ($filterSection) {
+    //     DB::statement("SET SQL_MODE=''"); //this is the trick, use it just before your query to be able to GROUP
+    //         $funds = Fund::with(['users' => function ($query) use ($filterSection) {
 
-                if ($filterSection !== null) {
-                    $query->whereHas('agencyUnit.agencySection', function ($subQuery) use ($filterSection) {
-                        $subQuery->where('office', $filterSection);
-                    });
-                }
+    //             if ($filterSection !== null) {
+    //                 $query->whereHas('agencyUnit.agencySection', function ($subQuery) use ($filterSection) {
+    //                     $subQuery->where('office', $filterSection);
+    //                 });
+    //             }
             
-            }, 'users.agencyUnit', 'users.agencyUnit.agencySection', 'users.uniformAllowances'])
-                ->has('users') // Ensure that the Fund has users
-                ->get();
+    //         }, 'users.agencyUnit', 'users.agencyUnit.agencySection', 'users.uniformAllowances'])
+    //             ->has('users') // Ensure that the Fund has users
+    //             ->get();
             
-        if ($filterFund !== null && $filterFund != 0 ) {
-            $funds = $funds->where('id', $filterFund);
-        }
+    //     if ($filterFund !== null && $filterFund != 0 ) {
+    //         $funds = $funds->where('id', $filterFund);
+    //     }
 
         
-        if($funds->isEmpty()){
-            return collect([]);
-        }else{
-            foreach($funds as $fund){
-                $fund->sections = AgencySection::with(['users' => function ($query) use ($fund){
-                    $query->where('fund_id', '=', $fund->id); 
-                    $query->where('employment_status', '=', 'PERMANENT')->orWhere('employment_status', '=', 'COTERMINOUS'); 
-                    $query->where('is_active', '=', 1); 
-                    $query->where('include_to_payroll', '=', 1); 
-                }])->select('*')->get()->groupBy('office');
+    //     if($funds->isEmpty()){
+    //         return collect([]);
+    //     }else{
+    //         foreach($funds as $fund){
+    //             $fund->sections = AgencySection::with(['users' => function ($query) use ($fund){
+    //                 $query->where('fund_id', '=', $fund->id); 
+    //                 $query->where('employment_status', '=', 'PERMANENT')->orWhere('employment_status', '=', 'COTERMINOUS'); 
+    //                 $query->where('is_active', '=', 1); 
+    //                 $query->where('include_to_payroll', '=', 1); 
+    //             }])->select('*')->get()->groupBy('office');
 
+    //         }
+
+
+    //         $payrollFunds = $funds;
+    //     }
+
+    //     return $payrollFunds;
+    // }
+
+    public function processUniformAllowancePayroll($filterSection = null, $filterFund = null)
+    {
+        // Fetch Funds that have active users meeting the criteria
+        $funds = Fund::whereHas('users', function ($query) use ($filterSection) {
+            $query->where('is_active', 1)
+                ->where('employment_status', 'PERMANENT')
+                ->orWhere('employment_status', 'COTERMINOUS')
+                ->where('include_to_payroll', 1);
+    
+            if ($filterSection !== null) {
+                $query->whereHas('agencyUnit.agencySection', function ($subQuery) use ($filterSection) {
+                    $subQuery->where('office', $filterSection);
+                });
             }
-
-
-            $payrollFunds = $funds;
+        })
+        ->with([
+            'users' => function ($query) {
+                $query->where('is_active', 1)
+                    ->where('employment_status', 'PERMANENT')
+                    ->orWhere('employment_status', 'COTERMINOUS')
+                    ->where('include_to_payroll', 1);
+            }
+        ])
+        ->get();
+    
+        // Apply fund filtering if needed
+        if ($filterFund !== null && $filterFund != 0) {
+            $funds = $funds->where('id', $filterFund);
         }
-
-        return $payrollFunds;
+    
+        if ($funds->isEmpty()) {
+            return collect([]);
+        }
+    
+        foreach ($funds as $fund) {
+            // Fetch agency sections that have users within the same fund
+            $fund->sections = AgencySection::whereHas('users', function ($query) use ($fund) {
+                $query->where('fund_id', $fund->id)
+                    ->where('employment_status', 'PERMANENT')
+                    ->orWhere('employment_status', 'COTERMINOUS')
+                    ->where('is_active', 1)
+                    ->where('include_to_payroll', 1);
+            })
+            ->with(['users' => function ($query) use ($fund) {
+                $query->where('fund_id', $fund->id)
+                    ->where('employment_status', 'PERMANENT')
+                    ->orWhere('employment_status', 'COTERMINOUS')
+                    ->where('is_active', 1)
+                    ->where('include_to_payroll', 1);
+            }])
+            ->get()
+            ->groupBy('office'); // Group sections by office name
+        }
+    
+        return $funds;
     }
-
 
     public function createPdf()
     {

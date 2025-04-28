@@ -61,11 +61,11 @@
             inset-block-end: 0;
             /* "bottom" */
             color: #0a090a;
-            background-color: #febdcd;
+            background-color: #bde7fe;
         }
 
         .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-            background-color: #fadee8;
+            background-color: #def3fa;
         }
 
 
@@ -115,7 +115,7 @@
                                         <div class="col-sm-12 row">
                                             <div class="col-sm-6">
                                                 <h6 class="">{{ $office }}</h6>
-                                                <div class="form-check">
+                                                {{-- <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" value=""
                                                         id="enableScroll{{ $payrollUserSection->id }}"
                                                         wire:change.debounce.500ms="lockScroll()"
@@ -124,21 +124,22 @@
                                                         for="enableScroll{{ $payrollUserSection->id }}">
                                                         Lock Scrolling
                                                     </label>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                             <div class="col-sm-6">
 
                                             </div>
                                         </div>
 
-                                        <div class="col-sm-12 row" id="screen_{{ $payrollUserSection->id }}">
-                                            <div class="col-sm-2">
+                                        <div class="col-sm-12 row" id="">
+                                        {{-- <div class="col-sm-12 row" id="screen_{{ $payrollUserSection->id }}"> --}}
+                                            {{-- <div class="col-sm-2">
                                                 <button class="ms-auto mt-auto btn btn-outline-primary btn-sm mt-2"
                                                     onclick="changeSize('screen_{{ $payrollUserSection->id }}', 'max', 'table_container{{ $payrollUserSection->id }}', 'maxBtn{{ $payrollUserSection->id }}'); return false;"
                                                     id="maxBtn{{ $payrollUserSection->id }}">
                                                     Maximize
                                                 </button>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="table-responsive mt-3"
                                                 style="max-height: 700px; overflow-y: auto; z-index: 80;"
@@ -624,35 +625,18 @@
                                                     </thead>
                                                     <tbody>
                                                         @php
-                                                            if (
-                                                                $this->payrollEmploymentStatus == 'Coterminous' ||
-                                                                $this->payrollEmploymentStatus == 'Permanent'
-                                                            ) {
-
-                                                                $payrollUsers = $payrollFund->users
-                                                                    ->where(function ($query) {
-                                                                        return $query
-                                                                            ->where('employment_status', 'COTERMINOUS')
-                                                                            ->orWhere('employment_status', 'PERMANENT');
-                                                                    })
-                                                                    ->where('is_active', 1)
-                                                                    ->sortBy('full_name');
-                                                            } else {
-                                                                $payrollUsers = $payrollFund->users
-                                                                    ->where(function ($query) {
-                                                                        $query
-                                                                            ->where('employment_status', '<>', 'COTERMINOUS')
-                                                                            ->orWhere(
-                                                                                'employment_status',
-                                                                                '<>',
-                                                                                'PERMANENT',
-                                                                            );
-                                                                    })
-                                                                    ->sortBy('full_name');
-                                                            }
+                                                            $payrollUsers = $payrollFund->users
+                                                                ->where(function ($query) {
+                                                                    return $query
+                                                                        ->where('employment_status', 'COTERMINOUS')
+                                                                        ->orWhere('employment_status', 'PERMANENT');
+                                                                })
+                                                                ->where('is_active', 1)
+                                                                ->sortBy('full_name');
                                                         @endphp
 
                                                         @foreach ($payrollUsers as $payrollUser)
+                                                        {{-- @dd($payrollUser) --}}
                                                             @if ($payrollFund->id == $payrollUser->fund_id)
                                                                 {{-- @if ($payrollUserSection->id == $payrollUser->id) --}}
                                                                 @if (
@@ -693,7 +677,7 @@
                                                                             {{ $payrollUser->sg_jg }}</td>
                                                                         <td scope="row"
                                                                             class="text-center align-middle p-0">
-                                                                            @livewire('modals.add-individual-attendance-modal', ['startDate' => $payrollDateFrom, 'endDate' => $payrollDateTo, 'userId' => $payrollUser->id, 'userDailyRate' => $payrollUser->daily_rate, 'userSgJg' => $payrollUser->sg_jg, 'isLessFifteen' => $isLessFifteen], key($payrollUser->id) )
+                                                                            @livewire('modals.add-individual-attendance-modal', ['startDate' => $payrollDateFrom, 'endDate' => $payrollDateTo, 'userId' => $payrollUser->id, 'userMonthlyRate' => $payrollUser->monthly_rate, 'userSgJg' => $payrollUser->sg_jg, 'isLessFifteen' => $isLessFifteen], key($payrollUser->id) )
                                                                         </td>
                                                                         @if (strtoupper($payrollUser->employment_status) == 'JOB ORDER' &&
                                                                                 strtoupper($payrollUser->employment_status) == 'CONTRACT OF SERVICE')
@@ -707,7 +691,7 @@
                                                                             </td>
                                                                         @else
                                                                             <td scope="row">
-                                                                                {{ number_format((float) $payrollUser->daily_rate, 2) }}
+                                                                                {{ number_format((float) $payrollUser->monthly_rate, 2) }}
                                                                             </td>
                                                                         @endif
 

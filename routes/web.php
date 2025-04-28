@@ -32,10 +32,6 @@ Route::get('process-payroll-jo', function () {
     return view('process-payroll-jo');
 })->name('process-payroll-jo');
 
-Route::get('process-payroll-casual', function () {
-    return view('process-payroll-casual');
-})->name('process-payroll-casual');
-
 Route::get('/processed-payrolls', function () {
     return view('processed-payrolls');
 })->name('processed-payrolls');
@@ -105,6 +101,13 @@ Route::get('/process-payroll', function () {
     return view('process-payroll');
 })->name('process-payroll');
 
+
+// payroll list download
+Route::get('/payrolls/download/{filename}', function ($filename) {
+    $path = storage_path("app/payrolls/$filename");
+    if (!file_exists($path)) abort(404);
+    return response()->download($path);
+})->name('payroll.download');
 
 // Route::get('payroll-clerk', ['middleware' => 'auth', function() {
 //     Auth::routes();

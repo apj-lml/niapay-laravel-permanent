@@ -658,7 +658,7 @@
 
                       $payrollUsers = $payrollFund->users
                             ->where(function($query) {
-                                return $query->where('employment_status', 'CASUAL')
+                                return $query->where('employment_status', 'COTERMINOUS')
                                       ->orWhere('employment_status', 'PERMANENT');
                             })
                             ->where('is_active', 1)
@@ -1377,7 +1377,7 @@
                             @foreach ($joAllowances->where('allowance_group', '=', 'PERA')->sortBy('sort_position')->all() as $peraAllowance)
                               <tr>
                                 <td>
-                                  <strong>{{ $peraAllowance->description }}</strong>
+                                  <strong>{{ $peraAllowance->account_title }}</strong>
                                 </td>
                                 <td style="text-align: right;">
                                   {{-- @if ($payrollFund->fund_description != 2) --}}
@@ -1414,7 +1414,7 @@
                             @foreach ($joAllowances->where('allowance_group', '=', 'MEDICAL')->sortBy('sort_position')->all() as $medicalAllowance)
                               <tr>
                                 <td>
-                                  <strong>{{ $medicalAllowance->description }}</strong>
+                                  <strong>{{ $medicalAllowance->account_title }}</strong>
                                 </td>
                                 <td style="text-align: right;">
                                   {{-- @if ($payrollFund->fund_description != 2) --}}
@@ -1451,7 +1451,7 @@
                             @foreach ($joAllowances->where('allowance_group', '=', 'MEAL')->sortBy('sort_position')->all() as $mealAllowance)
                               <tr>
                                 <td>
-                                  <strong>{{ $mealAllowance->description }}</strong>
+                                  <strong>{{ $mealAllowance->account_title }}</strong>
                                 </td>
                                 <td style="text-align: right;">
                                   {{-- @if ($payrollFund->fund_description != 2) --}}
@@ -1482,6 +1482,43 @@
                           @endif
                         @endif
                             
+
+                        {{-- OBLIGATION CHILD --}}
+                        @if (strtoupper($payrollEmploymentStatus) != 'JOB ORDER' && strtoupper($payrollEmploymentStatus) != 'CONTRACT OF SERVICE')
+                          @if ($joAllowances->countBy('allowance_group')['CHILD'] >= 1)
+                            @foreach ($joAllowances->where('allowance_group', '=', 'CHILD')->sortBy('sort_position')->all() as $childAllowance)
+                              <tr>
+                                <td>
+                                  <strong>{{ $childAllowance->account_title }}</strong>
+                                </td>
+                                <td style="text-align: right;">
+                                  {{-- @if ($payrollFund->fund_description != 2) --}}
+                                  @if (strpos($payrollFund->fund_description, 'LFPS') === true)
+                                    <strong>{{ $childAllowance->uacs_code_lfps }}</strong>
+                                  @elseif(strpos($payrollFund->fund_description, 'COB') === true)
+                                    <strong>{{ $childAllowance->uacs_code_cob }}</strong>
+                                  @else
+                                    <strong>{{ $childAllowance->uacs_code_lfps }}</strong>
+                                  @endif
+                                </td>
+                                <td>
+                                  &nbsp;
+                                </td>
+                                <td style="text-align: left;">
+                                  @if(isset($payrollUserSection->grand_total_allowance))
+                                    @if(isset($payrollUserSection->grand_total_allowance[$childAllowance->allowance_type]))
+                                      <strong>{{ number_format((float)$payrollUserSection->grand_total_allowance[$childAllowance->allowance_type]['total'], 2) }}</strong>
+                                    @else
+                                      &nbsp;
+                                    @endif
+                                  @else
+                                    &nbsp;
+                                  @endif
+                                </td>
+                              </tr>
+                              @endforeach
+                          @endif
+                        @endif
       
       
                         {{-- OBLIGATION TAX --}}
@@ -1640,7 +1677,7 @@
                     @foreach ($joDeductions->where('deduction_group', '=', 'COOP')->sortBy('sort_position')->all() as $coopLoanDeduction)
                     <tr>
                       <td>
-                        <strong>{{ str_replace('_', ' ', $coopLoanDeduction->deduction_group) }} {{ $coopLoanDeduction->account_title }}</strong>
+                        <strong>{{ $coopLoanDeduction->account_title }}</strong>
                       </td>
                       <td style="text-align: right;">
                         @if ($payrollFund->id != 2)
@@ -1746,10 +1783,10 @@
                     {{-- OBLIGATION CIB,LCCA --}}
                     <tr>
                       <td>
-                        <strong>CIB,LCCA</strong>
+                        <strong>Cash in Bank - Local Currency, Current Account</strong>
                       </td>
                       <td style="text-align: right;">
-                        <strong>111fo (1-01-02-020)</strong>
+                        <strong>111 (1-01-02-020)</strong>
                       </td>
                       <td>
                         &nbsp;

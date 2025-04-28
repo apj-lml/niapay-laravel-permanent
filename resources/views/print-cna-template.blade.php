@@ -220,7 +220,8 @@
 
                 $payrollUsers = $payrollFund->users(null, false, null, null, $office)
                     ->with('cnas')
-                    ->where('employment_status', 'CASUAL') // Filter by employment_status
+                    ->where('employment_status', 'PERMANENT') // Filter by employment_status
+                    ->orWhere('employment_status', 'COTERMINOUS') // Filter by employment_status
                     ->where('is_active', 1) // Filter by active users
                     ->get()
                     ->sortBy('full_name'); // Sort by full name

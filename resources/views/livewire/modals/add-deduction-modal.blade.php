@@ -91,7 +91,7 @@
                         {{-- <option value="" selected>N/A</option> --}}
                         {{-- <option value="both" selected>ALL</option> --}}
                         {{-- <option value="monthly">PERMANENT, COTERMINOUS, CASUAL</option> --}}
-                        <option value="daily" selected>CASUAL, PERMANENT</option>
+                        <option value="monthly" selected>PERMANENT, COTERMINOUS</option>
                     </select>
                     <label for="floatingSelect">Deduction For</label>
                     @error('deductionFor')

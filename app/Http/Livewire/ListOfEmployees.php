@@ -76,7 +76,8 @@ class ListOfEmployees extends Component
     {
         $users = User::where('employment_status', 'PERMANENT')
         ->orWhere('employment_status', 'COTERMINOUS')
-        ->where(DB::raw("CONCAT(first_name, ' ', middle_name, ' ', last_name)"), 'like', "%{$this->searchVal}%")
+        // ->where(DB::raw("CONCAT(first_name, ' ', middle_name, ' ', last_name)"), 'like', "%{$this->searchVal}%")
+        ->where("last_name", 'like', "%{$this->searchVal}%")
         ->orderby('last_name')
         ->orderby('first_name')
         ->paginate(20);

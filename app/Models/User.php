@@ -133,11 +133,6 @@ class User extends Authenticatable
     }
     
 
-    public function scopeJobOrder($query)
-    {
-        return $query->where('employment_status', '=', 'CASUAL');
-    }
-
     public function getFullNameAttribute() // notice that the attribute name is in CamelCase.
     {
         $fullName = $this->last_name . ', ' . $this->first_name . ' ' . $this->name_extn .' '. $this->middle_name;

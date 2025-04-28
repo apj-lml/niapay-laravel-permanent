@@ -99,7 +99,7 @@
 function setDates(currentDate, fifteenthDay){
   if (currentDate.isBefore(fifteenthDay, 'date')) {
         console.log('Current date is less than the 15th day of the month.');
-        document.getElementById('dateFromPayroll').value = dayjs().date(16).subtract(1, 'month').format('YYYY-MM-DD')
+        document.getElementById('dateFromPayroll').value = dayjs().subtract(1, 'month').startOf('month').format('YYYY-MM-DD')
         document.getElementById('dateToPayroll').value = dayjs().subtract(1, 'month').endOf('month').format('YYYY-MM-DD')
         
         // document.getElementById('payrollFrequency').value = 2;

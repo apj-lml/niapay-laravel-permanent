@@ -58,7 +58,19 @@ class EmployeeProfileModal extends Component
     ];
 
 
+    // public function mount()
+    // {
+    //     $this->employeeProfile->monthly_rate = number_format($this->employeeProfile->monthly_rate, 2);
+    // }
 
+    public function updatedEmployeeProfileMonthlyRate($value)
+    {
+        // Remove any non-numeric characters except the decimal point
+        $formattedValue = preg_replace('/[^0-9.]/', '', $value);
+
+        // Format the value with commas and 2 decimal places
+        $this->employeeProfile->monthly_rate = number_format($formattedValue, 2);
+    }
 
     protected $listeners = ['openEmployeeProfileModal'];
 
@@ -91,8 +103,6 @@ class EmployeeProfileModal extends Component
 
     function updatedEmployeeProfileDailyRate($value){
         $this->userDailyRate = (float) str_replace(",","", $value);
-        // dd('IM HERE: ' . $value);
-        // dd('IM HERE: ' . $this->userDailyRate);
 
     }
 
@@ -108,22 +118,16 @@ class EmployeeProfileModal extends Component
 
     public function changeIsLessFifteen()
     {
-
         if($this->isLessFifteen == 1){
             $this->employeeProfile->is_less_fifteen = 0;
         }else{
             $this->employeeProfile->is_less_fifteen = 1;
         }
-
-        // dd($this->employeeProfile->is_less_fifteen);
-
-
     }
 
-
+    //Commented out call to AutoAddDeduction() function in the saveProfile() function
     public function AutoAddDeduction()
     {
-
         // DEDUCTIONS
 
         $checkDupePagIbig = DeductionUser::
@@ -228,7 +232,7 @@ class EmployeeProfileModal extends Component
     public function saveProfile()
     {
         $this->validate();
-        $this->AutoAddDeduction();
+        // $this->AutoAddDeduction();
 
         $this->employeeProfile->save();
 

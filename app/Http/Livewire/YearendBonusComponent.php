@@ -33,7 +33,7 @@ class YearendBonusComponent extends Component
 
     public function mount()
     {
-        $users = User::all('id', 'employee_id', 'last_name', 'first_name', 'middle_name', 'name_extn', 'position', 'sg_jg', 'step', 'daily_rate');
+        $users = User::all('id', 'employee_id', 'last_name', 'first_name', 'middle_name', 'name_extn', 'position', 'sg_jg', 'step', 'monthly_rate');
         foreach($users as $user){
             // Add or update the user
 
@@ -50,7 +50,6 @@ class YearendBonusComponent extends Component
             }else{
 
                 $cleanedCg = str_replace(',', '', $this->cg);
-                
                 $user = YearendBonus::create(
                     [
                         'mc' => $this->mc,
@@ -58,13 +57,13 @@ class YearendBonusComponent extends Component
                         'emp_id' => $user->employee_id,
                         'name' => $user->full_name,
                         'position_title' => $user->position,
-                        'daily_rate' => $user->daily_rate,
-                        'monthly_rate' => $user->daily_rate * 22,
-                        'year_end_bonus' => $user->daily_rate * 22,
+                        'daily_rate' => $user->monthly_rate / 22,
+                        'monthly_rate' => $user->monthly_rate,
+                        'year_end_bonus' => $user->monthly_rate,
                         'cash_gift' => bcdiv((float) $cleanedCg, 1, 2),
-                        'total_year_end_bonus' => ($user->daily_rate * 22) + (float) $cleanedCg,
+                        'total_year_end_bonus' => ($user->monthly_rate) + (float) $cleanedCg,
                         'casab_loan' => null,
-                        'net_amount' => ($user->daily_rate * 22) + (float) $cleanedCg,
+                        'net_amount' => ($user->monthly_rate) + (float) $cleanedCg,
                         'user_id' => $user->id,
                     ]
                 );
@@ -103,7 +102,8 @@ class YearendBonusComponent extends Component
                     });
                 }, 'users' => function ($query) use ($fund){
                     $query->where('fund_id', '=', $fund->id); 
-                    $query->where('employment_status', '=', 'CASUAL'); 
+                    $query->where('employment_status', '=', 'PERMANENT'); 
+                    $query->orWhere('employment_status', '=', 'COTERMINOUS'); 
                     $query->where('is_active', '=', 1); 
                     $query->where('include_to_payroll', '=', 1);
 

@@ -18,7 +18,7 @@ class AddIndividualAttendanceModal extends Component
             $endDate,
             $userId,
             $attendanceId = null,
-            $userDailyRate,
+            $userMonthlyRate,
             $isLessFifteen,
             $userSgJg;
 
@@ -34,18 +34,16 @@ class AddIndividualAttendanceModal extends Component
 
         if($isLessFifteen != 'full_month'){
 
-            if($checkDupePera){
-                $checkAttendance = Attendance::where('user_id', $this->userId)
-                    ->where('first_half', '>', 0)
-                    ->where('second_half', '=', 0)
-                    ->get();
-            }
-
             $pera = (($this->firstHalfDaysRendered + $this->secondHalfDaysRendered) * 90.91);
 
             if($pera > 1000){
                 $pera = 1000;
             }
+
+        }else{
+            $pera = 2000;
+        }
+
 
             if(!$checkDupePera){
                 AllowanceUser::create([
@@ -64,7 +62,6 @@ class AddIndividualAttendanceModal extends Component
                 ]);
             }
 
-        }
         
 
         // DEDUCTIONS
@@ -74,10 +71,10 @@ class AddIndividualAttendanceModal extends Component
                         ->where('user_id', '=', $this->userId)
                         ->first();
 
-        $checkDupeWht = DeductionUser::
-                            where('deduction_id', '=', 8)
-                            ->where('user_id', '=', $this->userId)
-                            ->first();
+        // $checkDupeWht = DeductionUser::
+        //                     where('deduction_id', '=', 8)
+        //                     ->where('user_id', '=', $this->userId)
+        //                     ->first();
 
         $checkDupePhic = DeductionUser::
                             where('deduction_id', '=', 5)
@@ -89,7 +86,7 @@ class AddIndividualAttendanceModal extends Component
                             ->where('user_id', '=', $this->userId)
                             ->first();
 
-        $gsisAmount = (($this->userDailyRate * 22) * .09);
+        $gsisAmount = (($this->userMonthlyRate) * .09);
         if(!$checkDupeGsis){
             DeductionUser::create([
                 'user_id' => $this->userId,
@@ -101,7 +98,7 @@ class AddIndividualAttendanceModal extends Component
         }
 
 
-        $phicAmount = bcdiv((($this->userDailyRate * 22) * .025), 1, 2);
+        $phicAmount = bcdiv((($this->userMonthlyRate) * .025), 1, 2);
         if(!$checkDupePhic){
             DeductionUser::create([
                 'user_id' => $this->userId,
@@ -121,7 +118,8 @@ class AddIndividualAttendanceModal extends Component
 
 
 
-        $pagIbigAmount = (($this->userDailyRate * 22) * .02);
+        // $pagIbigAmount = (($this->userMonthlyRate) * .02);
+        $pagIbigAmount = 200;
 
         if(!$checkDupePagIbig){
             DeductionUser::create([
@@ -139,76 +137,45 @@ class AddIndividualAttendanceModal extends Component
             //     'frequency' => 1,
             // ]);
         }
-
-
-        // if(!$checkDupeWht && $this->userSgJg >= 13){
-        // if($this->userSgJg >= 8){
-
-        //     $grossPay = (($this->userDailyRate * 22) * 12) - ($gsisAmount * 12) - ($pagIbigAmount * 12) - ($phicAmount * 12) - (100 * 12);
-        //     $whtAmount = 0.00;
-
-        //     dd($grossPay);
-        //     if(($grossPay * 12) > 250000 && ($grossPay * 12) < 400000){
-        //         $whtAmount = ((($grossPay * 12) - 250000) * 0.15) / 12;
-        //     }
-
-        //     if ($checkDupeWht !== null) {
-        //         // If a record exists, update it
-        //         $checkDupeWht->update([
-        //             'user_id' => $this->userId,
-        //             'deduction_id' => 8,
-        //             'amount' => $whtAmount,
-        //             'frequency' => 1,
-        //         ]);
-        //     } else {
-        //         // If no record exists, create a new one
-        //         DeductionUser::create([
-        //             'user_id' => $this->userId,
-        //             'deduction_id' => 8,
-        //             'amount' => $whtAmount,
-        //             'frequency' => 1,
-        //             'active_status' => 1
-        //         ]);
-        //     }
-        // }
-        
     }
 
     public function addIndividualAttendance()
     {
         $this->daysRendered = $this->firstHalfDaysRendered + $this->secondHalfDaysRendered;
-
         $checkDupes = Attendance::where('user_id', $this->userId)
             ->where('start_date', $this->startDate)
             ->where('end_date', $this->endDate)
             ->get();
         
         if($checkDupes->isEmpty()){
-            Attendance::create([
-                'user_id' => $this->userId,
-                'start_date' => $this->startDate,
-                'end_date' => $this->endDate,
-                'days_rendered' => $this->daysRendered,
-                'first_half' => $this->firstHalfDaysRendered,
-                'second_half' => $this->secondHalfDaysRendered
-            ]);
+            if($this->daysRendered > 0){
 
-        // $this->dispatchBrowserEvent('closeModal', ['id' => 'addIndividualAttendanceModal']);
-        $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Successfully saved!']);
-        
+                Attendance::create([
+                    'user_id' => $this->userId,
+                    'start_date' => $this->startDate,
+                    'end_date' => $this->endDate,
+                    'days_rendered' => $this->daysRendered,
+                    'first_half' => $this->firstHalfDaysRendered,
+                    'second_half' => $this->secondHalfDaysRendered
+                ]);
+
+            // $this->dispatchBrowserEvent('closeModal', ['id' => 'addIndividualAttendanceModal']);
+            $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Successfully saved!']);
+            }
         }else{
             if($this->daysRendered > 0){
                 $selectAttendanceUser = Attendance::findOrFail($checkDupes[0]->id);
 
-                $selectAttendanceUser->days_rendered = $this->firstHalfDaysRendered + $this->secondHalfDaysRendered;
+                // $selectAttendanceUser->days_rendered = $this->firstHalfDaysRendered + $this->secondHalfDaysRendered;
+                $selectAttendanceUser->days_rendered = $this->daysRendered;
                 $selectAttendanceUser->first_half = $this->firstHalfDaysRendered;
                 $selectAttendanceUser->second_half = $this->secondHalfDaysRendered;
                 $selectAttendanceUser->save();
     
                 $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Attendance record updated!']);
             }else{
-                $this->deleteAttendance();
-                // $this->dispatchBrowserEvent('fireToast', ['icon' => 'error', 'title' => 'Attendance record removed!']);
+                    $this->deleteAttendance();
+                    // $this->dispatchBrowserEvent('fireToast', ['icon' => 'error', 'title' => 'Attendance record removed!']);
             }
         }
 
@@ -216,8 +183,6 @@ class AddIndividualAttendanceModal extends Component
 
         $this->emit('refreshProcessPayrollJobOrderComponent');
     }
-
-
 
     public function deleteAttendance(){
         $checkDupes = Attendance::where('user_id', $this->userId)

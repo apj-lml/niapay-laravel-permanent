@@ -22,7 +22,7 @@ class AddAttendance extends Component
     $firstHalf = '0.00',
     $secondHalf = '0.00',
     $daysRendered = '0.00',
-    $employmentStatus = "CASUAL",
+    $employmentStatus = "PERMANENT-COTERM",
     // $listOfEmployeesToConfigure,
     $searchVal = "",
     $counter = 0,
@@ -64,7 +64,7 @@ class AddAttendance extends Component
     ];
 
 
-    public function AutoAddDeduction($userId, $userDailyRate)
+    public function AutoAddDeduction($userId, $userMonthlyRate)
     {
         $isLessFifteen = $this->isLessFifteen;
 
@@ -74,33 +74,14 @@ class AddAttendance extends Component
                         ->where('user_id', '=', $userId)
                         ->first();
 
-        $checkAttendance = false;
-        
-        if($isLessFifteen == 'full_month'){;
-            if($checkDupePera){
-                $checkAttendance = Attendance::where('user_id', $userId)
-                    // ->where('start_date', $this->startDate)
-                    // ->where('end_date', $this->endDate)
-                    ->where('first_half', '>', 0)
-                    ->where('second_half', '>', 0)
-                    ->get();
-            }
+        if($isLessFifteen == 'full_month'){
 
-            $pera = ($this->daysRendered * 90.91);
+            // $pera = ($this->daysRendered * 90.91);
 
-            if($pera > 2000){
+            // if($pera > 2000){
                 $pera = 2000;
-            }
+            // }
         }else if($isLessFifteen == 'less_fifteen_first_half'){
-
-            if($checkDupePera){
-                $checkAttendance = Attendance::where('user_id', $userId)
-                    ->where('first_half', '>', 0)
-                    ->where('second_half', '=', 0)
-                    ->get();
-            }
-
-            // dd($checkDupePera);
 
             $pera = ($this->firstHalf * 90.91);
 
@@ -108,14 +89,6 @@ class AddAttendance extends Component
                 $pera = 1000;
             }
         }else{
-
-            if($checkDupePera){
-                $checkAttendance = Attendance::where('user_id', $userId)
-                    ->where('first_half', '=', 0)
-                    ->where('second_half', '>', 0)
-                    ->get();
-            }
-
 
             $pera = ($this->secondHalf * 90.91);
 
@@ -152,10 +125,10 @@ class AddAttendance extends Component
                         ->where('user_id', '=', $userId)
                         ->first();
 
-        $checkDupeWht = DeductionUser::
-                            where('deduction_id', '=', 8)
-                            ->where('user_id', '=', $userId)
-                            ->first();
+        // $checkDupeWht = DeductionUser::
+        //                     where('deduction_id', '=', 8)
+        //                     ->where('user_id', '=', $userId)
+        //                     ->first();
 
         $checkDupePhic = DeductionUser::
                             where('deduction_id', '=', 5)
@@ -167,7 +140,7 @@ class AddAttendance extends Component
                             ->where('user_id', '=', $userId)
                             ->first();
 
-        $gsisAmount = (($userDailyRate * 22) * .09);
+        $gsisAmount = (($userMonthlyRate * 22) * .09);
         if(!$checkDupeGsis){
             DeductionUser::create([
                 'user_id' => $userId,
@@ -179,7 +152,7 @@ class AddAttendance extends Component
         }
         
 
-        $phicAmount = bcdiv((($userDailyRate * 22) * .025), 1, 2);
+        $phicAmount = bcdiv((($userMonthlyRate * 22) * .025), 1, 2);
         if(!$checkDupePhic){
             DeductionUser::create([
                 'user_id' => $userId,
@@ -198,7 +171,7 @@ class AddAttendance extends Component
         }
         
 
-        $pagIbigAmount = (($userDailyRate * 22) * .02);
+        $pagIbigAmount = (($userMonthlyRate * 22) * .02);
 
         if(!$checkDupePagIbig){
             DeductionUser::create([
@@ -257,7 +230,7 @@ class AddAttendance extends Component
             ->get();
 
             $this->checkAttendanceDupeisEmpty = $checkDupes->isEmpty();
-            $this->AutoAddDeduction($employee->id, $employee->daily_rate);
+            $this->AutoAddDeduction($employee->id, $employee->monthly_rate);
             
             if($checkDupes->isEmpty()){
                 if((float)$this->daysRendered > 0){
@@ -343,7 +316,9 @@ class AddAttendance extends Component
 
         if($this->counter == 0){
             $this->configuredData=[];
-            $listOfEmployeesToConfigure = User::where("employment_status", "=", $this->employmentStatus)
+            $listOfEmployeesToConfigure = User::where("employment_status", "=", "PERMANENT")
+            ->where("employment_status", "=", "COTERMINOUS")
+            ->where('is_active', '=', 1)
             ->where('is_active', '=', 1)
             ->where('include_to_payroll', '=', 1)
             ->get();
@@ -375,7 +350,8 @@ class AddAttendance extends Component
             'employmentStatus' => 'required',
         ]);
 
-        $employeeByEmploymentStatus = User::where('employment_status', '=', $this->employmentStatus)
+        $employeeByEmploymentStatus = User::where("employment_status", "=", "PERMANENT")
+        ->where("employment_status", "=", "COTERMINOUS")
         ->where('is_active', '=', 1)
         ->where('include_to_payroll', '=', 1)
         ->get();
