@@ -84,6 +84,11 @@ class User extends Authenticatable
         return $this->hasMany(YearendBonus::class);
     }
 
+    public function mybs()
+    {
+        return $this->hasMany(MidyearBonus::class);
+    }
+
     public function cnas()
     {
         return $this->hasMany(Cna::class);

@@ -62,6 +62,7 @@ Route::get('/payroll-finder', function () {
     return view('payroll-finder');
 })->name('payroll-finder');
 
+
 Route::get('/year-end-bonus-landing-page', function () {
     return view('year-end-bonus-landing-page');
 })->name('year-end-bonus-landing-page');
@@ -69,6 +70,15 @@ Route::get('/year-end-bonus-landing-page', function () {
 Route::get('/year-end-bonus', function () {
     return view('year-end-bonus');
 })->name('year-end-bonus');
+
+
+Route::get('/mid-year-bonus-landing-page', function () {
+    return view('mid-year-bonus-landing-page');
+})->name('mid-year-bonus-landing-page');
+
+Route::get('/mid-year-bonus', function () {
+    return view('mid-year-bonus');
+})->name('mid-year-bonus');
 
 
 Route::get('/cna-landing-page', function () {

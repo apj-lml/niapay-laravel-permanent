@@ -121,6 +121,7 @@
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Process Payrolls</a>
                             <div class="dropdown-menu m-0">
                                 <a href="{{ route('process-payroll') }}" class="dropdown-item">Wages</a>
+                                <a href="{{ route('mid-year-bonus-landing-page') }}" class="dropdown-item">Mid-year Bonus (MYB)</a>
                                 <a href="{{ route('year-end-bonus-landing-page') }}" class="dropdown-item">Year-end Bonus & Cash Gift</a>
                                 <a href="{{ route('cna-landing-page') }}" class="dropdown-item">Collective Negotiation Agreement (CNA) Incentive</a>
                                 <a href="{{ route('pei-landing-page') }}" class="dropdown-item">Productive Enhancement Incentive (PEI)</a>

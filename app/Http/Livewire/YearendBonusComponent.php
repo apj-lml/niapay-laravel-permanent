@@ -27,9 +27,6 @@ class YearendBonusComponent extends Component
         'createPdf'
     ];
 
-    function remove() : Returntype {
-        
-    }
 
     public function mount()
     {
@@ -41,7 +38,7 @@ class YearendBonusComponent extends Component
             ->where('user_id', $user->id)
             ->get();
 
-            if($checkDupeYeb->isNotEmpty() && $this->mc != ""){
+            if($checkDupeYeb->isNotEmpty()){
                 foreach ($checkDupeYeb as $user) {
                     $user->update([
                         'mc' => $this->mc,
