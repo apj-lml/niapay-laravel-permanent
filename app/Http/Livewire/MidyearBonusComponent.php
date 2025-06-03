@@ -177,20 +177,35 @@ class MidyearBonusComponent extends Component
         $payrollFunds = $this->processMidYearPayroll();
         $oMerger = PDFMerger::init();
         $signatories = Signatory::where('docu', 'other_bonus')->get();
-    
+        
         foreach ($payrollFunds as $payrollFund) {
             $counter = 0;
     
             foreach ($payrollFund->sections as $office => $payrollSection) {
-                foreach ($payrollSection as $section) {
+
+                // dd($payrollFund->sections);
+                // dd($payrollSection->first()->users);
+
+                // foreach ($payrollSection as $section) {
     
-                    $firstSection = $payrollSection->first();
+                    // $firstSection = $payrollSection->first();
     
-                    $total_mid_year_bonus_per_office = (float) ($firstSection->total_mid_year_bonus_per_office ?? 0);
-                    $total_cash_gift_per_office = (float) ($firstSection->total_cash_gift_per_office ?? 0);
-                    $total_casab_loan_per_office = (float) ($firstSection->total_casab_loan_per_office ?? 0);
+                    // $total_mid_year_bonus_per_office = (float) ($firstSection->total_mid_year_bonus_per_office ?? 0);
+                    // $total_cash_gift_per_office = (float) ($firstSection->total_cash_gift_per_office ?? 0);
+                    // $total_casab_loan_per_office = (float) ($firstSection->total_casab_loan_per_office ?? 0);
+                    // $grand_total_mid_year_bonus_per_office = bcdiv($total_mid_year_bonus_per_office + $total_cash_gift_per_office, 1, 2);
+                    // $net_amount = bcdiv($grand_total_mid_year_bonus_per_office - $total_casab_loan_per_office, 1, 2);
+
+
+                    $users = $payrollFund->users(null, false, null, null, $office)->get();
+
+                    $total_mid_year_bonus_per_office = $users->sum(fn($user) => $user->mybs->sum('mid_year_bonus'));
+                    $total_cash_gift_per_office = $users->sum(fn($user) => $user->mybs->sum('cash_gift'));
+                    $total_casab_loan_per_office = $users->sum(fn($user) => $user->mybs->sum('casab_loan'));
+
                     $grand_total_mid_year_bonus_per_office = bcdiv($total_mid_year_bonus_per_office + $total_cash_gift_per_office, 1, 2);
                     $net_amount = bcdiv($grand_total_mid_year_bonus_per_office - $total_casab_loan_per_office, 1, 2);
+
                     
                     // dd($total_mid_year_bonus_per_office);
 
@@ -240,7 +255,7 @@ class MidyearBonusComponent extends Component
                     }
     
                     $counter++;
-                }
+                // }
             }
         }
     
