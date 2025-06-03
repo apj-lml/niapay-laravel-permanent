@@ -204,7 +204,18 @@
     border-top: solid;
   }
 
-  
+  table tfoot {
+                inset-block-end: 0;
+                /* "bottom" */
+                color: #0a090a;
+                background-color: #bdd9fe;
+                text-align: right;
+                font-weight: bold;
+            }
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background-color: #bdd9fe;
+}
 
 </style>
 
@@ -358,8 +369,8 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan=5 style="text-align: right;"><b>TOTAL</b></td>
-                                                    <td colspan=2><b>{{ number_format(bcdiv((float) $total_amount_due, 1, 2), 2) }}</b></td>
+                                                    <td colspan=5><b>TOTAL</b></td>
+                                                    <td colspan=2 style="text-align: left;"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ number_format(bcdiv((float) $total_amount_due, 1, 2), 2) }}</b></td>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -383,7 +394,14 @@
                                         </tr>
                                         <tr>
                                             <td><br></td>
-                                            <td>Supporting documents are complete and proper, computations are correct, and ASA and cash is available amounting to...</td>
+                                            <td>Supporting documents are complete and proper, computations are correct, and ASA and cash is available amounting to...
+                                                <br>
+                                                <u>
+                                                    <b style="margin-left:60px;">
+                                                        &nbsp; Php &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong> {{ number_format($total_amount_due, 2) }}</strong>
+                                                    </b>
+                                                </u>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td style="padding-left: 50px;">

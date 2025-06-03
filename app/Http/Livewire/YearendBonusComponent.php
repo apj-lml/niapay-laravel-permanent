@@ -167,8 +167,7 @@ class YearendBonusComponent extends Component
             $counter = 0;
 
             foreach($payrollFund->sections as $office => $payrollSection){
-                // dd($payrollSection);
-                foreach($payrollSection as $section){
+                // foreach($payrollSection as $section){
                     
                     // dd($payrollSection['total_year_end_bonus_per_office']);
                     $grand_total_year_end_bonus_per_office = bcdiv((float) $payrollSection['total_year_end_bonus_per_office'] + (float) $payrollSection['total_cash_gift_per_office'], 1, 2);
@@ -198,7 +197,7 @@ class YearendBonusComponent extends Component
 
                         // }
                     }
-                }
+                // }
 
                 if(count($employeesOfThisSection) > 0){
 

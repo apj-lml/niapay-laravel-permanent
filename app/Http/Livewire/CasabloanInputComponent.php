@@ -8,7 +8,7 @@ use App\Models\YearendBonus;
 class CasabloanInputComponent extends Component
 {
 
-    public $yebId, $yeb, $year, $casabloan;
+    public $yebId, $yeb, $year, $casabloan = 0;
 
     protected $listeners = [
         'refreshCasabloan' => 'updatedCasabloan',
@@ -32,9 +32,13 @@ class CasabloanInputComponent extends Component
         $checkYeb = YearendBonus::find($this->yebId);
         if($checkYeb){
             $casabloanVal = $checkYeb->casab_loan;
+            if ($this->casabloan == null || $this->casabloan == '') {
+                $this->casabloan = 0;
+            }
             if($checkYeb->casab_loan != $this->casabloan){
                 $casabloanVal = str_replace( ',', '', $this->casabloan);
             }
+
             $checkYeb->update([
                 'casab_loan' => bcdiv((float) $casabloanVal, 1, 2),
                 'net_amount' => bcdiv((float) ((float) $checkYeb->total_year_end_bonus - $casabloanVal), 1, 2),

@@ -987,14 +987,14 @@
                       <tr>
                         <td style="border-right: 1.5px solid black; text-align:left;font-size:10px;"><strong>TOTAL NET PAY</strong></td>
                         <td colspan="3" style="font-size:8px; text-align:left;"><strong>{{ strtoupper(Helper::numberToWord(sprintf("%.2f", $payrollUserSection->total_net_pay))) }}</strong></td>
-                        <td style="border-right: 1.5px solid black; background-color: #e3b4b4f1;"><strong>{{ number_format((float)sprintf("%.2f", $payrollUserSection->total_basic_pay),2)}}</strong></td>
+                        <td style="border-right: 1.5px solid black; background-color: #b4c1e3f1;"><strong>{{ number_format((float)sprintf("%.2f", $payrollUserSection->total_basic_pay),2)}}</strong></td>
     
                         @if (strtoupper($payrollEmploymentStatus) != 'JOB ORDER' && strtoupper($payrollEmploymentStatus) != 'CONTRACT OF SERVICE')
                         {{-- TOTAL PERA --}}
                           @if ($hasPERA)
                             @if(isset($payrollUserSection->grand_total_allowance))
                               @for($y=0; $y<$joAllowances->countBy('allowance_group')['PERA']; $y++)
-                              <td style="border-left: 1.5px solid black; background-color: #e3b4b4f1;">
+                              <td style="border-left: 1.5px solid black; background-color: #b4c1e3f1;">
                                 @foreach ($payrollUserSection->grand_total_allowance as $grandTotalAllowance)
                                   @if($grandTotalAllowance['allowance_group'] == 'PERA')
                                     @if ($grandTotalAllowance['sort_position'] == $y+1)
@@ -1006,7 +1006,7 @@
                               @endfor
                             @else
                               @for($y=1; $y<=$joAllowances->countBy('allowance_group')['PERA']; $y++)
-                                <td style="background-color: #e3b4b4f1;"></td>
+                                <td style="background-color: #b4c1e3f1;"></td>
                               @endfor
                             @endif
                           @endif
@@ -1015,7 +1015,7 @@
                           @if ($hasMEDICAL)
                             @if(isset($payrollUserSection->grand_total_allowance))
                               @for($y=0; $y<$joAllowances->countBy('allowance_group')['MEDICAL']; $y++)
-                              <td style="background-color: #e3b4b4f1;">
+                              <td style="background-color: #b4c1e3f1;">
                                 @foreach ($payrollUserSection->grand_total_allowance as $grandTotalAllowance)
                                   @if($grandTotalAllowance['allowance_group'] == 'MEDICAL')
                                     @if ($grandTotalAllowance['sort_position'] == $y+1)
@@ -1027,7 +1027,7 @@
                               @endfor
                             @else
                               @for($y=1; $y<=$joAllowances->countBy('allowance_group')['MEDICAL']; $y++)
-                                <td style="background-color: #e3b4b4f1;"></td>
+                                <td style="background-color: #b4c1e3f1;"></td>
                               @endfor
                             @endif
                           @endif
@@ -1036,7 +1036,7 @@
                           @if ($hasMEAL)
                             @if(isset($payrollUserSection->grand_total_allowance))
                               @for($y=0; $y<$joAllowances->countBy('allowance_group')['MEAL']; $y++)
-                              <td style="background-color: #e3b4b4f1;">
+                              <td style="background-color: #b4c1e3f1;">
                                 @foreach ($payrollUserSection->grand_total_allowance as $grandTotalAllowance)
                                   @if($grandTotalAllowance['allowance_group'] == 'MEAL')
                                     @if ($grandTotalAllowance['sort_position'] == $y+1)
@@ -1048,7 +1048,7 @@
                               @endfor
                             @else
                               @for($y=1; $y<=$joAllowances->countBy('allowance_group')['MEAL']; $y++)
-                                <td style="background-color: #e3b4b4f1;"></td>
+                                <td style="background-color: #b4c1e3f1;"></td>
                               @endfor
                             @endif
                           @endif
@@ -1057,7 +1057,7 @@
                           @if ($hasCHILD)
                             @if(isset($payrollUserSection->grand_total_allowance))
                               @for($y=0; $y<$joAllowances->countBy('allowance_group')['CHILD']; $y++)
-                              <td style="background-color: #e3b4b4f1;">
+                              <td style="background-color: #b4c1e3f1;">
                                 @foreach ($payrollUserSection->grand_total_allowance as $grandTotalAllowance)
                                   @if($grandTotalAllowance['allowance_group'] == 'CHILD')
                                     @if ($grandTotalAllowance['sort_position'] == $y+1)
@@ -1069,13 +1069,13 @@
                               @endfor
                             @else
                               @for($y=1; $y<=$joAllowances->countBy('allowance_group')['CHILD']; $y++)
-                                <td style="background-color: #e3b4b4f1;"></td>
+                                <td style="background-color: #b4c1e3f1;"></td>
                               @endfor
                             @endif
                           @endif
 
-                          <td style="background-color: #e3b4b4f1;"><strong>{{ number_format((float)$payrollUserSection->total_allowance, 2) }}</strong></td>
-                          <td style="background-color: #e3b4b4f1;"><strong>{{ number_format((float)($payrollUserSection->total_allowance + $payrollUserSection->total_basic_pay), 2) }}</strong></td>
+                          <td style="background-color: #b4c1e3f1;"><strong>{{ number_format((float)$payrollUserSection->total_allowance, 2) }}</strong></td>
+                          <td style="background-color: #b4c1e3f1;"><strong>{{ number_format((float)($payrollUserSection->total_allowance + $payrollUserSection->total_basic_pay), 2) }}</strong></td>
                         @endif
 
                       {{-- TOTAL TAX --}}
@@ -1083,7 +1083,7 @@
 
                         @if(isset($payrollUserSection->grand_total_deduction))
                           @for($y=0; $y<$joDeductions->countBy('deduction_group')['TAX']; $y++)
-                          <td style="background-color: #e3b4b4f1;">
+                          <td style="background-color: #b4c1e3f1;">
                             @foreach ($payrollUserSection->grand_total_deduction as $grandTotalDeduction)
                               @if($grandTotalDeduction['deduction_group'] == 'TAX')
                                 @if ($grandTotalDeduction['sort_position'] == $y+1)
@@ -1095,11 +1095,11 @@
                           @endfor
                         @else
                           @for($y=1; $y<=$joDeductions->countBy('deduction_group')['TAX']; $y++)
-                            <td style="background-color: #e3b4b4f1;"></td>
+                            <td style="background-color: #b4c1e3f1;"></td>
                           @endfor
                         @endif
                         @else
-                        <td style="background-color: #e3b4b4f1;"></td>
+                        <td style="background-color: #b4c1e3f1;"></td>
                      @endif
 
 
@@ -1108,7 +1108,7 @@
 
                         @if(isset($payrollUserSection->grand_total_deduction))
                           @for($y=0; $y<$joDeductions->countBy('deduction_group')['GSIS']; $y++)
-                          <td style="background-color: #e3b4b4f1;">
+                          <td style="background-color: #b4c1e3f1;">
                             @foreach ($payrollUserSection->grand_total_deduction as $grandTotalDeduction)
                               @if($grandTotalDeduction['deduction_group'] == 'GSIS')
                                 @if ($grandTotalDeduction['sort_position'] == $y+1)
@@ -1120,11 +1120,11 @@
                           @endfor
                         @else
                           @for($y=1; $y<=$joDeductions->countBy('deduction_group')['GSIS']; $y++)
-                            <td style="background-color: #e3b4b4f1;"></td>
+                            <td style="background-color: #b4c1e3f1;"></td>
                           @endfor
                         @endif
                         @else
-                        <td style="background-color: #e3b4b4f1;"></td>
+                        <td style="background-color: #b4c1e3f1;"></td>
                     @endif
 
 
@@ -1133,7 +1133,7 @@
                       @if($hasHDMF)
                       @if(isset($payrollUserSection->grand_total_deduction))
                         @for($y=0; $y<$joDeductions->countBy('deduction_group')['HDMF']; $y++)
-                          <td style="background-color: #e3b4b4f1;">  
+                          <td style="background-color: #b4c1e3f1;">  
                             
                             @foreach ($payrollUserSection->grand_total_deduction as $grandTotalDeduction)
                               @if($grandTotalDeduction['deduction_group'] == 'HDMF')
@@ -1148,11 +1148,11 @@
                           @endfor
                         @else
                           @for($y=1; $y<=$joDeductions->countBy('deduction_group')['HDMF']; $y++)
-                            <td style="background-color: #e3b4b4f1;"></td>
+                            <td style="background-color: #b4c1e3f1;"></td>
                           @endfor
                         @endif
                       @else
-                      <td style="background-color: #e3b4b4f1;"></td>
+                      <td style="background-color: #b4c1e3f1;"></td>
                    @endif
 
     
@@ -1162,7 +1162,7 @@
                       @if($hasPHIC)
                           @if(isset($payrollUserSection->grand_total_deduction))
                             @for($y=0; $y<$joDeductions->countBy('deduction_group')['PHIC']; $y++)
-                            <td style="background-color: #e3b4b4f1;">  
+                            <td style="background-color: #b4c1e3f1;">  
                               @foreach ($payrollUserSection->grand_total_deduction as $grandTotalDeduction)
                                 @if($grandTotalDeduction['deduction_group'] == 'PHIC')
                                   @if ($grandTotalDeduction['sort_position'] == $y+1)
@@ -1174,12 +1174,12 @@
                             @endfor
                           @else
                             @for($y=1; $y<=$joDeductions->countBy('deduction_group')['PHIC']; $y++)
-                              <td style="background-color: #e3b4b4f1;"></td>
+                              <td style="background-color: #b4c1e3f1;"></td>
                             @endfor
                           @endif
 
                       @else
-                        <td style="background-color: #e3b4b4f1;"></td>
+                        <td style="background-color: #b4c1e3f1;"></td>
                      @endif
     
                       {{-- TOTAL COOP LOAN --}}
@@ -1187,7 +1187,7 @@
                       @if($hasCOOP)
                         @if(isset($payrollUserSection->grand_total_deduction))
                           @for($y=0; $y<$joDeductions->countBy('deduction_group')['COOP']; $y++)
-                          <td style="background-color: #e3b4b4f1;">
+                          <td style="background-color: #b4c1e3f1;">
                             @foreach ($payrollUserSection->grand_total_deduction as $grandTotalDeduction)
                               @if($grandTotalDeduction['deduction_group'] == 'COOP')
                                 @if ($grandTotalDeduction['sort_position'] == $y+1)
@@ -1199,18 +1199,18 @@
                           @endfor
                         @else
                           @for($y=1; $y<=$joDeductions->countBy('deduction_group')['COOP']; $y++)
-                            <td style="background-color: #e3b4b4f1;"></td>
+                            <td style="background-color: #b4c1e3f1;"></td>
                           @endfor
                         @endif
                     @else
-                        <td style="background-color: #e3b4b4f1;"></td>
+                        <td style="background-color: #b4c1e3f1;"></td>
                      @endif
 
                   {{-- TOTAL DISALLOWANCE --}}
                   @if($hasDISALLOWANCE)
                     @if(isset($payrollUserSection->grand_total_deduction))
                       @for($y=0; $y<$joDeductions->countBy('deduction_group')['DISALLOWANCE']; $y++)
-                      <td style="background-color: #e3b4b4f1;">
+                      <td style="background-color: #b4c1e3f1;">
                         @foreach ($payrollUserSection->grand_total_deduction as $grandTotalDeduction)
                           @if($grandTotalDeduction['deduction_group'] == 'DISALLOWANCE')
                             @if ($grandTotalDeduction['sort_position'] == $y+1)
@@ -1222,18 +1222,18 @@
                       @endfor
                     @else
                       @for($y=1; $y<=$joDeductions->countBy('deduction_group')['DISALLOWANCE']; $y++)
-                        <td style="background-color: #e3b4b4f1;"></td>
+                        <td style="background-color: #b4c1e3f1;"></td>
                       @endfor
                     @endif
                 @else
-                <td style="background-color: #e3b4b4f1;"></td>
+                <td style="background-color: #b4c1e3f1;"></td>
                @endif
                   
               {{-- TOTAL OTHER --}}
               @if($hasOTHER)
                 @if(isset($payrollUserSection->grand_total_deduction))
                     @for($y=0; $y<$joDeductions->countBy('deduction_group')['OTHER']; $y++)
-                    <td style="background-color: #e3b4b4f1;">
+                    <td style="background-color: #b4c1e3f1;">
                       @foreach ($payrollUserSection->grand_total_deduction as $grandTotalDeduction)
                         @if($grandTotalDeduction['deduction_group'] == 'OTHER')
                           @if ($grandTotalDeduction['sort_position'] == $y+1)
@@ -1245,21 +1245,21 @@
                     @endfor
                   @else
                     @for($y=1; $y<=$joDeductions->countBy('deduction_group')['OTHER']; $y++)
-                      <td style="background-color: #e3b4b4f1;"></td>
+                      <td style="background-color: #b4c1e3f1;"></td>
                     @endfor
                   @endif
               @else
-              {{-- <td style="background-color: #e3b4b4f1;"></td> --}}
+              {{-- <td style="background-color: #b4c1e3f1;"></td> --}}
             @endif
     
-            <td style="background-color: #e3b4b4f1;"><strong>{{ number_format((float)sprintf("%.2f", $payrollUserSection->total_deduction), 2)}}</strong></td>
-            <td style="border-left: 1.5px solid black; background-color: #e3b4b4f1;"><strong>{{ number_format((float)sprintf("%.2f", $payrollUserSection->total_net_pay), 2)}}</strong> </td>
+            <td style="background-color: #b4c1e3f1;"><strong>{{ number_format((float)sprintf("%.2f", $payrollUserSection->total_deduction), 2)}}</strong></td>
+            <td style="border-left: 1.5px solid black; background-color: #b4c1e3f1;"><strong>{{ number_format((float)sprintf("%.2f", $payrollUserSection->total_net_pay), 2)}}</strong> </td>
             
             {{-- @if($isLessFifteen == false) --}}
             @if($isLessFifteen == 'all' || $isLessFifteen == 'full_month')
-              <td style="background-color: #e3b4b4f1;"><strong>{{ number_format((float) sprintf('%.2f', $payrollUserSection->total_first_half), 2) }}</strong>
+              <td style="background-color: #b4c1e3f1;"><strong>{{ number_format((float) sprintf('%.2f', $payrollUserSection->total_first_half), 2) }}</strong>
               </td>
-              <td style="background-color: #e3b4b4f1;"><strong>{{ number_format((float) sprintf('%.2f', $payrollUserSection->total_second_half), 2) }}</strong>
+              <td style="background-color: #b4c1e3f1;"><strong>{{ number_format((float) sprintf('%.2f', $payrollUserSection->total_second_half), 2) }}</strong>
               </td>
             @endif
 

@@ -61,11 +61,11 @@
             inset-block-end: 0;
             /* "bottom" */
             color: #0a090a;
-            background-color: #febdcd;
+            background-color: #bdd9fe;
         }
 
         .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-            background-color: #fadee8;
+            background-color: #bdd9fe;
         }
 
 

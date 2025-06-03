@@ -204,7 +204,18 @@
     border-top: solid;
   }
 
-  
+  table tfoot {
+                inset-block-end: 0;
+                /* "bottom" */
+                color: #0a090a;
+                background-color: #bdd9fe;
+                text-align: right;
+                font-weight: bold;
+            }
+
+    .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+        background-color: #bdd9fe;
+    }
 
 </style>
 
@@ -215,6 +226,11 @@
             @php
                 $counter = 0;
                 $hasNegativeNetpay = 0;
+                $total_year_end_bonus = 0;
+                $total_cash_gift = 0;
+                $total_bonus = 0;
+                $total_casab_loan = 0;
+                $total_net_amount = 0;
 
                 $payrollUsers = $payrollFund->users(null, false, null, null, $office)
                     ->where('employment_status', 'PERMANENT') // Filter by employment_status
@@ -313,6 +329,9 @@
                                                    {{-- @if ($office == $payrollUser->agencyUnit()->with('agencySection')->first()->toArray()['agency_section']['office']) --}}
                                                    @php
                                                         $counter = $counter + 1;
+                                                        $total_year_end_bonus += $payrollUser->yebs->where('year', $year)->first()->year_end_bonus;
+                                                        $total_cash_gift += $payrollUser->yebs->where('year', $year)->first()->cash_gift;
+                                                        $total_casab_loan += $payrollUser->yebs->where('year', $year)->first()->casab_loan;
                                                    @endphp
 
                                                     @php
@@ -383,11 +402,11 @@
                                             <tfoot>
                                                 <tr>
                                                     <td colspan=5 style="text-align: right;"><b>TOTAL</b></td>
-                                                    <td>{{ number_format($total_year_end_bonus_per_office, 2) }}</td>
-                                                    <td>{{ number_format($total_cash_gift_per_office, 2) }}</td>
-                                                    <td>{{ number_format($grand_total_year_end_bonus_per_office, 2) }}</td>
-                                                    <td>{{ number_format($total_casab_loan_per_office, 2) }}</td>
-                                                    <td>{{ number_format($net_amount, 2) }}</td>
+                                                    <td>{{ number_format($total_year_end_bonus, 2) }}</td>
+                                                    <td>{{ number_format($total_cash_gift, 2) }}</td>
+                                                    <td>{{ number_format($total_year_end_bonus + $total_cash_gift, 2) }}</td>
+                                                    <td>{{ number_format($total_casab_loan, 2) }}</td>
+                                                    <td>{{ number_format(($total_year_end_bonus + $total_cash_gift)-$total_casab_loan, 2) }}</td>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -411,7 +430,14 @@
                                         </tr>
                                         <tr>
                                             <td><br></td>
-                                            <td>Supporting documents are complete and proper, computations are correct, and ASA and cash is available amounting to...</td>
+                                            <td>Supporting documents are complete and proper, computations are correct, and ASA and cash is available amounting to...
+                                                <br>
+                                                <u>
+                                                    <b style="margin-left:60px;">
+                                                        &nbsp; Php &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong> {{ number_format($total_year_end_bonus + $total_cash_gift, 2) }}</strong>
+                                                    </b>
+                                                </u>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td style="padding-left: 50px;">

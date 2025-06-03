@@ -430,7 +430,14 @@
                                         </tr>
                                         <tr>
                                             <td><br></td>
-                                            <td>Supporting documents are complete and proper, computations are correct, and ASA and cash is available amounting to...</td>
+                                            <td>Supporting documents are complete and proper, computations are correct, and ASA and cash is available amounting to...
+                                                <br>
+                                                <u>
+                                                    <b style="margin-left:60px;">
+                                                        &nbsp; Php &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong> {{ number_format($total_mid_year_bonus_per_office, 2) }}</strong>
+                                                    </b>
+                                                </u>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td style="padding-left: 50px;">

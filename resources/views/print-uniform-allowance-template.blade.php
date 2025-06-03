@@ -204,7 +204,18 @@
     border-top: solid;
   }
 
-  
+  table tfoot {
+                inset-block-end: 0;
+                /* "bottom" */
+                color: #0a090a;
+                background-color: #bdd9fe;
+                text-align: right;
+                font-weight: bold;
+            }
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background-color: #bdd9fe;
+}
 
 </style>
 
@@ -334,7 +345,7 @@
                                             <tfoot>
                                                 <tr>
                                                     <td colspan=3 style="text-align: right;"><b>TOTAL</b></td>
-                                                    <td colspan=2 style="padding-left: 46px;"><b>{{ number_format(bcdiv((float) $total_uniform_allowance, 1, 2), 2) }}</b></td>
+                                                    <td colspan=2 style="padding-left: 46px; text-align: left;"><b>{{ number_format(bcdiv((float) $total_uniform_allowance, 1, 2), 2) }}</b></td>
                                                 </tr>
                                             </tfoot>
                                         </table>
