@@ -109,7 +109,7 @@
 
                         @php
                             $counter = 0;
-                            $total_year_end_bonus = 0;
+                            $total_mid_year_bonus = 0;
                             $total_cash_gift = 0;
                             $total_bonus = 0;
                             $total_casab_loan = 0;
@@ -185,7 +185,7 @@
 
                                                             @php
                                                                 $counter = $counter + 1;
-                                                                $total_year_end_bonus += $payrollUser->mybs->where('year', $year)->first()->year_end_bonus;
+                                                                $total_mid_year_bonus += $payrollUser->mybs->where('year', $year)->first()->mid_year_bonus;
                                                                 $total_cash_gift += $payrollUser->mybs->where('year', $year)->first()->cash_gift;
                                                                 $total_casab_loan += $payrollUser->mybs->where('year', $year)->first()->casab_loan;
                                                             @endphp
@@ -266,9 +266,9 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan=4 style="text-align: right;"><b>TOTAL</b></td>
-                                                        <td><b>{{ number_format(bcdiv((float) $total_year_end_bonus, 1, 2), 2) }}</b></td>
+                                                        <td><b>{{ number_format(bcdiv((float) $total_mid_year_bonus, 1, 2), 2) }}</b></td>
                                                         {{-- <td><b>{{ number_format(bcdiv((float) $total_casab_loan, 1, 2), 2) }}</b></td> --}}
-                                                        <td><b>{{ number_format(bcdiv((float) ($total_year_end_bonus) - $total_casab_loan, 1, 2), 2) }}</b></td>
+                                                        <td><b>{{ number_format(bcdiv((float) ($total_mid_year_bonus) - $total_casab_loan, 1, 2), 2) }}</b></td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -280,7 +280,7 @@
 
                                 @php
                                     $counter = 0;
-                                    $total_year_end_bonus = 0;
+                                    $total_mid_year_bonus = 0;
                                     $total_cash_gift = 0;
                                     $total_bonus = 0;
                                     $total_casab_loan = 0;
