@@ -76,6 +76,18 @@ Route::get('/mid-year-bonus-landing-page', function () {
     return view('mid-year-bonus-landing-page');
 })->name('mid-year-bonus-landing-page');
 
+
+
+Route::get('/upload-deductions-landing-page', function () {
+    return view('upload-deductions-landing-page');
+})->name('upload-deductions-landing-page');
+
+Route::get('/edit-uploaded-deductions-landing-page/{file}/{selectedDeductionType}', function ($file, $selectedDeductionType) {
+    return view('edit-uploaded-deductions-landing-page', compact('file', 'selectedDeductionType'));
+})->name('edit-uploaded-deductions-landing-page');
+
+
+
 Route::get('/mid-year-bonus', function () {
     return view('mid-year-bonus');
 })->name('mid-year-bonus');

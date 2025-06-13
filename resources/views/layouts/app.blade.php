@@ -129,7 +129,14 @@
                                 <a href="{{ route('payroll-finder') }}" class="dropdown-item">Payroll Finder</a>
                             </div>
                         </div>
-                        <a href="{{ route('/deduction-summary') }}" class="nav-item nav-link {{ (request()->routeIs('/deduction-summary')) ? 'active' : '' }}">Deduction Summary</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Deductions</a>
+                            <div class="dropdown-menu m-0">
+                                <a href="{{ route('upload-deductions-landing-page') }}" class="dropdown-item">Upload Deductions</a>
+                                <a href="{{ route('/deduction-summary') }}" class="dropdown-item">Deduction Summary</a>
+                            </div>
+                        </div>
+                        {{-- <a href="{{ route('/deduction-summary') }}" class="nav-item nav-link {{ (request()->routeIs('/deduction-summary')) ? 'active' : '' }}">Deduction Summary</a> --}}
                         <a href="{{ route('process-payslip') }}" class="nav-item nav-link {{ (request()->routeIs('/process-payslip')) ? 'active' : '' }}">Payslip</a>
                         {{-- <a href="{{ route('processed-payrolls') }}" class="nav-item nav-link {{ (request()->routeIs('/processed-payrolls')) ? 'active' : '' }}">Processed Payrolls</a> --}}
                         <div class="nav-item dropdown">
