@@ -48,7 +48,7 @@
             <div class="card-body">
                 <p style="color: red; font-weight: bolde;"><i>NOTE! <br>
                     1. Employees who are inactive or not included in payroll will not show here and will not be updated.<br>
-                    2. Data highlighted in red means that the value is not equal in the current deduction saved in the database.<br>
+                    2. Data highlighted in red means that the value is not equal to the current deduction saved in the database.<br>
                     3. Only all checked data will be updated.<br>
                 
                 </i></p>

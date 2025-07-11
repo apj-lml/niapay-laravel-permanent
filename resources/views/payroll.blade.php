@@ -30,7 +30,6 @@
 
     <div class="container-xxl bg-primary page-header p-5">
         <div class="container text-center">
-            {{-- <h1 class="text-white animated zoomIn mt-5">List of Employees</h1> --}}
 
         </div>
     </div>

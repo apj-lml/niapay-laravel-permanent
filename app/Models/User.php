@@ -124,7 +124,7 @@ class User extends Authenticatable
     public function employeeDeductions()
     {
         return $this->belongsToMany(Deduction::class)
-        ->withPivot('id', 'amount', 'frequency', 'active_status', 'remarks')
+        ->withPivot('id', 'loan_granted', 'start_term', 'end_term', 'amount', 'frequency', 'active_status', 'remarks')
         ->withTimestamps();
     }
 

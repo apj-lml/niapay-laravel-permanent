@@ -16,6 +16,8 @@ class EmployeeDeductionsComponent extends Component
             $frequency = 1,
             $active_status = 1,
             $remarks = 'N/A',
+            $loan_granted,
+            $end_term,
             $listOfDeductions,
             $editMode = false,
             $deductionUserId,
@@ -56,14 +58,16 @@ class EmployeeDeductionsComponent extends Component
                 'amount' => $this->amount,
                 'frequency' => $this->frequency,
                 'active_status' => $this->active_status,
-                'remarks' => $this->remarks
+                'remarks' => $this->remarks,
+                'loan_granted' => $this->loan_granted,
+                'end_term' => $this->end_term
             ]);
 
             $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Deduction successfully added!']);
 
             $this->openEmployeeDeductionsTab($this->employee->id);
 
-            $this->reset('amount', 'remarks');
+            $this->reset('amount', 'remarks', 'loan_granted', 'end_term');
 
             $this->emit('refreshProcessPayrollJobOrderComponent');
 
@@ -84,6 +88,8 @@ class EmployeeDeductionsComponent extends Component
             $this->frequency = $deductionEmployee->pivot->frequency;
 
             $this->remarks = $deductionEmployee->pivot->remarks;
+            $this->loan_granted = $deductionEmployee->pivot->loan_granted;
+            $this->end_term = $deductionEmployee->pivot->end_term;
             // dd($deductionEmployee->pivot->remarks);
         }
 
@@ -110,6 +116,8 @@ class EmployeeDeductionsComponent extends Component
         $selectDeductionUser->frequency = $this->frequency;
         $selectDeductionUser->active_status = $this->active_status;
         $selectDeductionUser->remarks = $this->remarks;
+        $selectDeductionUser->loan_granted = $this->loan_granted;
+        $selectDeductionUser->end_term = $this->end_term;
 
         $selectDeductionUser->save();
 
@@ -119,7 +127,9 @@ class EmployeeDeductionsComponent extends Component
         $this->deduction = 28;
         $this->active_status = 1;
         $this->remarks = 'N/A';
-
+        $this->loan_granted = "";
+        $this->end_term = "";
+        
         $this->employee = User::find($this->userId);
 
         $this->emit('refreshProcessPayrollJobOrderComponent');
@@ -136,13 +146,15 @@ class EmployeeDeductionsComponent extends Component
         $this->frequency = 1;
         $this->active_status = 1;
         $this->remarks = 'N/A';
+        $this->loan_granted = "";
+        $this->end_term = "";
 
     }
 
     public function deleteDeductionConfirmation($pivotId, $deductionId, $userId){
 
         $this->dispatchBrowserEvent('deleteDeductionConfirmation', ['pivotId' => $pivotId, 'deductionId' => $deductionId, 'userId' => $userId]);
-        $this->reset();
+        // $this->reset();
         
     }
 
