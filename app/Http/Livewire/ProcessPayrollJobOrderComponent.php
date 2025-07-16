@@ -558,43 +558,6 @@ class ProcessPayrollJobOrderComponent extends Component
         }
 
         DB::statement("SET SQL_MODE=''"); //this is the trick, use it just before the query to be able to GROUP
-            // $funds = Fund::with(['users' => function ($query) use ($filterSection, $filterAttendance, $from, $to, $inputIsLessFifteen) {
-
-            //     if($this->isLessFifteen == 'full_month'){
-            //         $query->where('include_to_payroll', 1)
-            //         ->where('is_active', 1)
-            //         ->orderBy('last_name', 'asc');
-            //     }else{
-            //         $query->where('include_to_payroll', 1)
-            //         ->where('is_active', 1)
-            //         ->where('is_less_fifteen', $inputIsLessFifteen)
-            //         ->orderBy('last_name', 'asc');
-            //     }
-
-            //     if ($filterSection !== null) {
-            //         // dd($filterSection);
-            //         $query->whereHas('agencyUnit.agencySection', function ($subQuery) use ($filterSection) {
-            //             $subQuery->where('office', $filterSection);
-            //         });
-            //     }
-            
-            //     if ($filterAttendance) {
-            //         $query->whereHas('attendances', function ($subQuery) use ($from, $to) {
-            //             if ($from !== null) {
-            //                 $subQuery->where('start_date', '=', $from);
-            //             }
-            
-            //             if ($to !== null) {
-            //                 $subQuery->where('end_date', '=', $to);
-            //             }
-            //         });
-            //     }
-            // }, 'users.agencyUnit', 'users.agencyUnit.agencySection', 'users.attendances'])
-            //     ->has('users') // Ensure that the Fund has users
-            //     ->get();
-
-
-
             $funds = Fund::with([
                 'users' => function ($query) use ($filterSection, $filterAttendance, $from, $to, $inputIsLessFifteen) {
                     $query->where('include_to_payroll', 1)
@@ -663,64 +626,27 @@ class ProcessPayrollJobOrderComponent extends Component
 
         //SELECTION OF DEDUCTION AND ALLOWANCES
         if($this->payrollEmploymentStatus == "Job Order" || $this->payrollEmploymentStatus == "Contract of Service"){
-            // $this->joDeductions = Deduction::where('deduction_group', '<>', 'GSIS')->where('status', 'ACTIVE')->get();
             $this->joDeductions = Deduction::where('deduction_group', '<>', 'GSIS')->get();
         }else{
             $this->joAllowances = Allowance::all();
-
-            // if($this->isLessFifteen != 'less_fifteen_second_half'){
-                $this->joDeductions = Deduction::all();
-            // }else{
-            //     $this->joDeductions = collect([]);
-            // }
+            $this->joDeductions = Deduction::all();
         }
 
-        // if($this->isLessFifteen != 'less_fifteen_second_half'){
             $this->additionalDeductions = Deduction::where('deduction_group', 'OTHER')->get();
 
             $this->uniqueAdditionalDeductionGroups = $this->additionalDeductions->unique('deduction_group');
-        // }else{
-        //     $this->additionalDeductions = collect([]);
-        //     $this->uniqueAdditionalDeductionGroups = collect([]);
-        // }
 
         
         if($funds->isEmpty()){
             return collect([]);
         }else{
             foreach($funds as $fund){
-            //UNCOMMENT THIS IF SOMETHING BAD HAPPENS
-
-            //     $fund->sections = AgencySection::whereHas('unit.user', function ($query) {
-            //         $query->where('employment_status', '=', 'PERMANENT')
-            //             ->orWhere('employment_status', '=', 'COTERMINOUS');
-            //     })->select('*')->get()->groupBy('office');
-
-            // $fund->sections = AgencySection::whereHas('users', function ($query) use ($fund, $inputIsLessFifteen) {
-            //     $query->where('fund_id', $fund->id)
-            //         ->where('employment_status', 'PERMANENT')
-            //         ->orWhere('employment_status', 'COTERMINOUS')
-            //         ->where('is_active', 1)
-            //         ->where('include_to_payroll', 1)
-            //         ->where('is_less_fifteen', $inputIsLessFifteen);
-            // })
-            // ->with(['users' => function ($query) use ($fund, $inputIsLessFifteen) {
-            //     $query->where('fund_id', $fund->id)
-            //         ->where('employment_status', 'PERMANENT')
-            //         ->orWhere('employment_status', 'COTERMINOUS')
-            //         ->where('is_active', 1)
-            //         ->where('include_to_payroll', 1)
-            //         ->where('is_less_fifteen', $inputIsLessFifteen);
-            // }])
-            // ->get()
-            // ->groupBy('office'); // Group sections by office name
-
 
             $fund->sections = AgencySection::whereHas('users', function ($query) use ($fund, $inputIsLessFifteen) {
                 $query->where('fund_id', $fund->id)
                       ->where(function ($q) {
-                          $q->where('employment_status', 'PERMANENT')
-                            ->orWhere('employment_status', 'COTERMINOUS');
+                          $q->whereIn('employment_status', ['PERMANENT', 'COTERMINOUS']);
+                            // ->orWhere('employment_status', 'COTERMINOUS');
                       })
                       ->where('is_active', 1)
                       ->where('include_to_payroll', 1)
@@ -729,8 +655,8 @@ class ProcessPayrollJobOrderComponent extends Component
             ->with(['users' => function ($query) use ($fund, $inputIsLessFifteen) {
                 $query->where('fund_id', $fund->id)
                       ->where(function ($q) {
-                          $q->where('employment_status', 'PERMANENT')
-                            ->orWhere('employment_status', 'COTERMINOUS');
+                          $q->whereIn('employment_status', ['PERMANENT', 'COTERMINOUS']);
+                            // ->orWhere('employment_status', 'COTERMINOUS');
                       })
                       ->where('is_active', 1)
                       ->where('include_to_payroll', 1)
@@ -746,8 +672,8 @@ class ProcessPayrollJobOrderComponent extends Component
             // dd($fund->sections);
 
         $JOUsers = $fund->users->where(function ($query, $inputIsLessFifteen){
-                return $query->where('employment_status', 'COTERMINOUS')
-                            ->orWhere('employment_status', 'PERMANENT')
+                return $query->whereIn('employment_status', ['PERMANENT', 'COTERMINOUS'])
+                            // ->orWhere('employment_status', 'PERMANENT')
                             ->where('is_less_fifteen', $inputIsLessFifteen);
             });
 
@@ -820,12 +746,12 @@ class ProcessPayrollJobOrderComponent extends Component
                                 }
 
                             }
+                            
+                            $JOUser->first_half = round(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / 2), 2);
+                            $JOUser->second_half = round(($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction, 2) - $JOUser->first_half;
 
-                            // $JOUser->first_half = round(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / $days_rendered) * $days_rendered_first_half, 2);
-                            // $JOUser->second_half = round(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / $days_rendered) * $days_rendered_second_half, 2);
-                            $JOUser->first_half = round(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / $days_rendered) * ($days_rendered/2), 2);
-                            $JOUser->second_half = bcdiv(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / $days_rendered) * ($days_rendered/2), 1, 2);
-
+                            // $JOUser->first_half = round(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / $days_rendered) * ($days_rendered/2), 2);
+                            // $JOUser->second_half = bcdiv(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / $days_rendered) * ($days_rendered/2), 1, 2);
                         }else{
                             $JOUser->basic_pay = 0.00;
                             $JOUser->first_half = 0.00;
@@ -847,6 +773,9 @@ class ProcessPayrollJobOrderComponent extends Component
                                         $section[0]->total_first_half += $JOUser->first_half;
                                         $section[0]->total_second_half += $JOUser->second_half;
                                         $section[0]->total_net_pay += (((float)$JOUser->basic_pay + (float)$JOUser->total_user_allowance) - $JOUser->total_user_deduction);
+                                        // $section[0]->total_first_half += $JOUser->first_half;
+                                        // $section[0]->total_second_half += $JOUser->second_half;
+                                        // $section[0]->total_net_pay += (((float)$JOUser->basic_pay + (float)$JOUser->total_user_allowance) - $JOUser->total_user_deduction);
                                     }
 
                                     // END

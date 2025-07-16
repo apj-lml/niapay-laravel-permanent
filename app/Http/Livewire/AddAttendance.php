@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Models\Attendance;
 use App\Models\DeductionUser;
 use App\Models\AllowanceUser;
-use App\Http\Modals\AddIndividualAttendanceModal;
 
 use Livewire;
 
@@ -140,7 +139,7 @@ class AddAttendance extends Component
                             ->where('user_id', '=', $userId)
                             ->first();
 
-        $gsisAmount = (($userMonthlyRate * 22) * .09);
+        $gsisAmount = (($userMonthlyRate) * .09);
         if(!$checkDupeGsis){
             DeductionUser::create([
                 'user_id' => $userId,
@@ -152,7 +151,7 @@ class AddAttendance extends Component
         }
         
 
-        $phicAmount = bcdiv((($userMonthlyRate * 22) * .025), 1, 2);
+        $phicAmount = bcdiv((($userMonthlyRate) * .025), 1, 2);
         if(!$checkDupePhic){
             DeductionUser::create([
                 'user_id' => $userId,
@@ -171,7 +170,7 @@ class AddAttendance extends Component
         }
         
 
-        $pagIbigAmount = (($userMonthlyRate * 22) * .02);
+        $pagIbigAmount = (($userMonthlyRate) * .02);
 
         if(!$checkDupePagIbig){
             DeductionUser::create([
@@ -193,30 +192,23 @@ class AddAttendance extends Component
     }
 
     public function addAttendance(){
-
-        $this->daysRendered = (float)$this->firstHalf + (float)$this->secondHalf;
         $isLessFifteen = $this->isLessFifteen;
-
+        // $this->daysRendered = (float)$this->firstHalf + (float)$this->secondHalf;
 
         $this->validate([
             'startDate' => 'required',
             'endDate' => 'required',
-            // 'firstHalf' => 'gt:0',
-            // 'secondHalf' => 'gt:0',
             'employmentStatus' => 'required',
         ]);
 
         
-        // dd($this->daysRendered);
         if($isLessFifteen == 'full_month'){
-            $employeeByEmploymentStatus = User::where('employment_status', '=', 'PERMANENT')
-            ->where('employment_status', '=', 'COTERMINOUS')
+            $employeeByEmploymentStatus = User::whereIn('employment_status', ['PERMANENT', 'COTERMINOUS'])
             ->where('is_active', '=', 1)
             ->where('include_to_payroll', '=', 1)
             ->get();
         }else{
-            $employeeByEmploymentStatus = User::where('employment_status', '=', 'PERMANENT')
-            ->where('employment_status', '=', 'COTERMINOUS')
+            $employeeByEmploymentStatus = User::whereIn('employment_status', ['PERMANENT', 'COTERMINOUS'])
             ->where('is_active', '=', 1)
             ->where('include_to_payroll', '=', 1)
             ->where('is_less_fifteen', '=', 1)
@@ -236,20 +228,18 @@ class AddAttendance extends Component
                 if((float)$this->daysRendered > 0){
                     
 
-                Attendance::create([
-                    'user_id' => $employee->id,
-                    'start_date' => $this->startDate,
-                    'end_date' => $this->endDate,
-                    'days_rendered' => $this->daysRendered,
-                    'first_half' => $this->firstHalf,
-                    'second_half' => $this->secondHalf
-                ]);
-                if( !next( $employeeByEmploymentStatus ) ) {
-                    $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Attendances are successfully added to the database.']);
-                }
+            Attendance::create([
+                'user_id' => $employee->id,
+                'start_date' => $this->startDate,
+                'end_date' => $this->endDate,
+                'days_rendered' => $this->daysRendered,
+                'first_half' => (double) $this->firstHalf,
+                'second_half' => $this->secondHalf
+            ]);
+            if( !next( $employeeByEmploymentStatus ) ) {
+                $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Attendances are successfully added to the database.']);
             }
-                   
-
+        }
             }else{
                 if((float)$this->daysRendered > 0){
                     // dd($checkDupes);
@@ -312,13 +302,11 @@ class AddAttendance extends Component
 
     public function configureAttendance()
     {
-        $this->daysRendered = $this->firstHalf + $this->secondHalf;
+        // $this->daysRendered = $this->firstHalf + $this->secondHalf;
 
         if($this->counter == 0){
             $this->configuredData=[];
-            $listOfEmployeesToConfigure = User::where("employment_status", "=", "PERMANENT")
-            ->where("employment_status", "=", "COTERMINOUS")
-            ->where('is_active', '=', 1)
+            $listOfEmployeesToConfigure = User::whereIn('employment_status', ['PERMANENT', 'COTERMINOUS'])
             ->where('is_active', '=', 1)
             ->where('include_to_payroll', '=', 1)
             ->get();
@@ -350,8 +338,7 @@ class AddAttendance extends Component
             'employmentStatus' => 'required',
         ]);
 
-        $employeeByEmploymentStatus = User::where("employment_status", "=", "PERMANENT")
-        ->where("employment_status", "=", "COTERMINOUS")
+        $employeeByEmploymentStatus = User::whereIn('employment_status', ['PERMANENT', 'COTERMINOUS'])
         ->where('is_active', '=', 1)
         ->where('include_to_payroll', '=', 1)
         ->get();

@@ -636,9 +636,7 @@
                                                         @endphp
 
                                                         @foreach ($payrollUsers as $payrollUser)
-                                                        {{-- @dd($payrollUser) --}}
                                                             @if ($payrollFund->id == $payrollUser->fund_id)
-                                                                {{-- @if ($payrollUserSection->id == $payrollUser->id) --}}
                                                                 @if (
                                                                     $payrollUserSection->office ==
                                                                         $payrollUser->agencyUnit()->with('agencySection')->first()->toArray()['agency_section']['office']
@@ -958,6 +956,7 @@
                                                                             {{ number_format((float) $payrollUser->total_user_deduction, 2) }}
                                                                         </td>
 
+                                                                        {{-- NET PAY PER EMPLOYEE --}}
                                                                         <td scope="row">
                                                                             <b>{{ number_format(($payrollUser->first_half) + ($payrollUser->second_half), 2) }} </b>
                                                                         </td>

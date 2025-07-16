@@ -14,7 +14,7 @@
                     <div class="mb-3">
                         <div class="row mb-3">
                             <div class="col-md-12">
-                                    <label for="isLessFifteen" class="form-label">Payroll Frequency</label>
+                                    <label for="isLessFifteen" class="form-label mb-0">Payroll Frequency</label>
     
                                     <select class="form-select @error('isLessFifteen') is-invalid @enderror" wire:model="isLessFifteen" aria-label="isLessFifteen" disabled>
                                         <option value="full_month">1 month</option>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                <label for="startDate" class="form-label">Start Date</label>
+                                <label for="startDate" class="form-label mb-0">Start Date</label>
                                 <input type="date" class="form-control @error('startDate') is-invalid @enderror" id="startDate" wire:model.debounce.500ms="startDate" aria-describedby="helpStartDate" readonly>
                                 @error('startDate')
                                     <span class="invalid-feedback" role="alert">
@@ -41,7 +41,7 @@
                                 {{-- <div id="helpStartDate" class="form-text">We'll never share your email with anyone else.</div> --}}
                             </div>
                             <div class="col-sm-6">
-                                <label for="endDate" class="form-label">End Date</label>
+                                <label for="endDate" class="form-label mb-0">End Date</label>
                                 <input type="date" class="form-control @error('endDate') is-invalid @enderror" id="endDate" wire:model.debounce.500ms="endDate" aria-describedby="helpEndDate" onchange="getDaysRendered()" readonly>
                                 @error('endDate')
                                     <span class="invalid-feedback" role="alert">
@@ -52,27 +52,27 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="mb-3">
-                        <label for="daysRendered" class="form-label">Days Rendered (Full Month)</label>
-                        <input type="text" class="form-control @error('endDate') is-invalid @enderror" id="daysRendered" wire:model.debounce.500ms="daysRendered" aria-describedby="">
+                    <div class="mb-3">
+                        <label for="daysRendered" class="form-label mb-0">Days Rendered (Full Month)</label>
+                        <input type="text" class="form-control @error('endDate') is-invalid @enderror" id="daysRendered" wire:model.debounce.500ms="daysRendered" aria-describedby="" @if($isLessFifteen != 'full_month') disabled @endif>
                         @error('daysRendered')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
-                    </div> --}}
+                    </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="firstHalf" class="form-label">Days Rendered (01-15)</label>
-                                <input type="text" class="form-control" id="firstHalf" wire:model.debounce.500ms="firstHalf" aria-describedby="" @if($isLessFifteen != 'full_month' && $isLessFifteen != 'less_fifteen_first_half') disabled @endif>
+                            <div class="mb-3 d-none">
+                                <label for="firstHalf" class="form-label mb-0">Days Rendered (01-15)</label>
+                                <input type="text" class="form-control" id="firstHalf" wire:model.debounce.500ms="firstHalf" aria-describedby="" @if($isLessFifteen != 'less_fifteen_first_half' || $isLessFifteen == 'full_month') disabled @endif>
                                 {{-- <div id="helpStartDate" class="form-text">We'll never share your email with anyone else.</div> --}}
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="secondHalf" class="form-label">Days Rendered (16-31)</label>
-                                <input type="text" class="form-control" id="secondHalf" wire:model.debounce.500ms="secondHalf" aria-describedby="" @if($isLessFifteen != 'full_month' && $isLessFifteen != 'less_fifteen_second_half') disabled @endif>
+                            <div class="mb-3 d-none">
+                                <label for="secondHalf" class="form-label mb-0">Days Rendered (16-31)</label>
+                                <input type="text" class="form-control" id="secondHalf" wire:model.debounce.500ms="secondHalf" aria-describedby="" @if($isLessFifteen != 'less_fifteen_second_half' || $isLessFifteen == 'full_month') disabled @endif>
                                 {{-- <div id="helpStartDate" class="form-text">We'll never share your email with anyone else.</div> --}}
                             </div>
                         </div>
