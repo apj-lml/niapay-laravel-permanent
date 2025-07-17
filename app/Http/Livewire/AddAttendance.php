@@ -170,7 +170,8 @@ class AddAttendance extends Component
         }
         
 
-        $pagIbigAmount = (($userMonthlyRate) * .02);
+        $pagIbigAmount = 200;
+        // $pagIbigAmount = (($userMonthlyRate) * .02);
 
         if(!$checkDupePagIbig){
             DeductionUser::create([

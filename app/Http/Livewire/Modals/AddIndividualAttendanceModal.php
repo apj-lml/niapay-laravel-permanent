@@ -141,7 +141,7 @@ class AddIndividualAttendanceModal extends Component
 
     public function addIndividualAttendance()
     {
-        $this->daysRendered = $this->firstHalfDaysRendered + $this->secondHalfDaysRendered;
+        // $this->daysRendered = $this->firstHalfDaysRendered + $this->secondHalfDaysRendered;
         $checkDupes = Attendance::where('user_id', $this->userId)
             ->where('start_date', $this->startDate)
             ->where('end_date', $this->endDate)
