@@ -44,6 +44,14 @@ Route::get('/process-payslip', function () {
     return view('process-payslip');
 })->name('process-payslip');
 
+Route::get('/remittances-landing-page', function () {
+    return view('remittances-landing-page');
+})->name('remittances-landing-page');
+
+
+Route::get('/download/remittance/{filename}', [App\Http\Controllers\RemittanceController::class, 'download'])
+    ->name('download.remittance');
+
 Auth::routes();
 
 

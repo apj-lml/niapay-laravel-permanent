@@ -138,6 +138,8 @@
                         </div>
                         {{-- <a href="{{ route('/deduction-summary') }}" class="nav-item nav-link {{ (request()->routeIs('/deduction-summary')) ? 'active' : '' }}">Deduction Summary</a> --}}
                         <a href="{{ route('process-payslip') }}" class="nav-item nav-link {{ (request()->routeIs('/process-payslip')) ? 'active' : '' }}">Payslip</a>
+                        <a href="{{ route('remittances-landing-page') }}" class="nav-item nav-link {{ (request()->routeIs('/remittances-landing-page')) ? 'active' : '' }}">Remittances</a>
+
                         {{-- <a href="{{ route('processed-payrolls') }}" class="nav-item nav-link {{ (request()->routeIs('/processed-payrolls')) ? 'active' : '' }}">Processed Payrolls</a> --}}
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ Auth::user()->first_name }}</a>
