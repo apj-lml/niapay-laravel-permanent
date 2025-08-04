@@ -190,6 +190,8 @@ class HdmfRemittancesComponent extends Component
         // GSIS
     public function createExcelFileGsis($filterSection = null, $filterFund = null)
         {
+            ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
+
             $templatePath = storage_path('app/excel_templates/gsis_remittance_template.xlsx');
             $spreadsheet = IOFactory::load($templatePath);
     
@@ -363,7 +365,10 @@ class HdmfRemittancesComponent extends Component
                             $formattedDate = Carbon::parse($npiUser?->period_covered_to)->format('m/Y');
                             $newSheet->setCellValue("B3", $formattedDate);
                             // Set totals
-                            $newSheet->setCellValue('N'. $rowStart + 18, $totalRemittance);
+                            // $newSheet->setCellValue('N'. $rowStart + 17, $totalRemittance);
+
+                            $newSheet->setCellValue('N'. $rowStart + 11, "FUND " . $fundName);
+
         
                             // Remove the template row
                             $newSheet->removeRow(6);
