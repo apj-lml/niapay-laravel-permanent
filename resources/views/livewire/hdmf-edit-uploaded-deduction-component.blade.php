@@ -161,7 +161,7 @@
             <h1 class="mt-2 mb-0">Records to be NOT Updated</h1> 
             <h5>(From Payroll System)</h5>
             <div class="col-sm-12">
-                <table class="table table-bordered border-primary table-hover table-striped w-50">
+                <table class="table table-bordered border-primary table-hover table-striped w-70">
                     <thead>
                         <tr>
                             <th>No.</th>
@@ -171,10 +171,31 @@
                             <th>First Name</th>
                             <th>Middle Name</th>
                             <th>Name Extn</th>
+                            <th>Deduction</th>
+                            <th>Amount</th>
+                            <th>End Term</th>
                         </tr>
                     </thead>
                     <tbody>
+                        
                         @forelse ($listOfToBeNotUpdated as $toBeNotUpdated)
+                        @php
+                            $amounts = $toBeNotUpdated->employeeDeductions
+                                ->whereIn('id', [3, 4])
+                                ->map(function ($deduction) {
+                                    return $deduction->pivot->amount ?? '';
+                                });
+                            $descriptions = $toBeNotUpdated->employeeDeductions
+                                ->whereIn('id', [3, 4])
+                                ->map(function ($deduction) {
+                                    return $deduction->description ?? '';
+                                });
+                            $endTerms = $toBeNotUpdated->employeeDeductions
+                                ->whereIn('id', [3, 4])
+                                ->map(function ($deduction) {
+                                    return $deduction->pivot->end_term ?? '';
+                                });
+                        @endphp
                             <tr>
                                 <td>{{ $counter }}</td>
                                 <td>{{ $toBeNotUpdated['id'] }}</td>
@@ -183,6 +204,9 @@
                                 <td>{{ $toBeNotUpdated['first_name'] }}</td>
                                 <td>{{ $toBeNotUpdated['middle_name'] }}</td>
                                 <td>{{ $toBeNotUpdated['name_extn'] }}</td>
+                                <td>{!! $descriptions->join('<br>') !!}</td>
+                                <td>{!! $amounts->join('<br>') !!}</td>
+                                <td>{!! $endTerms->join('<br>') !!}</td>
                             </tr>
                             @php $counter++; @endphp
                         @empty

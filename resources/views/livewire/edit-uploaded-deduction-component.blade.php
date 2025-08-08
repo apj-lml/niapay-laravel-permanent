@@ -76,6 +76,8 @@
                             <th>MPL</th>
                             <th>MPL_LITE</th>
                             <th>PL_REG</th>
+                            <th>EMRGYLN</th>
+                            <th>GFAL</th>
                             <th>CPL</th>
                         </tr>
                     </thead>
@@ -98,6 +100,8 @@
                                       $isCheckedMPL = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['MPL'] ?? 0;
                                       $isCheckedMPL_LITE = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['MPL_LITE'] ?? 0;
                                       $isCheckedPLREG = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['PLREG'] ?? 0;
+                                      $isCheckedEMRGYLN = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['EMRGYLN'] ?? 0;
+                                      $isCheckedGFAL = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['GFAL'] ?? 0;
                                       $isCheckedCPL = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['CPL'] ?? 0;
                                       
                                         $validatedPsVal = false;
@@ -106,6 +110,8 @@
                                         $validateMplLiteVal = false;
                                         $validatePlregVal = false;
                                         $validateCplVal = false;
+                                        $validateEmrgylnVal = false;
+                                        $validateGfalVal = false;
                                       // Validate PS value if it exists in the list to be saved
                                         
                                         if($isCheckedPS > 0) {
@@ -122,6 +128,12 @@
                                         }
                                         if($isCheckedPLREG > 0) {
                                             $validatePlregVal = $this->validateValueWithChanges($finalToBeUpdated['id'], 'PLREG', $finalToBeUpdated['excel_data']['PLREG']);
+                                        }
+                                        if($isCheckedEMRGYLN > 0) {
+                                            $validateEmrgylnVal = $this->validateValueWithChanges($finalToBeUpdated['id'], 'EMRGYLN', $finalToBeUpdated['excel_data']['EMRGYLN']);
+                                        }
+                                        if($isCheckedGFAL > 0) {
+                                            $validateGfalVal = $this->validateValueWithChanges($finalToBeUpdated['id'], 'GFAL', $finalToBeUpdated['excel_data']['GFAL']);
                                         }
                                         if($isCheckedCPL > 0) {
                                             $validateCplVal = $this->validateValueWithChanges($finalToBeUpdated['id'], 'CPL', $finalToBeUpdated['excel_data']['CPL']);
@@ -181,6 +193,26 @@
                                     {{ number_format($finalToBeUpdated['excel_data']['PLREG'], 2) }}
                                   </label>
                                 </td>
+                                <td>
+                                    <input type="checkbox"
+                                    class="form-check-input"
+                                    id="EMRGYLNCheck{{ $counter }}"
+                                    wire:change="updateListToBeSaved({{ $finalToBeUpdated['id'] }}, 'EMRGYLN', $event.target.checked ? {{ $finalToBeUpdated['excel_data']['EMRGYLN'] }} : 0)"
+                                    @if ($isCheckedEMRGYLN > 0) checked @endif>
+                                    <label class="form-check-label @if($validateEmrgylnVal) text-danger @endif" for="EMRGYLNCheck{{ $counter }}">
+                                        {{ number_format($finalToBeUpdated['excel_data']['EMRGYLN'], 2) }}
+                                    </label>
+                                </td>
+                                <td>
+                                    <input type="checkbox"
+                                          class="form-check-input"
+                                          id="GFALCheck{{ $counter }}"
+                                          wire:change="updateListToBeSaved({{ $finalToBeUpdated['id'] }}, 'GFAL', $event.target.checked ? {{ $finalToBeUpdated['excel_data']['GFAL'] }} : 0)"
+                                          @if ($isCheckedGFAL > 0) checked @endif>
+                                    <label class="form-check-label @if($validateGfalVal) text-danger @endif" for="GFALCheck{{ $counter }}">
+                                      {{ number_format($finalToBeUpdated['excel_data']['GFAL'], 2) }}
+                                    </label>
+                                  </td>
                                 <td>
                                   <input type="checkbox"
                                         class="form-check-input"

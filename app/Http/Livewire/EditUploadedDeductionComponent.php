@@ -120,6 +120,16 @@ class EditUploadedDeductionComponent extends Component
                 $entry['deduction_id'] = 13; // 13 is the ID for GSIS PLREG
             }
 
+            if ($row['excel_data']['EMRGYLN'] > 0 && $this->validateValueWithChanges($row['id'], 'EMRGYLN', $row['excel_data']['EMRGYLN'])) {
+                $entry['EMRGYLN'] = $row['excel_data']['EMRGYLN'];
+                $entry['deduction_id'] = 13; // 13 is the ID for GSIS EMRGYLN
+            }
+
+            if ($row['excel_data']['GFAL'] > 0 && $this->validateValueWithChanges($row['id'], 'GFAL', $row['excel_data']['GFAL'])) {
+                $entry['GFAL'] = $row['excel_data']['GFAL'];
+                $entry['deduction_id'] = 13; // 13 is the ID for GSIS GFAL
+            }
+
             if ($row['excel_data']['CPL'] > 0 && $this->validateValueWithChanges($row['id'], 'CPL', $row['excel_data']['CPL'])) {
                 $entry['CPL'] = $row['excel_data']['CPL'];
                 $entry['deduction_id'] = 12; // 12 is the ID for GSIS CPL
@@ -172,22 +182,10 @@ class EditUploadedDeductionComponent extends Component
             'CPL' => 12,
             'PLREG' => 13,
             'MPL_LITE' => 14,
+            'EMRGYLN' => 15,
+            'GFAL' => 16,
         ];
         $DbDeduction = $deductionMap[$dedType] ?? null;
-        // $DbDeduction = 9; // 9 is the ID for GSIS PREMIUM
-        // if($dedType == 'PS'){
-        //     $DbDeduction = 9; // 9 is the ID for GSIS PREMIUM
-        // } elseif($dedType == 'SALARY_LOAN'){
-        //     $DbDeduction = 10; // 10 is the ID for GSIS SALARY LOAN
-        // } elseif($dedType == 'MPL'){
-        //     $DbDeduction = 11; // 11 is the ID for GSIS MPL
-        // } elseif($dedType == 'MPL_LITE'){
-        //     $DbDeduction = 14; // 14 is the ID for GSIS MPL_LITE
-        // } elseif($dedType == 'PLREG'){
-        //     $DbDeduction = 13; // 13 is the ID for GSIS PLREG
-        // } elseif($dedType == 'CPL'){
-        //     $DbDeduction = 12; // 12 is the ID for GSIS CPL
-        // }
         $currentDeduction = $user->employeeDeductions()->where('deduction_id', $DbDeduction)->first();
         if ($currentDeduction) {
             $currentValue = $currentDeduction->pivot->amount;
@@ -223,6 +221,10 @@ class EditUploadedDeductionComponent extends Component
                             $deductionId = 13; // GSIS PLREG
                         } elseif ($key == 'CPL') {
                             $deductionId = 12; // GSIS CPL
+                        } elseif ($key == 'EMRGYLN') {
+                            $deductionId = 15; // GSIS EMERGENCY LOAN
+                        } elseif ($key == 'GFAL') {
+                            $deductionId = 16; // GSIS GFAL
                         }
 
                         if ($deductionId) {
