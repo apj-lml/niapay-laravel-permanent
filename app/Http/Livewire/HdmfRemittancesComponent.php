@@ -145,14 +145,16 @@ class HdmfRemittancesComponent extends Component
                         }
 
                     $newSheet->setCellValue('C6', $counter);
+                    // Remove the template row
 
+                    $newSheet->setCellValue('C5', $totalRemittance);
+
+                    $newSheet->removeRow(10);
                     }
 
                     // Set totals
-                    $newSheet->setCellValue('C5', $totalRemittance);
 
-                    // Remove the template row
-                    $newSheet->removeRow(10);
+                    
                         // }
                     // }
                 }
