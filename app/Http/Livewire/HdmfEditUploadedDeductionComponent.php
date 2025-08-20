@@ -81,6 +81,7 @@ class HdmfEditUploadedDeductionComponent extends Component
         foreach ($data as $row) {
             $pagibigId = trim($row['pagibigid'] ?? ''); // HDMF from Excel
 
+
             if (!$pagibigId) {
                 continue; // Skip rows with empty BPNO
             }
@@ -110,13 +111,14 @@ class HdmfEditUploadedDeductionComponent extends Component
             $entry = ['user_id' => $row['user_id']];
             $typeOfHdmfDeduction = "";
             $deductionId = null;
-        
+                       
             if (Str::contains($row['excel_data']['scheme_desc'], '448') || Str::contains($row['excel_data']['scheme_desc'], '469')) {
                 $typeOfHdmfDeduction = "HDMF_MPL";
                 $deductionId = 3;
         
                 if ($this->validateValueWithChanges($row['user_id'], 'HDMF_MPL', $typeOfHdmfDeduction)) {
                     $entry['deduction_type'] = 'HDMF_MPL';
+                    $entry['application_no'] = $row['excel_data']['applno'];
                     $entry['monthly_amortization'] = $row['excel_data']['monthly_amo'];
                     $entry['loan_granted'] = $row['excel_data']['loan_grante'];
                     $entry['start_term'] = $row['excel_data']['start_term'];
@@ -130,6 +132,7 @@ class HdmfEditUploadedDeductionComponent extends Component
         
                 if ($this->validateValueWithChanges($row['user_id'], 'HDMF_CAL', $typeOfHdmfDeduction)) {
                     $entry['deduction_type'] = 'HDMF_CAL';
+                    $entry['application_no'] = $row['excel_data']['applno'];
                     $entry['monthly_amortization'] = $row['excel_data']['monthly_amo'];
                     $entry['loan_granted'] = $row['excel_data']['loan_grante'];
                     $entry['start_term'] = $row['excel_data']['start_term'];
@@ -191,7 +194,7 @@ class HdmfEditUploadedDeductionComponent extends Component
     }
 
 
-    public function updateListToBeSaved($id, $amortization, $loanGranted, $startTerm, $endTerm)
+    public function updateListToBeSaved($id, $amortization, $applNo, $loanGranted, $startTerm, $endTerm)
     {
         // Find the entry in the final list to update
         $found = false;
@@ -212,6 +215,7 @@ class HdmfEditUploadedDeductionComponent extends Component
         if (! $found && $amortization > 0) {
             $this->listTobeSaved[] = [
                 'user_id' => $id,
+                'application_no' => $applNo,
                 'monthly_amortization' => $amortization,
                 'loan_granted' => $loanGranted,
                 'start_term' => $startTerm,
@@ -239,12 +243,16 @@ class HdmfEditUploadedDeductionComponent extends Component
                         }
 
                         if ($deductionId) {
+                            // dd($entry);
                             $user->employeeDeductions()->syncWithoutDetaching([ // this will not remove existing deductions. It will only add or update the specified deduction.
-                                $deductionId => ['amount' => $entry['monthly_amortization'],
+                                $deductionId => [
+                                'amount' => $entry['monthly_amortization'],
+                                'application_no' => $entry['application_no'],
                                 'loan_granted' => $entry['loan_granted'],
                                 'start_term' => $entry['start_term'],
                                 'end_term' => $entry['end_term'],
-                                'frequency' => 1]
+                                'frequency' => 1
+                                ]
                             ]);
                         }
                     }

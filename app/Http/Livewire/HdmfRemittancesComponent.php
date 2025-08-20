@@ -26,6 +26,7 @@ class HdmfRemittancesComponent extends Component
             ['id' => 3, 'description' => 'HDMF MPL'],
             ['id' => 4, 'description' => 'HDMF CL'],
             ['id' => 5, 'description' => 'GSIS'],
+            ['id' => 8, 'description' => 'WHTAX'],
         ];
     }
 
@@ -130,14 +131,14 @@ class HdmfRemittancesComponent extends Component
                             $newSheet->setCellValue("C{$rowStart}", $application_no);
                             $newSheet->setCellValue("D{$rowStart}", $npiUser?->last_name);
                             $newSheet->setCellValue("E{$rowStart}", '=TRIM("' . $npiUser?->first_name . ' ' . $npiUser?->name_extn . '")');
-                            $newSheet->setCellValue("F{$rowStart}", $npiUser?->npiad_middle_name);
+                            $newSheet->setCellValue("F{$rowStart}", $npiUser?->middle_name);
                             $newSheet->setCellValue("G{$rowStart}", $amount);
                             $newSheet->setCellValue("H{$rowStart}", $er);
                             $newSheet->setCellValue("I{$rowStart}", $plt);
 
                             $formattedDate = Carbon::parse($npiUser?->period_covered_to)->format('Ym');
                             $newSheet->setCellValue("J{$rowStart}", $formattedDate . '01');
-
+                            
                             $totalRemittance += $amount;
 
                             $rowStart++; // Move to next row
@@ -190,8 +191,9 @@ class HdmfRemittancesComponent extends Component
         }
 
         // GSIS
+    
     public function createExcelFileGsis($filterSection = null, $filterFund = null)
-        {
+    {
             ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
 
             $templatePath = storage_path('app/excel_templates/gsis_remittance_template.xlsx');
@@ -207,9 +209,11 @@ class HdmfRemittancesComponent extends Component
                 ->where('period_covered_from', $this->payrollDateFrom)
                 ->where('period_covered_to', $this->payrollDateTo)
                 ->whereHas('newPayrollIndexAllDed', function ($query) use ($deduction) {
-                    $query->where('npiad_deduction_id', $deduction);
+                    $query->where('npiad_group', 'GSIS');
                     $query->where('npiad_type', 'DEDUCTION');
                 });
+
+            // dd($newPayroll->get());
             
             if ($filterSection !== null) {
                 $newPayroll->where('office', $filterSection);
@@ -316,22 +320,22 @@ class HdmfRemittancesComponent extends Component
                                 $newSheet->setCellValue("A{$rowStart}", $npiUser?->gsis);
                                 $newSheet->setCellValue("B{$rowStart}", $npiUser?->last_name);
                                 $newSheet->setCellValue("C{$rowStart}", '=TRIM("' . $npiUser?->first_name .'")');
-                                $newSheet->setCellValue("D{$rowStart}", $npiUser?->npiad_middle_name);
-                                $newSheet->setCellValue("F{$rowStart}", $npiUser?->name_extn);
-                                $newSheet->setCellValue("G{$rowStart}", $npiUser?->birthdate); // birthdate
-                                $newSheet->setCellValue("H{$rowStart}", $npiUser?->gsis_crn ?? 'NO CRN'); // CRN
-                                $newSheet->setCellValue("I{$rowStart}", $npiUser?->daily_monthly_rate); // Monthly Salary
-                                $newSheet->setCellValue("J{$rowStart}", 'wala pa'); // Effectivity Date
-                                $newSheet->setCellValue("K{$rowStart}", $ps?->npiad_amount ?? 0); // PS
-                                $newSheet->setCellValue("L{$rowStart}", $gs);
-                                $newSheet->setCellValue("M{$rowStart}", $ec);
-                                $newSheet->setCellValue("N{$rowStart}", $consoloan?->npiad_amount ?? 0);
-                                $newSheet->setCellValue("O{$rowStart}", $mplite?->npiad_amount ?? 0);
-                                $newSheet->setCellValue("P{$rowStart}", $emergency?->npiad_amount ?? 0);
-                                $newSheet->setCellValue("Q{$rowStart}", $pl?->npiad_amount ?? 0);
-                                $newSheet->setCellValue("R{$rowStart}", $gfal?->npiad_amount ?? 0);
-                                $newSheet->setCellValue("S{$rowStart}", $mpl?->npiad_amount ?? 0);
-                                $newSheet->setCellValue("T{$rowStart}", $cpl?->npiad_amount ?? 0);
+                                $newSheet->setCellValue("D{$rowStart}", $npiUser?->middle_name);
+                                $newSheet->setCellValue("E{$rowStart}", $npiUser?->name_extn);
+                                $newSheet->setCellValue("F{$rowStart}", $npiUser?->birthdate); // birthdate
+                                $newSheet->setCellValue("G{$rowStart}", $npiUser?->gsis_crn ?? 'NO CRN'); // CRN
+                                $newSheet->setCellValue("H{$rowStart}", $npiUser?->daily_monthly_rate); // Monthly Salary
+                                // $newSheet->setCellValue("J{$rowStart}", 'wala pa'); // Effectivity Date
+                                $newSheet->setCellValue("I{$rowStart}", $ps?->npiad_amount ?? 0); // PS
+                                $newSheet->setCellValue("J{$rowStart}", $gs);
+                                $newSheet->setCellValue("K{$rowStart}", $ec);
+                                $newSheet->setCellValue("L{$rowStart}", $consoloan?->npiad_amount ?? 0);
+                                $newSheet->setCellValue("M{$rowStart}", $mplite?->npiad_amount ?? 0);
+                                $newSheet->setCellValue("N{$rowStart}", $emergency?->npiad_amount ?? 0);
+                                $newSheet->setCellValue("O{$rowStart}", $pl?->npiad_amount ?? 0);
+                                $newSheet->setCellValue("P{$rowStart}", $gfal?->npiad_amount ?? 0);
+                                $newSheet->setCellValue("Q{$rowStart}", $mpl?->npiad_amount ?? 0);
+                                $newSheet->setCellValue("R{$rowStart}", $cpl?->npiad_amount ?? 0);
     
                     
                                 $totalPs += $ps?->npiad_amount ?? 0;
@@ -352,16 +356,16 @@ class HdmfRemittancesComponent extends Component
                             }
 
 
-                            $newSheet->setCellValue('K'. $rowStart, $totalPs);
-                            $newSheet->setCellValue('L'. $rowStart, $totalGs);
-                            $newSheet->setCellValue('M'. $rowStart, $totalEc);
-                            $newSheet->setCellValue('N'. $rowStart, $totalConsoloan);
-                            $newSheet->setCellValue('O'. $rowStart, $totalMplite);
-                            $newSheet->setCellValue('P'. $rowStart, $totalEmergency);
-                            $newSheet->setCellValue('Q'. $rowStart, $totalPl);
-                            $newSheet->setCellValue('R'. $rowStart, $totalGfal);
-                            $newSheet->setCellValue('S'. $rowStart, $totalMpl);
-                            $newSheet->setCellValue('T'. $rowStart, $totalCpl);
+                            $newSheet->setCellValue('I'. $rowStart, $totalPs);
+                            $newSheet->setCellValue('J'. $rowStart, $totalGs);
+                            $newSheet->setCellValue('K'. $rowStart, $totalEc);
+                            $newSheet->setCellValue('L'. $rowStart, $totalConsoloan);
+                            $newSheet->setCellValue('M'. $rowStart, $totalMplite);
+                            $newSheet->setCellValue('N'. $rowStart, $totalEmergency);
+                            $newSheet->setCellValue('O'. $rowStart, $totalPl);
+                            $newSheet->setCellValue('P'. $rowStart, $totalGfal);
+                            $newSheet->setCellValue('Q'. $rowStart, $totalMpl);
+                            $newSheet->setCellValue('R'. $rowStart, $totalCpl);
 
 
                             $formattedDate = Carbon::parse($npiUser?->period_covered_to)->format('m/Y');
@@ -369,7 +373,7 @@ class HdmfRemittancesComponent extends Component
                             // Set totals
                             // $newSheet->setCellValue('N'. $rowStart + 17, $totalRemittance);
 
-                            $newSheet->setCellValue('N'. $rowStart + 11, "FUND " . $fundName);
+                            $newSheet->setCellValue('M'. $rowStart + 12, "FUND " . $fundName);
 
         
                             // Remove the template row
@@ -401,15 +405,143 @@ class HdmfRemittancesComponent extends Component
             }
 
     
-
     public function generateRemittanceTemplate()
     {
         if ($this->deduction > 0 && $this->deduction <= 4){
             $this->createExcelFile();
-        } else if ($this->deduction >= 5 ) {
+        } else if ($this->deduction >= 5 && $this->deduction < 8) {
             $this->createExcelFileGsis();
+        } else if ($this->deduction == 8) {
+            $this->createExcelFileWhtax();
+        } else {
+            session()->flash('error', 'Invalid deduction type selected.');
         }
     }
+
+
+    public function createExcelFileWhtax($filterSection = null, $filterFund = null)
+    {
+        $templatePath = storage_path('app/excel_templates/bir_remittance_template.xlsx');
+        $spreadsheet = IOFactory::load($templatePath);
+
+        DB::statement("SET SQL_MODE=''"); // Allow GROUP BY
+        $deduction = $this->deduction;
+        $newPayroll = NewPayrollIndex::with([
+            'user.fund',
+            'user.agencyUnit.agencySection',
+            'newPayrollIndexAllDed'
+        ])
+            ->where('period_covered_from', $this->payrollDateFrom)
+            ->where('period_covered_to', $this->payrollDateTo)
+            ->whereHas('newPayrollIndexAllDed', function ($query) use ($deduction) {
+                $query->where('npiad_deduction_id', $deduction);
+                $query->where('npiad_group', 'TAX');
+                $query->where('npiad_type', 'DEDUCTION');
+            });
+        
+        if ($filterSection !== null) {
+            $newPayroll->where('office', $filterSection);
+        }
+        
+        if ($filterFund !== null) {
+            $newPayroll->whereHas('user.fund', function ($query) {
+                $query->where('id', $this->filterFund);
+            });
+        }
+        
+        $funds = $newPayroll->get()
+            ->groupBy(function ($item) {
+                return $item->funding_charges ?? 'Unknown Fund';
+            })
+            ->map(function ($groupedByFund) {
+                return $groupedByFund->groupBy(function ($item) {
+                    return $item->office; // Office-level grouping
+                });
+            });
+
+        if ($funds->isEmpty()) {
+            return collect([]);
+        }
+
+
+        foreach ($funds as $fundName => $offices) {
+            foreach ($offices as $officeName => $payrollEntries) {
+                if ($payrollEntries->isEmpty()) {
+                    continue; // Skip if no entries
+                }
+        
+                // Clone template
+                $templateSheet = $spreadsheet->getSheetByName("BIR Attachment");
+                $newSheet = clone $templateSheet;
+        
+                // Ensure unique sheet name
+                $sheetName = Str::limit(
+                    preg_replace('/[\\\\\\/\\?\\*\\[\\]:]/', '', $fundName ." ". $officeName),
+                    31,
+                    ''
+                );
+
+                $newSheet->setTitle($sheetName ?: 'attachment');
+
+                $spreadsheet->addSheet($newSheet);
+                
+                // dd($spreadsheet->getSheetNames());
+
+                $totalRemittance = 0;
+                $counter = 1;
+                $rowStart = 10;
+        
+                foreach ($payrollEntries as $npiUser) {
+                    $deductionRecord = $npiUser->newPayrollIndexAllDed()
+                        ?->where('npiad_deduction_id', $deduction)
+                        ?->where('npiad_group', 'TAX')
+                        ->first();
+        
+                    $amount = $deductionRecord?->npiad_amount ?? 0;
+        
+                    $newSheet->insertNewRowBefore($rowStart);
+                    $newSheet->setCellValue("A{$rowStart}", $counter);
+                    $newSheet->mergeCells("B{$rowStart}:C{$rowStart}");
+                    $newSheet->setCellValue("B{$rowStart}", trim(preg_replace('/\s+/', ' ', $npiUser?->last_name. ', ' . $npiUser?->first_name . ' ' . $npiUser?->name_extn . ' ' . $npiUser?->middle_name)));
+                    $newSheet->setCellValue("D{$rowStart}", $npiUser?->tin);
+                    $newSheet->setCellValue("E{$rowStart}", $amount);
+        
+                    $totalRemittance += $amount;
+                    $rowStart++;
+                    $counter++;
+                }
+        
+                // Use last $npiUser safely
+                if (isset($npiUser)) {
+                    $formattedDate = Carbon::parse($npiUser->period_covered_to)->format('F Y');
+                    $newSheet->setCellValue('A5', 'For the Month of ' . $formattedDate);
+                }
+                
+                $newSheet->setCellValue('E' . $rowStart, $totalRemittance);
+
+                // Remove the template row
+                $newSheet->removeRow(9);
+            }
+        }
+        
+        // Remove original template AFTER all clones are added
+        $spreadsheet->removeSheetByIndex(0);
+        
+   
+            // Save the Excel file to storage temporarily
+            $fileName = 'whtax' . '_' . now()->format('Ymd_His') . '.xlsx';
+            $modifiedPath = storage_path("app/bir_reports/{$fileName}");
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save($modifiedPath);
+
+            // Dispatch browser event to trigger download
+            $this->dispatchBrowserEvent('fileDownload', [
+                'url' => route('download.remittance', ['filename' => $fileName])
+            ]);
+
+            return $modifiedPath; // Optional: return path if you also want to use it later
+
+        }
 
 
     public function render()

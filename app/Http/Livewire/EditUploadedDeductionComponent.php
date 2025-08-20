@@ -6,6 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Carbon\Carbon;
 
 class EditUploadedDeductionComponent extends Component
 {
@@ -94,6 +95,11 @@ class EditUploadedDeductionComponent extends Component
         // === Step 4: Prepare final list to be saved ===
         foreach ($this->listOfFinalToBeUpdated as $row) {
             $entry = ['id' => $row['id']];
+            $entry['crn'] =  $row['excel_data']['CRN'];
+            
+            $entry['gsis_birthdate'] = !empty($row['excel_data']['BirthDate'])
+            ? Carbon::parse($row['excel_data']['BirthDate'])->format('Y-m-d')
+            : null;
 
             if ($row['excel_data']['PS'] > 0 && $this->validateValueWithChanges($row['id'], 'PS', $row['excel_data']['PS'])) {
                 $entry['PS'] = $row['excel_data']['PS'];
@@ -201,11 +207,14 @@ class EditUploadedDeductionComponent extends Component
     }
 
     public function saveRecords(){
-
+        // dd($this->listTobeSaved);
         foreach ($this->listTobeSaved as $entry) {
             $user = User::find($entry['id']);
             if ($user) {
                 foreach ($entry as $key => $value) {
+
+                    $user->gsis_crn = $entry['crn'] ?? null;
+                    $user->birthdate = $entry['gsis_birthdate'] ?? null;
                     
                     if ($key != 'id') {
                         $deductionId = null;
@@ -234,6 +243,7 @@ class EditUploadedDeductionComponent extends Component
                         }
                     }
                 }
+                $user->save();
             }
         }
 

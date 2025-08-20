@@ -282,6 +282,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                     'first_name' => $user->first_name,
                                     'middle_name' => $user->middle_name,
                                     'name_extn' => $user->name_extn,
+                                    'birthdate' => $user->birthdate,
                                     'office' => $user->agencyUnit()->with('agencySection')->first()->toArray()['agency_section']['office'],
                                     'office_section' => $user->agencyUnit()->with('agencySection')->first()->toArray()['agency_section']['section_description'] . " / " . $user->agencyUnit()->with('agencySection')->first()->unit_description,
                                     'imo' => "PANGASINAN IMO",
@@ -294,6 +295,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                     'period_covered_to' => $dateto,
                                     'funding_charges' => $thisFund->fund_description,
                                     'gsis' => $user->gsis,
+                                    'gsis_crn' => $user->gsis_crn,
                                     'tin' => $user->tin,
                                     'phic_no' => $user->phic_no,
                                     'hdmf' => $user->hdmf,
@@ -403,6 +405,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                         'first_name' => $user->first_name,
                                         'middle_name' => $user->middle_name,
                                         'name_extn' => $user->name_extn,
+                                        'birthdate' => $user->birthdate,
                                         'office' => $user->agencyUnit()->with('agencySection')->first()->toArray()['agency_section']['office'],
                                         'office_section' => $user->agencyUnit()->with('agencySection')->first()->toArray()['agency_section']['section_description'] . " / " . $user->agencyUnit()->with('agencySection')->first()->unit_description,
                                         // 'office_section' => $user->agencyUnit()->with('agencySection')->first()->toArray()['agency_section']['section_description'],
@@ -422,6 +425,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                         'period_covered_to' => $dateto,
                                         'funding_charges' => $thisFund->fund_description,
                                         'gsis' => $user->gsis,
+                                        'gsis_crn' => $user->gsis_crn,
                                         'tin' => $user->tin,
                                         'phic_no' => $user->phic_no,
                                         'hdmf' => $user->hdmf,
@@ -432,6 +436,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                     if(isset($user->user_deductions)){
                                         foreach($user->user_deductions as $user_deductions){
                                             foreach($user_deductions as $user_deduction){
+
                                                     $checkDedDupe = NewPayrollIndexAllDed::
                                                     // where('npiad_amount', $user_deduction->pivot->amount)
                                                     where('new_payroll_index_id', $payrollIndex->id)
@@ -441,6 +446,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                                     ->get();
 
                                                     if($checkDedDupe->isEmpty()){
+                                                        
                                                         $npiadLastInsertedIdDed = DB::table('new_payroll_index_all_deds')->insertGetId([
                                                             'npiad_type' => "DEDUCTION",
                                                             'npiad_deduction_id' => $user_deduction->id,
@@ -483,6 +489,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                                     ->get();
 
                                                     if($checkDedDupe->isEmpty()){
+                                                        
                                                         $npiadLastInsertedIdDed = DB::table('new_payroll_index_all_deds')->insertGetId([
                                                             'npiad_type' => "ALLOWANCE",
                                                             'npiad_deduction_id' => $user_allowance->id,

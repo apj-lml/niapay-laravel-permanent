@@ -69,6 +69,7 @@
                             <th>No.</th>
                             <th>ID</th>
                             <th>Pag-IBIG ID</th>
+                            <th>Acct./ Appl No.</th>
                             <th>LastName</th>
                             <th>FirstName</th>
                             <th>MiddleName</th>
@@ -87,6 +88,7 @@
                                 <td>{{ $counter }}</td>
                                 <td>{{ $finalToBeUpdated['user_id'] }}</td>
                                 <td>{{ $finalToBeUpdated['excel_data']['pagibigid'] }}</td>
+                                <td>{{ $finalToBeUpdated['excel_data']['applno'] }}</td>
                                 <td>{{ $finalToBeUpdated['excel_data']['lname'] }}</td>
                                 <td>{{ $finalToBeUpdated['excel_data']['fname'] }}</td>
                                 <td>{{ $finalToBeUpdated['excel_data']['mid'] }}</td>
@@ -133,6 +135,7 @@
                                           id="HDMF_MPLCheck{{ $counter }}"
                                           wire:change="updateListToBeSaved({{ $finalToBeUpdated['user_id'] }},
                                                         $event.target.checked ? {{ $finalToBeUpdated['excel_data']['monthly_amo'] }} : 0,
+                                                        {{ $finalToBeUpdated['excel_data']['applno'] }},
                                                         {{ $finalToBeUpdated['excel_data']['loan_grante'] }},
                                                         '{{ $finalToBeUpdated['excel_data']['start_term'] }}',
                                                         '{{ $finalToBeUpdated['excel_data']['end_term'] }}')"
@@ -166,7 +169,7 @@
                         <tr>
                             <th>No.</th>
                             <th>ID</th>
-                            <th>BPNO</th>
+                            <th>Pag-IBIG No.</th>
                             <th>Last Name</th>
                             <th>First Name</th>
                             <th>Middle Name</th>
@@ -179,7 +182,7 @@
                     <tbody>
                         
                         @forelse ($listOfToBeNotUpdated as $toBeNotUpdated)
-                        @php
+                        {{-- @php
                             $amounts = $toBeNotUpdated->employeeDeductions
                                 ->whereIn('id', [3, 4])
                                 ->map(function ($deduction) {
@@ -195,6 +198,20 @@
                                 ->map(function ($deduction) {
                                     return $deduction->pivot->end_term ?? '';
                                 });
+                        @endphp --}}
+
+                        @php
+                            $amounts = collect($toBeNotUpdated['employeeDeductions'] ?? [])
+                                ->whereIn('id', [3, 4])
+                                ->map(fn($deduction) => $deduction['pivot']['amount'] ?? '');
+
+                            $descriptions = collect($toBeNotUpdated['employeeDeductions'] ?? [])
+                                ->whereIn('id', [3, 4])
+                                ->map(fn($deduction) => $deduction['description'] ?? '');
+
+                            $endTerms = collect($toBeNotUpdated['employeeDeductions'] ?? [])
+                                ->whereIn('id', [3, 4])
+                                ->map(fn($deduction) => $deduction['pivot']['end_term'] ?? '');
                         @endphp
                             <tr>
                                 <td>{{ $counter }}</td>

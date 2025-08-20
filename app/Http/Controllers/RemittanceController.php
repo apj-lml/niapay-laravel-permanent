@@ -16,6 +16,8 @@ class RemittanceController extends Controller
             $filePath = storage_path('app/hdmf_reports/' . $filename);
         } elseif (Str::contains($filename, 'gsis')) {
             $filePath = storage_path('app/gsis_reports/' . $filename);
+        } elseif (Str::contains($filename, 'whtax')) {
+            $filePath = storage_path('app/bir_reports/' . $filename);
         }
 
         if (!file_exists($filePath)) {

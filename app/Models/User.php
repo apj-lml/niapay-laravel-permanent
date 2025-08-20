@@ -27,6 +27,7 @@ class User extends Authenticatable
         'first_name',
         'middle_name',
         'name_extn',
+        'birthdate',
         'email',
         'password',
         // 'section',
@@ -43,6 +44,7 @@ class User extends Authenticatable
         'hdmf',
         // 'sss',
         'gsis',
+        'gsis_crn',
         'role',
         'include_to_payroll',
         'basic_pay',
@@ -124,7 +126,7 @@ class User extends Authenticatable
     public function employeeDeductions()
     {
         return $this->belongsToMany(Deduction::class)
-        ->withPivot('id', 'loan_granted', 'start_term', 'end_term', 'amount', 'frequency', 'active_status', 'remarks')
+        ->withPivot('id', 'application_no', 'loan_granted', 'start_term', 'end_term', 'amount', 'frequency', 'active_status', 'remarks')
         ->withTimestamps();
     }
 
