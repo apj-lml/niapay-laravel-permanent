@@ -15,6 +15,7 @@ class EmployeeProfileModal extends Component
             $isStepDisabled = '',
             $profileIsLoaded = 'd-block',
             $userDailyRate,
+            $userMonthlyRate,
             $userId,
             $userSgJg,
             $activeStatus,
@@ -63,14 +64,7 @@ class EmployeeProfileModal extends Component
     //     $this->employeeProfile->monthly_rate = number_format($this->employeeProfile->monthly_rate, 2);
     // }
 
-    public function updatedEmployeeProfileMonthlyRate($value)
-    {
-        // Remove any non-numeric characters except the decimal point
-        $formattedValue = preg_replace('/[^0-9.]/', '', $value);
 
-        // Format the value with commas and 2 decimal places
-        $this->employeeProfile->monthly_rate = number_format($formattedValue, 2);
-    }
 
     protected $listeners = ['openEmployeeProfileModal'];
 
@@ -92,10 +86,15 @@ class EmployeeProfileModal extends Component
         $this->userId = $userId;
         $this->employeeProfile = User::findOrFail($userId);
 
+
+
         $this->userDailyRate = $this->employeeProfile->daily_rate;
+        $this->userMonthlyRate = $this->employeeProfile->monthly_rate;
         $this->userSgJg = $this->employeeProfile->sg_jg;
         $this->activeStatus = $this->employeeProfile->is_active;
         $this->isLessFifteen = $this->employeeProfile->is_less_fifteen;
+
+ 
 
         // $this->emit('openEmployeeAllowancesTab', $userId);
 
@@ -105,6 +104,13 @@ class EmployeeProfileModal extends Component
         $this->userDailyRate = (float) str_replace(",","", $value);
 
     }
+
+    public function updatedEmployeeProfileMonthlyRate($value)
+    {
+
+        $this->userMonthlyRate = (float) str_replace(",","", $value);
+    }
+    
 
     public function changeActiveStatus()
     {
@@ -228,18 +234,20 @@ class EmployeeProfileModal extends Component
         $this->dispatchBrowserEvent('closeDeductionsTab');
     }
 
-
     public function saveProfile()
     {
         $this->validate();
         // $this->AutoAddDeduction();
-
+        $this->employeeProfile['monthly_rate'] = (float) str_replace(",", "", $this->employeeProfile['monthly_rate']);
         $this->employeeProfile->save();
+
+        $this->employeeProfile['monthly_rate'] = number_format(
+            $this->employeeProfile['monthly_rate'], 2
+        );
 
         $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Successfully updated profile.']);
         $this->emit('refreshProcessPayrollJobOrderComponent');
     }
-
 
     public function clickEmployeeDeductionsTab($userId)
     {
