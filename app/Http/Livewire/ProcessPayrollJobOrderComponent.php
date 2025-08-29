@@ -159,7 +159,8 @@ class ProcessPayrollJobOrderComponent extends Component
                         // dd($data);
 
 
-                        $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption(['dpi' => 118,]);
+                        // $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption(['dpi' => 118,]);
+                        $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption(['dpi' => 140]);
                  
                         $employeesOfThisSection = [];
                         foreach($thisFund->users as $user){
@@ -732,10 +733,13 @@ class ProcessPayrollJobOrderComponent extends Component
      
                             // $JOUser->basic_pay = bcdiv((float)((float)$JOUser->daily_rate) * ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->days_rendered), 1, 2);
                             $JOUser->basic_pay = bcdiv(((float)$JOUser->monthly_rate), 1, 2);
+                            $JOUser->daily_rate = round($JOUser->basic_pay / 22, 2); // Assuming 22 working days in a month
                             $days_rendered = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->days_rendered);
                             $days_rendered_first_half = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->first_half);
                             $days_rendered_second_half = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->second_half);
 
+                            //test
+                            $JOUser->basic_pay = round($JOUser->daily_rate * $days_rendered);
 
                             // Setting User Allowances
                             if(!$JOUser->employeeAllowances->isEmpty()){

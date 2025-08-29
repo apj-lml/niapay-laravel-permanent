@@ -27,7 +27,8 @@
          margin-right: -25px;
          margin-top:20px;
          margin-bottom: -10px; 
-         font-family: Cambria,Georgia,serif;
+         /* font-family: Cambria,Georgia,serif; */
+         font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',sans-serif;
      }
 
      h1 {
@@ -373,7 +374,7 @@
                 <img class="logo" src="{{ public_path('img/nia.jpg') }}" alt="nia logo" height="75px" width="75px" style="margin-left: 75px;">
                 <img class="logo" src="{{ public_path('img/bagong-pilipinas.jpg') }}" alt="bagong pilipinas" height="75px" width="75px" style="margin-left: 1375px;">
               </div>
-                <h2>L A B O R &nbsp; P A Y R O L L</h2>
+                <h2>G E N E R A L &nbsp; P A Y R O L L</h2>
                 <p>for the period {{ $payrollDateFrom->format('F') }} {{ $payrollDateFrom->format('j') }}-{{ $payrollDateTo->format('j') }}, {{ $payrollDateFrom->format('Y') }}</p>
                 <div style="margin-left: 5px; margin-bottom: 3px;">
                   <div class="col-sm-6">
@@ -393,7 +394,7 @@
                     <th scope="col" rowspan="3" style="width:12%; border-right: 1.5px solid black;">N A M E</th>
                     <th scope="col" rowspan="3" style="width:12%;">POSITION TITLE / JG</th>
                     <th scope="col" rowspan="3" style="">NUMBER OF DAYS WORKED</th>
-                    <th scope="col" rowspan="3" style="">DAILY RATE</th>
+                    {{-- <th scope="col" rowspan="3" style="">DAILY RATE</th> --}}
                     <th scope="col" rowspan="3" style="border-right: 1.5px solid black;">BASIC PAY</th>
                     @if (strtoupper($payrollEmploymentStatus) != 'JOB ORDER' && strtoupper($payrollEmploymentStatus) != 'CONTRACT OF SERVICE')
                         <th scope="col"
@@ -633,7 +634,7 @@
                   
                 </thead>
                 <tr>
-                  <td colspan="4" style="font-size: 8px; height:2px; padding:0px;"></td>
+                  <td colspan="3" style="font-size: 8px; height:2px; padding:0px;"></td>
                   <td style="border-right: 1.5px solid black; text-align:center; font-size: 8px; height:2px; padding:0px;">A</td>
                   @if (strtoupper($payrollEmploymentStatus) != 'JOB ORDER' && strtoupper($payrollEmploymentStatus) != 'CONTRACT OF SERVICE')
                     <td colspan="{{ $joAllowances->count() }}" style="font-size: 8px; height:2px; padding:0px;"></td>
@@ -642,7 +643,7 @@
                   @endif
                   <td colspan="{{ $joDeductions->count() + $gsisCol + $hdmfCol + $taxCol + $phicCol + $coopCol + $disallowanceCol - $inactiveDeduction->count() }}" style="font-size: 8px; height:2px; padding:0px;"></td>
                   <td style="border-right: 1.5px solid black; text-align:center; font-size: 8px; height:2px; padding:0px;">D</td>
-                  <td style="border-right: 1.5px solid black; text-align:center; font-size: 8px; height:2px; padding:0px;"
+                  <td style="border-right: 1.5px solid black; text-align:left; font-size: 8px; height:2px; padding-left:7px;"
                   {{-- @if($isLessFifteen == false) --}}
                   @if($isLessFifteen == 'all' || $isLessFifteen == 'full_month')
                   colspan="3"
@@ -676,7 +677,7 @@
                                       <span style="position:absolute; margin-left: -19px; margin-top:5px;">{{ $counter }}</span>{{ $payrollUser->full_name }}
                                     </td>
          
-                                    <td scope="row" style="font-size: 7px; text-align:left;">{{ $payrollUser->position }} / {{ $payrollUser->sg_jg }}</td>
+                                    <td scope="row" style="font-size: 7px; text-align:left;">{{ $payrollUser->position }} / {{ $payrollUser->sg_jg }}-{{ $payrollUser->step }}</td>
         
                                     <td scope="row" style="text-align:center;">
                                       @foreach ($payrollUser->attendances as $attendance)
@@ -690,7 +691,7 @@
                                       @endforeach
                                     </td>
                                     
-                                    <td scope="row">{{ number_format((float)$payrollUser->daily_rate, 2) }}</td>  
+                                    {{-- <td scope="row">{{ number_format((float)$payrollUser->daily_rate, 2) }}</td> --}}
                                     <td scope="row" style="border-right: 1.5px solid black;"><strong>{{ number_format((float)$payrollUser->basic_pay, 2) }}</strong></td>
                                     {{-- <td scope="row" style="border-right: 1.5px solid black;">{{ number_format((float)$payrollUser->basic_pay, 2) }}</td> --}}
                                     
@@ -986,7 +987,7 @@
                     <tfoot class="fw-bold">
                       <tr>
                         <td style="border-right: 1.5px solid black; text-align:left;font-size:10px;"><strong>TOTAL NET PAY</strong></td>
-                        <td colspan="3" style="font-size:8px; text-align:left;"><strong>{{ strtoupper(Helper::numberToWord(sprintf("%.2f", $payrollUserSection->total_net_pay))) }}</strong></td>
+                        <td colspan="2" style="font-size:8px; text-align:left;"><strong>{{ strtoupper(Helper::numberToWord(sprintf("%.2f", $payrollUserSection->total_net_pay))) }}</strong></td>
                         <td style="border-right: 1.5px solid black; background-color: #b4c1e3f1;"><strong>{{ number_format((float)sprintf("%.2f", $payrollUserSection->total_basic_pay),2)}}</strong></td>
     
                         @if (strtoupper($payrollEmploymentStatus) != 'JOB ORDER' && strtoupper($payrollEmploymentStatus) != 'CONTRACT OF SERVICE')
@@ -2068,7 +2069,7 @@
       if ( isset($pdf) ) {
 
           $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
-          $font = $fontMetrics->get_font("cambria", "bold");
+          $font = $fontMetrics->get_font("calibri", "bold");
           $size = 10;
 
           $width = $fontMetrics->get_text_width($text, $font, $size) / 2;

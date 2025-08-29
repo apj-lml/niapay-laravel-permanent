@@ -11,6 +11,12 @@ class DeductionUser extends Model
 
     protected $table = 'deduction_user';
 
+    protected $casts = [
+        'end_term' => 'date',
+        'start_term' => 'date',
+        'loan_granted' => 'decimal:2',
+    ];
+
     protected $fillable = [
         'user_id',
         'deduction_id',

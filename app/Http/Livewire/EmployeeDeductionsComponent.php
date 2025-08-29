@@ -16,8 +16,8 @@ class EmployeeDeductionsComponent extends Component
             $frequency = 1,
             $active_status = 1,
             $remarks = 'N/A',
-            $loan_granted,
-            $end_term,
+            $loan_granted = null,
+            $end_term = null,
             $listOfDeductions,
             $editMode = false,
             $deductionUserId,
@@ -40,6 +40,7 @@ class EmployeeDeductionsComponent extends Component
 
     public function addDeduction()
     {
+        // dd($this->loan_granted);
         $this->validate([
             'amount' => 'required'
         ]);
@@ -59,8 +60,8 @@ class EmployeeDeductionsComponent extends Component
                 'frequency' => $this->frequency,
                 'active_status' => $this->active_status,
                 'remarks' => $this->remarks,
-                'loan_granted' => $this->loan_granted,
-                'end_term' => $this->end_term
+                'loan_granted' => $this->loan_granted ?: null,
+                'end_term' => $this->end_term ?: null
             ]);
 
             $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Deduction successfully added!']);

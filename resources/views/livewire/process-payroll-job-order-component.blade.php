@@ -672,7 +672,7 @@
                                                                         </td>
                                                                         <td scope="row" class="text-start">
                                                                             {{ $payrollUser->position }} /
-                                                                            {{ $payrollUser->sg_jg }}</td>
+                                                                            {{ $payrollUser->sg_jg }}-{{ $payrollUser->step }}</td>
                                                                         <td scope="row"
                                                                             class="text-center align-middle p-0">
                                                                             @livewire('modals.add-individual-attendance-modal', ['startDate' => $payrollDateFrom, 'endDate' => $payrollDateTo, 'userId' => $payrollUser->id, 'userMonthlyRate' => $payrollUser->monthly_rate, 'userSgJg' => $payrollUser->sg_jg, 'isLessFifteen' => $isLessFifteen], key($payrollUser->id) )

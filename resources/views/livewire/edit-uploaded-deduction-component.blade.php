@@ -72,6 +72,7 @@
                             <th>APPELLATION</th>
                             <th>CRN</th>
                             <th>PS</th>
+                            <th>CONSOLOAN</th>
                             <th>SALARY_LOAN</th>
                             <th>MPL</th>
                             <th>MPL_LITE</th>
@@ -96,6 +97,7 @@
                                   <div class="form-check">
                                     @php
                                       $isCheckedPS = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['PS'] ?? 0;
+                                      $isCheckedCONSOLOAN = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['CONSOLOAN'] ?? 0;
                                       $isCheckedSALARY_LOAN = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['SALARY_LOAN'] ?? 0;
                                       $isCheckedMPL = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['MPL'] ?? 0;
                                       $isCheckedMPL_LITE = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['MPL_LITE'] ?? 0;
@@ -105,6 +107,7 @@
                                       $isCheckedCPL = collect($listTobeSaved)->firstWhere('id', $finalToBeUpdated['id'])['CPL'] ?? 0;
                                       
                                         $validatedPsVal = false;
+                                        $validateConsoloan = false;
                                         $validateSalaryLoanVal = false;
                                         $validateMplVal = false;
                                         $validateMplLiteVal = false;
@@ -116,6 +119,9 @@
                                         
                                         if($isCheckedPS > 0) {
                                             $validatedPsVal = $this->validateValueWithChanges($finalToBeUpdated['id'], 'PS', $finalToBeUpdated['excel_data']['PS']);
+                                        }
+                                        if($isCheckedCONSOLOAN > 0) {
+                                            $validateConsoloan = $this->validateValueWithChanges($finalToBeUpdated['id'], 'CONSOLOAN', $finalToBeUpdated['excel_data']['CONSOLOAN']);
                                         }
                                         if($isCheckedSALARY_LOAN > 0) {
                                             $validateSalaryLoanVal = $this->validateValueWithChanges($finalToBeUpdated['id'], 'SALARY_LOAN', $finalToBeUpdated['excel_data']['SALARY_LOAN']);
@@ -151,6 +157,16 @@
                                         {{ number_format($finalToBeUpdated['excel_data']['PS'], 2) }}
                                     </label>
                                   </div>
+                                </td>
+                                <td>
+                                    <input type="checkbox" 
+                                        class="form-check-input"
+                                        id="CONSOLOANCheck{{ $counter }}"
+                                        wire:change="updateListToBeSaved({{ $finalToBeUpdated['id'] }}, 'CONSOLOAN', $event.target.checked ? {{ $finalToBeUpdated['excel_data']['CONSOLOAN'] }} : 0)"
+                                        @if ($isCheckedCONSOLOAN > 0) checked @endif>
+                                    <label class="form-check-label @if($validateConsoloan) text-danger @endif" for="CONSOLOANCheck{{ $counter }}">
+                                      {{ number_format($finalToBeUpdated['excel_data']['CONSOLOAN'], 2) }}
+                                    </label>
                                 </td>
                                 <td>
                                     <input type="checkbox" 

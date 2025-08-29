@@ -106,9 +106,14 @@ class EditUploadedDeductionComponent extends Component
                 $entry['deduction_id'] = 9; // 9 is the ID for GSIS PREMIUM
             }
         
+            if ($row['excel_data']['CONSOLOAN'] > 0 && $this->validateValueWithChanges($row['id'], 'CONSOLOAN', $row['excel_data']['CONSOLOAN'])) {
+                $entry['CONSOLOAN'] = $row['excel_data']['CONSOLOAN'];
+                $entry['deduction_id'] = 10; // 10 is the ID for GSIS SALARY LOAN
+            }
+
             if ($row['excel_data']['SALARY_LOAN'] > 0 && $this->validateValueWithChanges($row['id'], 'SALARY_LOAN', $row['excel_data']['SALARY_LOAN'])) {
                 $entry['SALARY_LOAN'] = $row['excel_data']['SALARY_LOAN'];
-                $entry['deduction_id'] = 10; // 10 is the ID for GSIS SALARY LOAN
+                $entry['deduction_id'] = 17; // 10 is the ID for GSIS SALARY LOAN
             }
         
             if ($row['excel_data']['MPL'] > 0 && $this->validateValueWithChanges($row['id'], 'MPL', $row['excel_data']['MPL'])) {
@@ -183,13 +188,14 @@ class EditUploadedDeductionComponent extends Component
         $user = User::find($id);
         $deductionMap = [
             'PS' => 9,
-            'SALARY_LOAN' => 10,
+            'CONSOLOAN' => 10,
             'MPL' => 11,
             'CPL' => 12,
             'PLREG' => 13,
             'MPL_LITE' => 14,
             'EMRGYLN' => 15,
             'GFAL' => 16,
+            'SALARY_LOAN' => 17,
         ];
         $DbDeduction = $deductionMap[$dedType] ?? null;
         $currentDeduction = $user->employeeDeductions()->where('deduction_id', $DbDeduction)->first();
@@ -220,8 +226,8 @@ class EditUploadedDeductionComponent extends Component
                         $deductionId = null;
                         if ($key == 'PS') {
                             $deductionId = 9; // GSIS PREMIUM
-                        } elseif ($key == 'SALARY_LOAN') {
-                            $deductionId = 10; // GSIS SALARY LOAN
+                        } elseif ($key == 'CONSOLOAN') {
+                            $deductionId = 10; // GSIS CONSOLOAN
                         } elseif ($key == 'MPL') {
                             $deductionId = 11; // GSIS MPL
                         } elseif ($key == 'MPL_LITE') {
@@ -234,6 +240,8 @@ class EditUploadedDeductionComponent extends Component
                             $deductionId = 15; // GSIS EMERGENCY LOAN
                         } elseif ($key == 'GFAL') {
                             $deductionId = 16; // GSIS GFAL
+                        } elseif ($key == 'SALARY_LOAN') {
+                            $deductionId = 17; // GSIS SALARY LOAN
                         }
 
                         if ($deductionId) {
@@ -252,10 +260,7 @@ class EditUploadedDeductionComponent extends Component
 
     }
 
-    public function ddMe()
-    {
-       return dd($this->listTobeSaved);
-    }
+
 
     public function render()
     {
