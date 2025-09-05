@@ -83,18 +83,18 @@ class AddDeductionModal extends Component
             $this->deductionGroup = $this->deductionDescription;
         }
 
-        if(empty($this->sortPosition)){
+        // if(empty($this->sortPosition)){
             $lastSortPosition = Deduction::where('deduction_group', '=', $this->deductionGroup)->orderBy('sort_position', 'desc')->first();
             if(is_null($lastSortPosition)){
                 $this->sortPosition = 0;
             }else{
                 $this->sortPosition = $lastSortPosition->sort_position + 1;
             }
-        }
+        // }1
 
         Deduction::updateOrCreate(['id'=>$this->deductionId], [
-            'description' => strtoupper($this->deductionDescription),
-            'account_title' => strtoupper($this->accountTitle),
+            'description' => $this->deductionDescription,
+            'account_title' => $this->accountTitle,
             'deduction_type' => strtoupper(str_replace(' ', '_', $this->deductionDescription)),
             'deduction_group' => strtoupper(str_replace(' ', '_', $this->deductionGroup)),
             'deduction_for' => $this->deductionFor,
@@ -116,7 +116,9 @@ class AddDeductionModal extends Component
                 }else{
                     $is_active = 0;
                 }
-                if($userDeduction->deduction_id == 27){
+
+                //PHIC exemption condition
+                if($userDeduction->deduction_type == 'PHIC_PREMIUM'){
                     if(($userDeduction->remarks == 'N/A' || $userDeduction->remarks == null) ){
                         $data->update([
                             'active_status' => $is_active,

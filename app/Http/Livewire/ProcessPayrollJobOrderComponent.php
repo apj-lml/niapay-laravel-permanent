@@ -160,8 +160,13 @@ class ProcessPayrollJobOrderComponent extends Component
 
 
                         // $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption(['dpi' => 118,]);
-                        $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption(['dpi' => 140]);
-                 
+                        $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption([
+                            'dpi' => 300,
+                            'isHtml5ParserEnabled' => true,
+                            'isRemoteEnabled' => true,
+                        ]);
+
+                        
                         $employeesOfThisSection = [];
                         foreach($thisFund->users as $user){
                             if($user->agencyUnit->agencySection->office == $userSection->office){
@@ -241,11 +246,9 @@ class ProcessPayrollJobOrderComponent extends Component
     public function insertIndexDeductions(){
 
         foreach($this->payrollFunds as $thisFund){
-
-  
-            foreach($thisFund->sections as $myFund){
-                // dd($myFund);
-            }
+            // foreach($thisFund->sections as $myFund){
+            //     // dd($myFund);
+            // }
 
             if($thisFund->users){
 
@@ -295,6 +298,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                     'period_covered_from' => $datefrom,
                                     'period_covered_to' => $dateto,
                                     'funding_charges' => $thisFund->fund_description,
+                                    'fund_acct_no' => $thisFund->acct_no,
                                     'gsis' => $user->gsis,
                                     'gsis_crn' => $user->gsis_crn,
                                     'tin' => $user->tin,
@@ -325,6 +329,7 @@ class ProcessPayrollJobOrderComponent extends Component
 
                                     });
 
+
                                 foreach($userDeductions as $user_deductions){
                                     foreach($user_deductions as $user_deduction){
                                             $checkDedDupe = NewPayrollIndexAllDed::where('new_payroll_index_id', $newPayrollIndexLastInsertedId)
@@ -352,10 +357,9 @@ class ProcessPayrollJobOrderComponent extends Component
                                                     'created_at' => now()
                                                     ]);
                                                 }
+                                            }
+                                        }
 
-                           
-                                                                            }
-                                                                        }
                                 }
                                 
                                     if(isset($user->user_allowances)){
@@ -425,6 +429,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                         'period_covered_from' => $datefrom,
                                         'period_covered_to' => $dateto,
                                         'funding_charges' => $thisFund->fund_description,
+                                        'fund_acct_no' => $thisFund->acct_no,
                                         'gsis' => $user->gsis,
                                         'gsis_crn' => $user->gsis_crn,
                                         'tin' => $user->tin,
@@ -435,44 +440,59 @@ class ProcessPayrollJobOrderComponent extends Component
                                     ]);
 
                                     if(isset($user->user_deductions)){
+                                        // Collect all current deduction IDs from the user deductions
+                                        $currentDeductionIds = [];
+
                                         foreach($user->user_deductions as $user_deductions){
                                             foreach($user_deductions as $user_deduction){
 
-                                                    $checkDedDupe = NewPayrollIndexAllDed::
-                                                    // where('npiad_amount', $user_deduction->pivot->amount)
-                                                    where('new_payroll_index_id', $payrollIndex->id)
-                                                    ->where('npiad_description', $user_deduction->description)
-                                                    ->whereRelation('newPayrollIndex', 'period_covered_from', $datefrom)
-                                                    ->whereRelation('newPayrollIndex', 'period_covered_to', $dateto)
-                                                    ->get();
+                                                $currentDeductionIds[] = $user_deduction->id;
 
-                                                    if($checkDedDupe->isEmpty()){
-                                                        
-                                                        $npiadLastInsertedIdDed = DB::table('new_payroll_index_all_deds')->insertGetId([
-                                                            'npiad_type' => "DEDUCTION",
-                                                            'npiad_deduction_id' => $user_deduction->id,
+                                                $checkDedDupe = NewPayrollIndexAllDed::
+                                                // where('npiad_amount', $user_deduction->pivot->amount)
+                                                where('new_payroll_index_id', $payrollIndex->id)
+                                                ->where('npiad_description', $user_deduction->description)
+                                                ->whereRelation('newPayrollIndex', 'period_covered_from', $datefrom)
+                                                ->whereRelation('newPayrollIndex', 'period_covered_to', $dateto)
+                                                ->get();
+
+                                                if($checkDedDupe->isEmpty()){
+                                                    
+                                                    $npiadLastInsertedIdDed = DB::table('new_payroll_index_all_deds')->insertGetId([
+                                                        'npiad_type' => "DEDUCTION",
+                                                        'npiad_deduction_id' => $user_deduction->id,
+                                                        'npiad_amount' => $user_deduction->pivot->amount,
+                                                        'npiad_application_no' => $user_deduction->pivot->application_no,
+                                                        'npiad_loan_granted' => $user_deduction->pivot->loan_granted,
+                                                        'npiad_start_term' => $user_deduction->pivot->start_term,
+                                                        'npiad_end_term' => $user_deduction->pivot->end_term,
+                                                        'npiad_group' => $user_deduction->deduction_group,
+                                                        'npiad_description' => $user_deduction->description,
+                                                        'npiad_for' => $user_deduction->deduction_for,
+                                                        'npiad_sort_position' => $user_deduction->sort_position,
+                                                        'new_payroll_index_id' => $payrollIndex->id,
+                                                        'updated_at' => now()
+                                                    ]);
+                                                } else {
+                                                    // Update each item in the collection
+
+                                                    foreach ($checkDedDupe as $deduction) {
+                                                        $deduction->update([
                                                             'npiad_amount' => $user_deduction->pivot->amount,
-                                                            'npiad_application_no' => $user_deduction->pivot->application_no,
-                                                            'npiad_loan_granted' => $user_deduction->pivot->loan_granted,
-                                                            'npiad_start_term' => $user_deduction->pivot->start_term,
-                                                            'npiad_end_term' => $user_deduction->pivot->end_term,
-                                                            'npiad_group' => $user_deduction->deduction_group,
-                                                            'npiad_description' => $user_deduction->description,
-                                                            'npiad_for' => $user_deduction->deduction_for,
-                                                            'npiad_sort_position' => $user_deduction->sort_position,
-                                                            'new_payroll_index_id' => $payrollIndex->id,
                                                             'updated_at' => now()
                                                         ]);
-                                                    } else {
-                                                       // Update each item in the collection
-
-                                                        foreach ($checkDedDupe as $deduction) {
-                                                            $deduction->update([
-                                                                'npiad_amount' => $user_deduction->pivot->amount,
-                                                                'updated_at' => now()
-                                                            ]);
-                                                        }
                                                     }
+                                                }
+
+                                                // Delete deductions not in the current list, but only within the same payroll period
+                                                NewPayrollIndexAllDed::where('new_payroll_index_id', $payrollIndex->id)
+                                                ->whereRelation('newPayrollIndex', 'period_covered_from', $datefrom)
+                                                ->whereRelation('newPayrollIndex', 'period_covered_to', $dateto)
+                                                ->whereNotIn('npiad_deduction_id', $currentDeductionIds)
+                                                ->delete();
+
+
+
     
                                             }
                                         }

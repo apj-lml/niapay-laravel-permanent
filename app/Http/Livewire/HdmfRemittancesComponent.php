@@ -61,7 +61,8 @@ class HdmfRemittancesComponent extends Component
         
         $funds = $newPayroll->get()
             ->groupBy(function ($item) {
-                return $item->funding_charges ?? 'Unknown Fund';
+                // Combine funding_charges and acct_no for grouping
+                return ($item->funding_charges ?? 'Unknown Fund') . '|' . ($item->acct_no ?? 'N/A');
             })
             ->map(function ($groupedByFund) {
                 return $groupedByFund->groupBy(function ($item) {
@@ -75,8 +76,9 @@ class HdmfRemittancesComponent extends Component
             return collect([]);
         }
 
-        foreach ($funds as $fundName => $offices) {
+        foreach ($funds as $fundKey  => $offices) {
 
+            [$fundName, $fundAcctNo] = explode('|', $fundKey);
 
                 // foreach($payrollSection as $section){
                     // Clone the template sheet for each fund
@@ -94,6 +96,8 @@ class HdmfRemittancesComponent extends Component
                         $spreadsheet->addSheet($newSheet);
         
                         $totalRemittance = 0;
+                        $totalEe= 0;
+                        $totalEr= 0;
                         $counter = 0;
         
                         $rowStart = 11; // Start inserting rows at 11
@@ -139,16 +143,29 @@ class HdmfRemittancesComponent extends Component
                             $formattedDate = Carbon::parse($npiUser?->period_covered_to)->format('Ym');
                             $newSheet->setCellValue("J{$rowStart}", $formattedDate . '01');
                             
-                            $totalRemittance += $amount;
+                            $totalEe += $amount;
+
+                            $totalEr += $er;
+
+                            $totalRemittance += $amount + $er;
 
                             $rowStart++; // Move to next row
                             $counter++;
                         }
 
+                    $newSheet->setCellValue('C5', $totalRemittance);
+
                     $newSheet->setCellValue('C6', $counter);
+
+                    $newSheet->setCellValue('C7', $fundName ." / ". $fundAcctNo);
+
                     // Remove the template row
 
-                    $newSheet->setCellValue('C5', $totalRemittance);
+                    $newSheet->setCellValue('G5', $totalEe);
+                    $newSheet->setCellValue('H5', $totalEr);
+
+                    $newSheet->setCellValue('G2', "FUND " . $fundName);
+
 
                     $newSheet->removeRow(10);
                     }

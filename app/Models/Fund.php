@@ -13,7 +13,7 @@ class Fund extends Model
         'fund_description',
         'fund_obligation_description',
         'fund_uacs_code',
-        'basic_pay'
+        'acct_no',
     ];
 
     // public function users()

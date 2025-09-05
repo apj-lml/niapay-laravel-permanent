@@ -43,6 +43,7 @@ class NewPayrollIndex extends Model
         'days_rendered',
         'basic_pay',
         'funding_charges',
+        'fund_acct_no',
         'filename',
             ];
 

@@ -23,11 +23,11 @@
      body {
          /* background: #fb887c; */
          /* color: #fff; */
-         margin-left: -25px;
-         margin-right: -25px;
-         margin-top:20px;
+         margin-left: -65px;
+         margin-right: -65px;
+         margin-top:40px;
          margin-bottom: -10px; 
-         /* font-family: Cambria,Georgia,serif; */
+         /* font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
          font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',sans-serif;
      }
 
@@ -70,7 +70,9 @@
      }
 
      table.payroll td{
-      text-align: right;
+        text-align: right;
+        height:2em;
+
      } 
 
      table, th, td {
@@ -78,17 +80,19 @@
          border-collapse: collapse;
      }
 
-     th, td {
-         padding: 2.5px;
-         font-size:7px;
+     td {
+         padding: 5px;
+         font-size:18px;
          border: 0.5px solid black;
-         /* height:15px */
      }
 
      th {
-      font-size:6.5px;
+      padding: 2.5px;
+      font-size:12px;
       font-weight: bolder;
       word-wrap: break-word;
+      border: 0.5px solid black;
+
      }
 
      .page-break {
@@ -119,7 +123,7 @@
     }
 
     .fw-sm{
-      font-size: 9px;
+      font-size: 16px;
       text-align: left;
       margin-bottom: 0;
       margin-top: 1px;
@@ -164,7 +168,7 @@
   }
   hr{
     border: 0.2px solid ;
-    width: 150px;
+    width: 350px;
     margin-top: 0;
     margin-bottom: 0;
   }
@@ -370,9 +374,9 @@
           <div class="main">
             <caption>
               <div class="logo-container">
-                <img class="logo" src="{{ public_path('img/op-logo.jpg') }}" alt="op logo" height="75px" width="75px">
-                <img class="logo" src="{{ public_path('img/nia.jpg') }}" alt="nia logo" height="75px" width="75px" style="margin-left: 75px;">
-                <img class="logo" src="{{ public_path('img/bagong-pilipinas.jpg') }}" alt="bagong pilipinas" height="75px" width="75px" style="margin-left: 1375px;">
+                <img class="logo" src="{{ public_path('img/op-logo.jpg') }}" alt="op logo" height="150px" width="150px">
+                <img class="logo" src="{{ public_path('img/nia.jpg') }}" alt="nia logo" height="150px" width="150px" style="margin-left: 150px;">
+                <img class="logo" src="{{ public_path('img/bagong-pilipinas.jpg') }}" alt="bagong pilipinas" height="150px" width="150px" style="margin-left: 3575px;">
               </div>
                 <h2>G E N E R A L &nbsp; P A Y R O L L</h2>
                 <p>for the period {{ $payrollDateFrom->format('F') }} {{ $payrollDateFrom->format('j') }}-{{ $payrollDateTo->format('j') }}, {{ $payrollDateFrom->format('Y') }}</p>
@@ -382,7 +386,7 @@
   
                   </div>
                   <div class="col-sm-6">
-                  <p class="fw-sm" style="display: inline; float: right; margin-right:60px; margin-top:-10px;">CHARGED TO: <strong>{{ $payrollFund->fund_description }}</strong></p>
+                  <p class="fw-sm" style="display: inline; float: right; margin-right:60px; margin-top:-18px;">CHARGED TO: <strong>{{ $payrollFund->fund_description }}</strong></p>
   
                   </div>
                   {{-- <p class="fw-sm" style="display: inline; float: left;">We acknowledge receipt of cash shown opposite our name as full compensation for services rendered for the period covered.</p> --}}
@@ -391,10 +395,10 @@
               <table class="payroll">
                 <thead>
                   <tr>
-                    <th scope="col" rowspan="3" style="width:12%; border-right: 1.5px solid black;">N A M E</th>
-                    <th scope="col" rowspan="3" style="width:12%;">POSITION TITLE / JG</th>
-                    <th scope="col" rowspan="3" style="">NUMBER OF DAYS WORKED</th>
-                    {{-- <th scope="col" rowspan="3" style="">DAILY RATE</th> --}}
+                    <th scope="col" rowspan="3" style="width:10%; border-right: 1.5px solid black;">N A M E</th>
+                    <th scope="col" rowspan="3" style="width:8%;">POSITION TITLE / JG</th>
+                    {{-- <th scope="col" rowspan="3" style="">NUMBER OF DAYS WORKED</th> --}}
+                    <th scope="col" rowspan="3" style="">MONTHLY RATE</th>
                     <th scope="col" rowspan="3" style="border-right: 1.5px solid black;">BASIC PAY</th>
                     @if (strtoupper($payrollEmploymentStatus) != 'JOB ORDER' && strtoupper($payrollEmploymentStatus) != 'CONTRACT OF SERVICE')
                         <th scope="col"
@@ -634,16 +638,17 @@
                   
                 </thead>
                 <tr>
+                          {{-- 3 --}}
                   <td colspan="3" style="font-size: 8px; height:2px; padding:0px;"></td>
-                  <td style="border-right: 1.5px solid black; text-align:center; font-size: 8px; height:2px; padding:0px;">A</td>
+                  <td style="border-right: 1.5px solid black; text-align:center; font-size: 12px; height:2px; padding:0px;">A</td>
                   @if (strtoupper($payrollEmploymentStatus) != 'JOB ORDER' && strtoupper($payrollEmploymentStatus) != 'CONTRACT OF SERVICE')
-                    <td colspan="{{ $joAllowances->count() }}" style="font-size: 8px; height:2px; padding:0px;"></td>
-                    <td colspan="" style="text-align:center; font-size: 8px; height:2px; padding:0px;">B</td>
-                    <td colspan="" style="text-align:center; font-size: 8px; height:2px; padding:0px;">C = A + B</td>
+                    <td colspan="{{ $joAllowances->count() }}" style="font-size: 12px; height:2px; padding:0px;"></td>
+                    <td colspan="" style="text-align:center; font-size: 12px; height:2px; padding:0px;">B</td>
+                    <td colspan="" style="text-align:center; font-size: 12px; height:2px; padding:0px;">C = A + B</td>
                   @endif
                   <td colspan="{{ $joDeductions->count() + $gsisCol + $hdmfCol + $taxCol + $phicCol + $coopCol + $disallowanceCol - $inactiveDeduction->count() }}" style="font-size: 8px; height:2px; padding:0px;"></td>
-                  <td style="border-right: 1.5px solid black; text-align:center; font-size: 8px; height:2px; padding:0px;">D</td>
-                  <td style="border-right: 1.5px solid black; text-align:left; font-size: 8px; height:2px; padding-left:7px;"
+                  <td style="border-right: 1.5px solid black; text-align:center; font-size: 12px; height:2px; padding:0px;">D</td>
+                  <td style="border-right: 1.5px solid black; text-align:left; font-size: 12px; height:2px; padding-left:7px;"
                   {{-- @if($isLessFifteen == false) --}}
                   @if($isLessFifteen == 'all' || $isLessFifteen == 'full_month')
                   colspan="3"
@@ -673,25 +678,11 @@
                                 @if($office == $payrollUser->agencyUnit()->with('agencySection')->first()->toArray()['agency_section']['office'])
                                     
                                 <tr @if(($payrollUser->basic_pay - $payrollUser->total_user_deduction + $payrollUser->total_user_allowance < 5000) && $isLessFifteen == 'full_month' || ($payrollUser->basic_pay - $payrollUser->total_user_deduction + $payrollUser->total_user_allowance < 0) && ($isLessFifteen == 'less_fifteen_first_half' || $isLessFifteen == 'less_fifteen_second_half')) style="background-color: rgba(245, 94, 39, 0.172)" @endif>
-                                    <td scope="row" style="border-right: 1.5px solid black; font-size:8px; height:20px; text-align:left; position: relative;">
-                                      <span style="position:absolute; margin-left: -19px; margin-top:5px;">{{ $counter }}</span>{{ $payrollUser->full_name }}
+                                    <td scope="row" style="border-right: 1.5px solid black; font-size:18px; height:20px; text-align:left; position: relative;">
+                                      <span style="position:absolute; margin-left: -40px; margin-top:10px; font-size:16px;">{{ $counter }}</span>{{ $payrollUser->full_name }}
                                     </td>
-         
-                                    <td scope="row" style="font-size: 7px; text-align:left;">{{ $payrollUser->position }} / {{ $payrollUser->sg_jg }}-{{ $payrollUser->step }}</td>
-        
-                                    <td scope="row" style="text-align:center;">
-                                      @foreach ($payrollUser->attendances as $attendance)
-                                      @php
-                                        $attendance->start_date = \Carbon\Carbon::parse($attendance->start_date);
-                                        $attendance->end_date = \Carbon\Carbon::parse($attendance->end_date);
-                                      @endphp
-                                        @if ($attendance->start_date == $payrollDateFrom && $attendance->end_date == $payrollDateTo)
-                                          {{ (number_format((float)$attendance->days_rendered, 3)) }}
-                                        @endif
-                                      @endforeach
-                                    </td>
-                                    
-                                    {{-- <td scope="row">{{ number_format((float)$payrollUser->daily_rate, 2) }}</td> --}}
+                                    <td scope="row" style="font-size: 18px; text-align:left;">{{ $payrollUser->position }} / {{ $payrollUser->sg_jg }}-{{ $payrollUser->step }}</td>
+                                    <td scope="row">{{ number_format((float)$payrollUser->monthly_rate, 2) }}</td>
                                     <td scope="row" style="border-right: 1.5px solid black;"><strong>{{ number_format((float)$payrollUser->basic_pay, 2) }}</strong></td>
                                     {{-- <td scope="row" style="border-right: 1.5px solid black;">{{ number_format((float)$payrollUser->basic_pay, 2) }}</td> --}}
                                     
@@ -949,7 +940,7 @@
                                       <strong style="display:inline;">{{ number_format(bcdiv($payrollUser->second_half, 1, 2), 2) }}</strong>
                                     </div>
                                     @if($isLessFifteen == 'all' || $isLessFifteen == 'full_month')
-                                      <span style="position: absolute; display:inline; margin-left: 51px; margin-top:-2px; font-size:8px;" >{{ $counter }}</span>
+                                      <span style="position: absolute; display:inline; margin-left: 120px; margin-top:-10px; font-size:16px;" >{{ $counter }}</span>
                                     @endif
                                   </td>
                                   @endif
@@ -986,8 +977,8 @@
               
                     <tfoot class="fw-bold">
                       <tr>
-                        <td style="border-right: 1.5px solid black; text-align:left;font-size:10px;"><strong>TOTAL NET PAY</strong></td>
-                        <td colspan="2" style="font-size:8px; text-align:left;"><strong>{{ strtoupper(Helper::numberToWord(sprintf("%.2f", $payrollUserSection->total_net_pay))) }}</strong></td>
+                        <td style="border-right: 1.5px solid black; text-align:left;font-size:16px;"><strong>TOTAL NET PAY</strong></td>
+                        <td colspan="2" style="font-size:16px; text-align:left;"><strong>{{ strtoupper(Helper::numberToWord(sprintf("%.2f", $payrollUserSection->total_net_pay))) }}</strong></td>
                         <td style="border-right: 1.5px solid black; background-color: #b4c1e3f1;"><strong>{{ number_format((float)sprintf("%.2f", $payrollUserSection->total_basic_pay),2)}}</strong></td>
     
                         @if (strtoupper($payrollEmploymentStatus) != 'JOB ORDER' && strtoupper($payrollEmploymentStatus) != 'CONTRACT OF SERVICE')
@@ -1947,7 +1938,8 @@
               </tr>
 
               <tr>
-                <td style="padding:0px; margin-top: 0px; padding-left: 70px; vertical-align: text-top;" colspan="3" >
+                                                                                                            {{-- 3 --}}
+                <td style="padding:0px; margin-top: 0px; padding-left: 70px; vertical-align: text-top;" colspan="1" >
                   <div style="overflow:hidden;">
                   Date:___________________________
                   </div>
