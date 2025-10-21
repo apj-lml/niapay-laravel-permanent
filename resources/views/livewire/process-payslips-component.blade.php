@@ -35,7 +35,6 @@
     <div class="col-md-12">
       <div class="form-floating mb-3 wow fadeInUp">
           <select class="form-select @error('isLessFifteen') is-invalid @enderror" id="isLessFifteen" aria-label="isLessFifteen" wire:model="isLessFifteen">
-              {{-- <option value="all" >All</option> --}}
               <option value="full_month" selected>1 month</option>
               <option value="less_fifteen_first_half">Less than 15 (First Half)</option>
               <option value="less_fifteen_second_half">Less than 15 (Second Half)</option>

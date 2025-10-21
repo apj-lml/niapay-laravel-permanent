@@ -21,6 +21,7 @@ class DeductionUser extends Model
         'user_id',
         'deduction_id',
         'amount',
+        'application_no',
         'loan_granted',
         'start_term',
         'end_term',

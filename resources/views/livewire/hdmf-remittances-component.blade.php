@@ -8,8 +8,24 @@
       </div>
     </div>
       <div class="row wow fadeInUp" data-wow-delay="0.1s">
-  
-      <div class="col-md-4">
+        <div class="col-md-12">
+          <div class="form-floating mb-3 wow fadeInUp">
+              <select class="form-select @error('isLessFifteen') is-invalid @enderror" id="isLessFifteen" aria-label="isLessFifteen" wire:model="isLessFifteen">
+                  {{-- <option value="all" >All</option> --}}
+                  <option value="full_month" selected>1 month</option>
+
+                  <option value="less_fifteen_first_half">Less than 15 (First Half)</option>
+                  <option value="less_fifteen_second_half">Less than 15 (Second Half)</option>
+              </select>
+              <label for="floatingSelect">Select Period</label>
+              @error('isLessFifteen')
+                  <span class="invalid-feedback" role="alert">
+                      <strong>{{ $message }}</strong>
+                  </span>
+              @enderror
+          </div>
+      </div>
+      <div class="col-md-6">
           <div class="form-floating mb-3">
             <input type="date" class="form-control @error('payrollDateFrom') is-invalid @enderror" id="dateFromPayroll" placeholder="start date" wire:model="payrollDateFrom" max="2099-12-31">
             <label for="dateFromPayroll">Date From</label>
@@ -20,7 +36,7 @@
             @enderror
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="form-floating mb-3 wow fadeInUp" data-wow-delay="0.5s">
             <input type="date" class="form-control @error('payrollDateTo') is-invalid @enderror" id="dateToPayroll" placeholder="end date" wire:model="payrollDateTo" max="2099-12-31">
             <label for="dateToPayroll">Date To</label>
@@ -31,7 +47,7 @@
           @enderror
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-12">
             <div class="form-floating">
                 <select class="form-select js-choice @error('deduction') is-invalid @enderror" aria-label="section" wire:model="deduction">
                     @isset($listOfDeductions)
@@ -56,7 +72,8 @@
       </div>
 
       <div class="text-center mt-3">
-        <button class="btn btn-primary" wire:click="generateRemittanceTemplate()">Generate Remittance Template</button>
+        <button class="btn btn-primary" wire:click="generateRemittanceTemplate()">Generate Remittances</button>
+        <button class="btn btn-primary" wire:click="generateADA()">Generate ADA</button>
       </div>
   </div>
   

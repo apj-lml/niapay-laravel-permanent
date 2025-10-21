@@ -188,7 +188,7 @@
                 <tr class="gross-table-header">
                   <td>Period Covered</td>
                   <td>No. of Days Worked</td>
-                  <td>Daily Rate</td>
+                  <td>Monthly Rate</td>
                   <td>Basic Pay</td>
                 </tr>
                 @foreach ($employee->sortBy('period_covered_from') as $employeeData)
@@ -423,7 +423,6 @@
                         // Initialize the array element if it doesn't exist
                         $deductionTotals['HDMF'][strpos($deduction->npiad_description, 'HDMF') !== false ? $deduction->npiad_description : 'HDMF' . ' ' . $deduction->npiad_description] += $deduction->npiad_amount;
                         $overAllDeductionTotal += $deduction->npiad_amount;
-
                       }
 
                     }
@@ -690,12 +689,12 @@
                 <td style="vertical-align: bottom; text-align:center"><i>Certified correct:</i></td>
               </tr>
               <tr>
-                {{-- <td height="40" style="vertical-align: bottom;"><b>EDNA V. NANALES</b></td> --}}
-                <td height="40" style="vertical-align: bottom; text-align:center"><b>MARILYN D. BAUTISTA</b></td>
+                <td height="40" style="vertical-align: bottom; text-align:center"><b>RYAN A. RIVERA</b></td>
+                {{-- <td height="40" style="vertical-align: bottom; text-align:center"><b>MARILYN D. BAUTISTA</b></td> --}}
               </tr>
               <tr>
                 {{-- <td><i>Data Encoder</i></td> --}}
-                <td style="vertical-align: bottom; text-align:center"><i>Collection Representative A</i></td>
+                <td style="vertical-align: bottom; text-align:center"><i>Chief, Administrative and Finance Section</i></td>
               </tr>
             </table>
           </td>

@@ -18,7 +18,7 @@
 </style>
 @endpush
 <div class="modal fade" id="employeeProfileModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="employeeProfileModalLabel" aria-hidden="true" wire:ignore.self>
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content position-relative">
             <div class="modal-loading-overlay {{ $profileIsLoaded }}">
                 <div class="position-absolute top-50 start-50 translate-middle">

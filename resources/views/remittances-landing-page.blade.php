@@ -67,8 +67,11 @@
     <div class="container-fluid">
         <div class="card wow fadeInUp shadow-sm" data-wow-delay="0.1s">
             <div class="card-header bg-primary text-white fw-1">{{ __('Remittances') }}</div>
+            <small class="animated zoomIn m-2 text-danger">*This will generate current deductions as remittance.</small>
 
-            <div class="card-body">
+            <div class="card-body col-sm-5 mx-auto">
+
+                {{-- Include Livewire Component --}}
 
                 {{-- @livewire('modals.show-payslip-modal', ['userId' => request()->segment(2)]) --}}
                     

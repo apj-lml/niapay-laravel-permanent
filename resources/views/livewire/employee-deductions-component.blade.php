@@ -14,7 +14,7 @@
                 </button>
 
           </h2>
-          <div id="flush-collapseTwo" class="accordion-collapse collapse  show" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample" wire:ignore.self>
+          <div id="flush-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample" wire:ignore.self>
             <div class="accordion-body" >
                 <form wire:submit.prevent="addDeduction" class="needs-validation" novalidate >
                     @csrf
@@ -33,7 +33,7 @@
                                         @endforeach
                                     @endisset
                                 </select>
-                                <label for="floatingSelect">Deductions</label>
+                                <label for="floatingSelect">Deduction*</label>
                                 @error('deduction')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -62,7 +62,7 @@
                                     <option value="1" selected>Active</option>
                                     <option value="0">Inactive</option>
                                 </select>
-                                <label for="floatingSelect">Status</label>
+                                <label for="floatingSelect">Status*</label>
                                 @error('active_status')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -75,7 +75,7 @@
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="number" min="0" step=".01" class="form-control @error('amount') is-invalid @enderror" placeholder="Monthly Rate" wire:model.debounce.500="amount">
-                                <label for="monthly_rate">Amount</label>
+                                <label for="monthly_rate">Amount*</label>
                                 @error('amount')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -83,9 +83,23 @@
                                 @enderror
                             </div>
                         </div>
+                        @php
+                            $selectedDeduction = null;
+                            // dd($listOfDeductions);
+                            if ($listOfDeductions) {
+                                $selectedDeduction = $listOfDeductions->firstWhere('id', $this->deduction);
+                                if($selectedDeduction == null){
+                                    $selectedDeduction = (object)[
+                                        'deduction_group' => '',
+                                    ];
+                                }
+                            }
+
+                            // dd($selectedDeduction);
+                        @endphp
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <select class="form-select @error('remarks') is-invalid @enderror" aria-label="remarks" wire:model="remarks" @if($this->deduction != 5 || ($this->deduction == 5 && $this->active_status == 1)) disabled @endif>
+                                <select class="form-select @error('remarks') is-invalid @enderror" aria-label="remarks" wire:model="remarks" @if($selectedDeduction && $selectedDeduction->deduction_group != 'PHIC') disabled @endif>
                                     <option value="N/A" selected>N/A</option>
                                     <option value="Indigent family identified by DSWD">Indigent family identified by DSWD</option>
                                     <option value="Beneficiary of 4Ps">Beneficiary of 4Ps</option>
@@ -103,9 +117,20 @@
                         </div>
                     </div>
                     <hr>
-                    <p class="fw-bolder mb-1">Additional Details (Optional)</p>
+                    <p class="fw-bolder mb-1">Additional Details</p>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-8 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control @error('application_no') is-invalid @enderror" placeholder="Account No." wire:model.debounce.500="application_no"  @if($selectedDeduction && $selectedDeduction->deduction_group != 'HDMF') disabled @endif>
+                                <label for="application_no">Application / Account No.*</label>
+                                @error('application_no')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="form-floating">
                                 <input type="text" class="form-control @error('loan_granted') is-invalid @enderror" placeholder="Loan Granted" wire:model.debounce.500="loan_granted">
                                 <label for="loan_granted">Loan Granted</label>
@@ -116,6 +141,18 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="date" class="form-control @error('start_term') is-invalid @enderror" placeholder="Start Term" wire:model.debounce.500="start_term">
+                                <label for="start_term">Start Term</label>
+                                @error('start_term')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="date" class="form-control @error('end_term') is-invalid @enderror" placeholder="End Term" wire:model.debounce.500="end_term">
@@ -155,10 +192,11 @@
       <tr style="text-align: center;">
         <th scope="col">Type</th>
         <th scope="col">Deduction</th>
-        <th scope="col" style="width: 18%;">End Term <br> (if applicable)</th>
-        <th scope="col">Loan Granted <br> (if applicable)</th>
+        <th scope="col" style="width: 24%;">Term <br> (if applicable)</th>
+        <th scope="col">Application / Account No. <br> (if applicable)</th>
         <th scope="col">Amount</th>
         <th scope="col">Status</th>
+        <th scope="col">Remarks</th>
         <th scope="col">Controls</th>
       </tr>
     </thead>
@@ -169,12 +207,12 @@
         @endphp
 
         @if(isset($employee))
-            @forelse($employee->employeeDeductions as $deduction)
+            @forelse($employee->employeeDeductions->sortBy('deduction_group')->sortBy('description') as $deduction)
                 <tr class="">
                     <td scope="row" class="text-start">{{ $deduction->deduction_group }}</td>
                     <td scope="row" class="text-start">{{ $deduction->description }}</td>
-                    <td scope="row" class="text-start">{{ $deduction->pivot->end_term ? \Carbon\Carbon::parse($deduction->pivot->end_term)->format('F j, Y') : 'N/A' }}</td>
-                    <td scope="row">{{ number_format((float)$deduction->pivot->loan_granted, 2) }}</td>
+                    <td scope="row" class="text-start">{{ $deduction->pivot->start_term ? \Carbon\Carbon::parse($deduction->pivot->start_term)->format('F j, Y') : 'N/A' }} - {{ $deduction->pivot->end_term ? \Carbon\Carbon::parse($deduction->pivot->end_term)->format('F j, Y') : 'N/A' }}</td>
+                    <td scope="row">{{$deduction->pivot->application_no }}</td>
                     <td scope="row">{{ number_format((float)$deduction->pivot->amount, 2) }}</td>
                     <td scope="row" class="text-center">@if($deduction->pivot->active_status == 1) Active @else Inactive @endif
                         @if($deduction->pivot->active_status == 0 && $deduction->pivot->deduction_id == 5 && ($deduction->pivot->remarks != 'N/A' && $deduction->pivot->remarks != null))
@@ -183,6 +221,7 @@
                             </span>
                         @endif
                     </td>
+                    <td scope="row">{{ $deduction->pivot->remarks }}</td>
                     <td scope="row" class="text-center">
                         <button class="btn btn-sm btn-outline-secondary" wire:click="myEditMode(true, {{ $deduction->pivot->id }})" onclick="checkAccordion(this);">
                             <i class="bi bi-pencil"></i>

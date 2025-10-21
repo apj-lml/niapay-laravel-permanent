@@ -126,7 +126,7 @@ class HdmfEditUploadedDeductionComponent extends Component
                     $entry['deduction_id'] = $deductionId;
                 }
         
-            } elseif (Str::contains($row['excel_data']['scheme_desc'], '449')) {
+            } elseif (Str::contains($row['excel_data']['scheme_desc'], '449') || Str::contains($row['excel_data']['scheme_desc'], '470')) {
                 $typeOfHdmfDeduction = "HDMF_CAL";
                 $deductionId = 4;
         
@@ -170,27 +170,36 @@ class HdmfEditUploadedDeductionComponent extends Component
         });
     }
 
-    // This function checks if the value for a specific deduction type has changed compared to the current value in the database.
-    // It returns true if the value has changed, false otherwise.
-    public function validateValueWithChanges($id, $dedType, $value){
+    public function validateValueWithChanges($id, $dedType, $value)
+    {
         $user = User::find($id);
+    
         $deductionMap = [
             'HDMF_MPL' => 3,
             'HDMF_CAL' => 4,
         ];
+    
         $DbDeduction = $deductionMap[$dedType] ?? null;
-
-        $currentDeduction = $user->employeeDeductions()->where('deduction_id', $DbDeduction)->first();
-        if ($currentDeduction) {
-            $currentValue = $currentDeduction->pivot->amount;
-            if ($value != $currentValue) {
-                return true; // Value has changed
+        if (!$DbDeduction) {
+            return false; // invalid deduction type
+        }
+    
+        $currentDeductions = $user->employeeDeductions()
+            ->where('deduction_id', $DbDeduction)
+            ->get();
+    
+        if ($currentDeductions->isNotEmpty()) {
+            foreach ($currentDeductions as $deduction) {
+                $currentValue = $deduction->pivot->amount;
+                if ((float) $value != (float) $currentValue) {
+                    return true; // Found at least one different value
+                }
             }
+            return false; // All values match
         } else {
             // If no current deduction, any value > 0 is a change
             return $value > 0;
         }
-        return false; // No change
     }
 
 

@@ -95,11 +95,9 @@
                                 <td>{{ $finalToBeUpdated['excel_data']['name_ext'] }}</td>
                                 <td>{{ $finalToBeUpdated['excel_data']['scheme_desc'] }}</td>
                                 <td>
-                                    @if(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '448'))
+                                    @if(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '448') || Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '469'))
                                         MPL
-                                    @elseif(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '469'))
-                                        MPL
-                                    @elseif(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '449'))
+                                    @elseif(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '449') || Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '470'))
                                         Calamity Loan
                                     @else
                                         Unknown Loan Type
@@ -115,7 +113,7 @@
                                         if(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '448') || Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '469')){
                                             $isCheckedMPL = $isCheckedAmort;
                                             $deductionType = 'HDMF_MPL';
-                                        } elseif(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '449')) {
+                                        } elseif(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '449') || Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '470')) {
                                             $isCheckedCAL = $isCheckedAmort;
                                             $deductionType = 'HDMF_CAL';
                                         }
@@ -123,10 +121,9 @@
                                         $validatedAmortVal = false;
                                           
                                         // Validate HDMF_MPL value if it exists in the list to be saved
-                                          
-                                          if($isCheckedAmort > 0) {
-                                              $validatedAmortVal = $this->validateValueWithChanges($finalToBeUpdated['user_id'], $deductionType, $finalToBeUpdated['excel_data']['monthly_amo']);
-                                          }
+                                        if($isCheckedAmort > 0) {
+                                            $validatedAmortVal = $this->validateValueWithChanges($finalToBeUpdated['user_id'], $deductionType, $finalToBeUpdated['excel_data']['monthly_amo']);
+                                        }
 
                                       @endphp
                                       <input
@@ -139,7 +136,7 @@
                                                         {{ $finalToBeUpdated['excel_data']['loan_grante'] }},
                                                         '{{ $finalToBeUpdated['excel_data']['start_term'] }}',
                                                         '{{ $finalToBeUpdated['excel_data']['end_term'] }}')"
-                                          @if ($isCheckedMPL > 0) checked @endif>
+                                          @if ($isCheckedAmort > 0) checked @endif>
                                       <label class="form-check-label @if($validatedAmortVal) text-danger @endif" for="HDMF_MPLCheck{{ $counter }}">
                                           {{ number_format($finalToBeUpdated['excel_data']['monthly_amo'], 2) }}
                                       </label>

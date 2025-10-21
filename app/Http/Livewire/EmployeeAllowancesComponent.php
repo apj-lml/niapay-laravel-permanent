@@ -150,7 +150,7 @@ class EmployeeAllowancesComponent extends Component
 
         $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Successfully removed deduction!']);
 
-        $this->openEmployeeDeductionsTab($userId);
+        $this->openEmployeeAllowancesTab($userId);
 
         $this->emit('refreshProcessPayrollJobOrderComponent');
 

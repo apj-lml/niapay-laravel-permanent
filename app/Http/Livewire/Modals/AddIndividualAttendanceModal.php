@@ -34,7 +34,7 @@ class AddIndividualAttendanceModal extends Component
 
         if($isLessFifteen != 'full_month'){
 
-            $pera = (($this->firstHalfDaysRendered + $this->secondHalfDaysRendered) * 90.91);
+            $pera = (($this->daysRendered) * 90.91);
 
             if($pera > 1000){
                 $pera = 1000;

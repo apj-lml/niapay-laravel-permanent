@@ -17,6 +17,8 @@ class EmployeeDeductionsComponent extends Component
             $active_status = 1,
             $remarks = 'N/A',
             $loan_granted = null,
+            $application_no = null,
+            $start_term = null,
             $end_term = null,
             $listOfDeductions,
             $editMode = false,
@@ -27,13 +29,13 @@ class EmployeeDeductionsComponent extends Component
     {
         $this->employee = User::find($userId);
 
-            $this->listOfDeductions = Deduction::
-                // where('status', 'ACTIVE')
-                orderBy('deduction_group')
-                ->orderBy('description')
-                ->get();
+        $this->listOfDeductions = Deduction::
+            // where('status', 'ACTIVE')
+            orderBy('deduction_group')
+            ->orderBy('description')
+            ->get();
 
-            $this->deduction = $this->listOfDeductions[0]['id'];
+        $this->deduction = $this->listOfDeductions[0]['id'];
 
         $this->userId = $userId;
     }
@@ -57,11 +59,13 @@ class EmployeeDeductionsComponent extends Component
                 'user_id' => $this->employee->id,
                 'deduction_id' => $this->deduction,
                 'amount' => $this->amount,
+                'application_no' => $this->application_no,
+                'loan_granted' => $this->loan_granted ?: null,
+                'start_term' => $this->start_term ?: null,
+                'end_term' => $this->end_term ?: null,
                 'frequency' => $this->frequency,
                 'active_status' => $this->active_status,
                 'remarks' => $this->remarks,
-                'loan_granted' => $this->loan_granted ?: null,
-                'end_term' => $this->end_term ?: null
             ]);
 
             $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Deduction successfully added!']);
@@ -89,7 +93,9 @@ class EmployeeDeductionsComponent extends Component
             $this->frequency = $deductionEmployee->pivot->frequency;
 
             $this->remarks = $deductionEmployee->pivot->remarks;
+            $this->application_no = $deductionEmployee->pivot->application_no;
             $this->loan_granted = $deductionEmployee->pivot->loan_granted;
+            $this->start_term = $deductionEmployee->pivot->start_term;
             $this->end_term = $deductionEmployee->pivot->end_term;
             // dd($deductionEmployee->pivot->remarks);
         }
@@ -119,6 +125,8 @@ class EmployeeDeductionsComponent extends Component
         $selectDeductionUser->remarks = $this->remarks;
         $selectDeductionUser->loan_granted = $this->loan_granted;
         $selectDeductionUser->end_term = $this->end_term;
+        $selectDeductionUser->start_term = $this->start_term;
+        $selectDeductionUser->application_no = $this->application_no;
 
         $selectDeductionUser->save();
 
@@ -130,6 +138,8 @@ class EmployeeDeductionsComponent extends Component
         $this->remarks = 'N/A';
         $this->loan_granted = "";
         $this->end_term = "";
+        $this->application_no = "";
+
         
         $this->employee = User::find($this->userId);
 
@@ -149,6 +159,9 @@ class EmployeeDeductionsComponent extends Component
         $this->remarks = 'N/A';
         $this->loan_granted = "";
         $this->end_term = "";
+        $this->start_term = "";
+        $this->application_no = "";
+        
 
     }
 

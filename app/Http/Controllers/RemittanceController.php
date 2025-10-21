@@ -12,18 +12,21 @@ class RemittanceController extends Controller
 {
     public function download($filename)
     {
-        if (Str::contains($filename, 'hdmf')) {
+        if (Str::contains($filename, 'hdmf_remittance')) {
             $filePath = storage_path('app/hdmf_reports/' . $filename);
-        } elseif (Str::contains($filename, 'gsis')) {
+        } elseif (Str::contains($filename, 'gsis_remittance') || Str::contains($filename, 'Bundle')) {
             $filePath = storage_path('app/gsis_reports/' . $filename);
-        } elseif (Str::contains($filename, 'whtax')) {
+        } elseif (Str::contains($filename, 'whtax_remittance')) {
             $filePath = storage_path('app/bir_reports/' . $filename);
+        } elseif (Str::contains($filename, 'ADA')) {
+            $filePath = storage_path('app/ada_reports/' . $filename);
         }
 
         if (!file_exists($filePath)) {
             abort(404, 'File not found.');
+        }else{
+            return response()->download($filePath)->deleteFileAfterSend(false);
         }
 
-        return response()->download($filePath)->deleteFileAfterSend(false);
     }
 }

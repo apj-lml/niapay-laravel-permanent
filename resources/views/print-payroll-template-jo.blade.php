@@ -679,7 +679,7 @@
                                     
                                 <tr @if(($payrollUser->basic_pay - $payrollUser->total_user_deduction + $payrollUser->total_user_allowance < 5000) && $isLessFifteen == 'full_month' || ($payrollUser->basic_pay - $payrollUser->total_user_deduction + $payrollUser->total_user_allowance < 0) && ($isLessFifteen == 'less_fifteen_first_half' || $isLessFifteen == 'less_fifteen_second_half')) style="background-color: rgba(245, 94, 39, 0.172)" @endif>
                                     <td scope="row" style="border-right: 1.5px solid black; font-size:18px; height:20px; text-align:left; position: relative;">
-                                      <span style="position:absolute; margin-left: -40px; margin-top:10px; font-size:16px;">{{ $counter }}</span>{{ $payrollUser->full_name }}
+                                      <span style="position:absolute; margin-left: -40px; margin-top:15px; font-size:20px;">{{ $counter }}</span>{{ $payrollUser->full_name }}
                                     </td>
                                     <td scope="row" style="font-size: 18px; text-align:left;">{{ $payrollUser->position }} / {{ $payrollUser->sg_jg }}-{{ $payrollUser->step }}</td>
                                     <td scope="row">{{ number_format((float)$payrollUser->monthly_rate, 2) }}</td>
@@ -693,9 +693,9 @@
                                             @for ($y = 0; $y < $joAllowances->countBy('allowance_group')['PERA']; $y++)
                                                 <td>
                                                     @foreach ($payrollUser->user_allowances['PERA'] as $pera)
-                                                        @if ($pera['sort_position'] == $y + 1)
+                                                        {{-- @if ($pera['sort_position'] == $y + 1) --}}
                                                             {{ number_format((float) $pera['pivot']['amount'], 2) }}
-                                                        @endif
+                                                        {{-- @endif --}}
                                                     @endforeach
                                                 </td>
                                             @endfor
@@ -711,9 +711,9 @@
                                             @for ($y = 0; $y < $joAllowances->countBy('allowance_group')['MEDICAL']; $y++)
                                                 <td>
                                                     @foreach ($payrollUser->user_allowances['MEDICAL'] as $medical)
-                                                        @if ($medical['sort_position'] == $y + 1)
+                                                        {{-- @if ($medical['sort_position'] == $y + 1) --}}
                                                             {{ number_format((float) $medical['pivot']['amount'], 2) }}
-                                                        @endif
+                                                        {{-- @endif --}}
                                                     @endforeach
                                                 </td>
                                             @endfor
@@ -729,9 +729,9 @@
                                             @for ($y = 0; $y < $joAllowances->countBy('allowance_group')['MEAL']; $y++)
                                                 <td>
                                                     @foreach ($payrollUser->user_allowances['MEAL'] as $meal)
-                                                        @if ($meal['sort_position'] == $y + 1)
+                                                        {{-- @if ($meal['sort_position'] == $y + 1) --}}
                                                             {{ number_format((float) $meal['pivot']['amount'], 2) }}
-                                                        @endif
+                                                        {{-- @endif --}}
                                                     @endforeach
                                                 </td>
                                             @endfor
@@ -747,9 +747,9 @@
                                             @for ($y = 0; $y < $joAllowances->countBy('allowance_group')['CHILD']; $y++)
                                                 <td>
                                                     @foreach ($payrollUser->user_allowances['CHILD'] as $child)
-                                                        @if ($child['sort_position'] == $y + 1)
+                                                        {{-- @if ($child['sort_position'] == $y + 1) --}}
                                                             {{ number_format((float) $child['pivot']['amount'], 2) }}
-                                                        @endif
+                                                        {{-- @endif --}}
                                                     @endforeach
                                                 </td>
                                             @endfor
@@ -926,7 +926,7 @@
                                       <strong>{{ number_format(bcdiv(round($payrollUser->first_half + $payrollUser->second_half, 5), 1, 2), 2) }}</strong>
                                     </div>
                                     @if($isLessFifteen != 'all' && $isLessFifteen != 'full_month')
-                                      <span style="position: absolute; display:inline; margin-left: 51px; margin-top:-2px; font-size:8px;" >{{ $counter }}</span>
+                                      <span style="position: absolute; display:inline; margin-left: 120px; margin-top:-6px; font-size:20px;" >{{ $counter }}</span>
                                     @endif
                                   </td>
 
@@ -940,7 +940,7 @@
                                       <strong style="display:inline;">{{ number_format(bcdiv($payrollUser->second_half, 1, 2), 2) }}</strong>
                                     </div>
                                     @if($isLessFifteen == 'all' || $isLessFifteen == 'full_month')
-                                      <span style="position: absolute; display:inline; margin-left: 120px; margin-top:-10px; font-size:16px;" >{{ $counter }}</span>
+                                      <span style="position: absolute; display:inline; margin-left: 120px; margin-top:-10px; font-size:20px;" >{{ $counter }}</span>
                                     @endif
                                   </td>
                                   @endif
@@ -1010,9 +1010,9 @@
                               <td style="background-color: #b4c1e3f1;">
                                 @foreach ($payrollUserSection->grand_total_allowance as $grandTotalAllowance)
                                   @if($grandTotalAllowance['allowance_group'] == 'MEDICAL')
-                                    @if ($grandTotalAllowance['sort_position'] == $y+1)
+                                    {{-- @if ($grandTotalAllowance['sort_position'] == $y+1) --}}
                                       <strong>{{ number_format((float)$grandTotalAllowance['total'],2) }}</strong>
-                                    @endif
+                                    {{-- @endif --}}
                                   @endif
                                 @endforeach
                               </td>
@@ -1031,9 +1031,9 @@
                               <td style="background-color: #b4c1e3f1;">
                                 @foreach ($payrollUserSection->grand_total_allowance as $grandTotalAllowance)
                                   @if($grandTotalAllowance['allowance_group'] == 'MEAL')
-                                    @if ($grandTotalAllowance['sort_position'] == $y+1)
+                                    {{-- @if ($grandTotalAllowance['sort_position'] == $y+1) --}}
                                       <strong>{{ number_format((float)$grandTotalAllowance['total'],2) }}</strong>
-                                    @endif
+                                    {{-- @endif --}}
                                   @endif
                                 @endforeach
                               </td>
@@ -1052,9 +1052,9 @@
                               <td style="background-color: #b4c1e3f1;">
                                 @foreach ($payrollUserSection->grand_total_allowance as $grandTotalAllowance)
                                   @if($grandTotalAllowance['allowance_group'] == 'CHILD')
-                                    @if ($grandTotalAllowance['sort_position'] == $y+1)
+                                    {{-- @if ($grandTotalAllowance['sort_position'] == $y+1) --}}
                                       <strong>{{ number_format((float)$grandTotalAllowance['total'],2) }}</strong>
-                                    @endif
+                                    {{-- @endif --}}
                                   @endif
                                 @endforeach
                               </td>

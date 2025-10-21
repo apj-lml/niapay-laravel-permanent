@@ -479,6 +479,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                                     foreach ($checkDedDupe as $deduction) {
                                                         $deduction->update([
                                                             'npiad_amount' => $user_deduction->pivot->amount,
+                                                            'npiad_sort_position' => $user_deduction->sort_position,
                                                             'updated_at' => now()
                                                         ]);
                                                     }
@@ -532,6 +533,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                                         foreach ($checkDedDupe as $allowance) {
                                                             $allowance->update([
                                                                 'npiad_amount' => $user_allowance->pivot->amount,
+                                                                'npiad_sort_position' => $user_allowance->sort_position,
                                                                 'updated_at' => now()
                                                             ]);
                                                         }
@@ -619,9 +621,10 @@ class ProcessPayrollJobOrderComponent extends Component
                     $query->where('include_to_payroll', 1)
                           ->where('is_active', 1);
         
-                    if ($this->isLessFifteen != 'full_month') {
+                    // if ($this->isLessFifteen != 'full_month') {
+                    //     dd($inputIsLessFifteen);
                         $query->where('is_less_fifteen', $inputIsLessFifteen);
-                    }
+                    // }
         
                     if ($filterSection !== null) {
                         $query->whereHas('agencyUnit.agencySection', function ($subQuery) use ($filterSection) {
@@ -752,14 +755,15 @@ class ProcessPayrollJobOrderComponent extends Component
                         if($attendances->isNotEmpty()){
      
                             // $JOUser->basic_pay = bcdiv((float)((float)$JOUser->daily_rate) * ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->days_rendered), 1, 2);
-                            $JOUser->basic_pay = bcdiv(((float)$JOUser->monthly_rate), 1, 2);
-                            $JOUser->daily_rate = round($JOUser->basic_pay / 22, 2); // Assuming 22 working days in a month
+                            // $JOUser->basic_pay = bcdiv(((float)$JOUser->monthly_rate), 1, 2);
+                            $JOUser->basic_pay = $JOUser->monthly_rate;
+                            $JOUser->daily_rate = $JOUser->monthly_rate / 22; // Assuming 22 working days in a month
                             $days_rendered = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->days_rendered);
                             $days_rendered_first_half = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->first_half);
                             $days_rendered_second_half = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->second_half);
 
                             //test
-                            $JOUser->basic_pay = round($JOUser->daily_rate * $days_rendered);
+                            $JOUser->basic_pay = round(bcdiv((float)($JOUser->daily_rate * $days_rendered), 1, 2));
 
                             // Setting User Allowances
                             if(!$JOUser->employeeAllowances->isEmpty()){

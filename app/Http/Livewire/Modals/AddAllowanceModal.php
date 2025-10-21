@@ -62,7 +62,7 @@ class AddAllowanceModal extends Component
         // $this->allowanceId = $agencyAllowance->id;
 
         $this->allowanceDescription = $allowance->description;
-        $this->accountTitle = $allowance->allowance_title;
+        $this->accountTitle = $allowance->account_title;
         $this->allowanceGroup = $allowance->allowance_group;
         $this->allowanceFor = $allowance->allowance_for;
         $this->allowanceId = $allowance->id;
@@ -109,8 +109,8 @@ class AddAllowanceModal extends Component
         }
         // dd($this->agencySectionId);
         Allowance::updateOrCreate(['id'=>$this->allowanceId], [
-            'description' => strtoupper($this->allowanceDescription),
-            'account_title' => strtoupper($this->accountTitle),
+            'description' => ($this->allowanceDescription),
+            'account_title' => ($this->accountTitle),
             'allowance_type' => strtoupper(str_replace(' ', '_', $this->allowanceDescription)),
             'allowance_group' => strtoupper(str_replace(' ', '_', $this->allowanceGroup)),
             'allowance_for' => $this->allowanceFor,
