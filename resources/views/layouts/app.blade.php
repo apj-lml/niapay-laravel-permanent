@@ -66,7 +66,7 @@
 </head>
 
 <body>
-    <div class="@if(Route::is('process-payroll-jo') || Route::is('year-end-bonus')) container-fluid @else container-xxl @endif bg-white p-0">
+    <div class="@if(Route::is('process-payroll-jo') || Route::is('year-end-bonus') || Route::is('edit-uploaded-deductions-landing-page')) container-fluid @else container-xxl @endif bg-white p-0">
         <!-- Spinner Start -->
         <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
@@ -77,7 +77,7 @@
 
 
         <!-- Navbar & Hero Start -->
-        <div class="@if(Route::is('process-payroll-jo') || Route::is('year-end-bonus')) container-fluid @else container-xxl @endif position-relative p-0">
+        <div class="@if(Route::is('process-payroll-jo') || Route::is('year-end-bonus') || Route::is('edit-uploaded-deductions-landing-page')) container-fluid @else container-xxl @endif position-relative p-0">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0" style="z-index: 1000;">
                 <a href="/" class="navbar-brand p-0">
                     <h1 class="m-0">NIAPay</h1>
@@ -125,7 +125,8 @@
                                 <a href="{{ route('year-end-bonus-landing-page') }}" class="dropdown-item">Year-end Bonus & Cash Gift</a>
                                 <a href="{{ route('cna-landing-page') }}" class="dropdown-item">Collective Negotiation Agreement (CNA) Incentive</a>
                                 <a href="{{ route('pei-landing-page') }}" class="dropdown-item">Productive Enhancement Incentive (PEI)</a>
-                                <a href="{{ route('ua-landing-page') }}" class="dropdown-item">Uniform Allowance</a>
+                                <a href="{{ route('ua-landing-page') }}" class="dropdown-item">Uniform / Clothing Allowance (UCA)</a>
+                                <a href="{{ route('findes-generator-landing-page') }}" class="dropdown-item">Generate FINDES</a>
                                 <a href="{{ route('payroll-finder') }}" class="dropdown-item">Payroll Finder</a>
                             </div>
                         </div>
@@ -147,10 +148,6 @@
                                 <a href="{{ route('/change-password') }}" class="dropdown-item">Change Password</a>
                                 <a href="{{ route('/list-of-admin') }}" class="dropdown-item">List of Admins</a>
                                 <a href="{{ route('/system-settings') }}" class="dropdown-item">System Settings</a>
-                                {{-- <a href="quote.html" class="dropdown-item">Free Quote</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
-                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                                <a href="404.html" class="dropdown-item">404 Page</a> --}}
                             </div>
                         </div>
                         @endauth

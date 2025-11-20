@@ -216,23 +216,23 @@ class UniformAllowanceComponent extends Component
 
         }
 
-    //#toolbar=0
-    try{
-        $oMerger->merge();
-        
-        // Generate a unique filename for the merged PDF
-        $filename = 'UNIFORMALLOWANCE_'. $this->year . '.pdf';
-        // Save the merged PDF to storage/app/payrolls
-        $path = storage_path('app/uniform_allowance/' . $filename);
-        file_put_contents($path, $oMerger->output());
-        }catch (\Exception $e) {
-            // Handle the case where there are no PDFs to merge
-            // For example, you can log an error message or perform other actions
-            // You can access the exception message using $e->getMessage()
-            // Example: Log::error('Failed to merge PDFs: ' . $e->getMessage());
-        }
+        //#toolbar=0
+        try{
+            $oMerger->merge();
+            
+            // Generate a unique filename for the merged PDF
+            $filename = 'UNIFORMALLOWANCE_'. $this->year . '.pdf';
+            // Save the merged PDF to storage/app/payrolls
+            $path = storage_path('app/uniform_allowance/' . $filename);
+            file_put_contents($path, $oMerger->output());
+            }catch (\Exception $e) {
+                // Handle the case where there are no PDFs to merge
+                // For example, you can log an error message or perform other actions
+                // You can access the exception message using $e->getMessage()
+                // Example: Log::error('Failed to merge PDFs: ' . $e->getMessage());
+            }
 
-    $this->dispatchBrowserEvent('previewUniformAllowancePdf', ['mypdf' => base64_encode($oMerger->output()), 'toolbar' => '']);
+        $this->dispatchBrowserEvent('previewUniformAllowancePdf', ['mypdf' => base64_encode($oMerger->output()), 'toolbar' => '']);
                                     
     }
 

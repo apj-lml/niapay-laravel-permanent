@@ -39,6 +39,7 @@ class User extends Authenticatable
         'daily_rate',
         'monthly_rate',
         'fund_id',
+        'atm_no',
         'tin',
         'phic_no',
         'hdmf',

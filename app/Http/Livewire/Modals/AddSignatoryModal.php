@@ -9,11 +9,11 @@ use Livewire\Component;
 class AddSignatoryModal extends Component
 {
 
-    protected $listeners = ['openEditSignatoryModal'];
+    protected $listeners = ['openEditSignatoryModal', 'resetFields'];
 
     public $signatoryName,
             $position,
-            $type = 'Box A [Preparer]',
+            $type,
             $signatoryId,
             $section = 1,
             $office = 'PIMO',
@@ -32,24 +32,62 @@ class AddSignatoryModal extends Component
                 'type' => 'required'
             ]);
             }
+
+    public function openAddSignatoryModal()
+        {
+            $this->resetFields(); // clears all variables
+        }
+
+    public function resetFields()
+        {
+            $this->signatoryId = null;
+            $this->signatoryName = '';
+            $this->position = '';
+            $this->section = 1;
+            $this->office = 'PIMO';
+            $this->type = '';
+            $this->signatoryDocu = 'wages';
+            $this->isEditMode = false;
+        }
+
+    public function getTypeOptionsProperty()
+        {
+            return match($this->signatoryDocu) {
+                'wages' => [
+                    'Box A [Preparer]',
+                    'Box B [Section Chief Concerned]',
+                    'Box C [Finance Unit Head]',
+                    'Box D [Approver]',
+                    'Box E [Certified]',
+                ],
+                'other_bonus' => [
+                    'Box A [Preparer]',
+                    'Box B [Certified]',
+                    'Box C [Approved for Payment]',
+                    'Box D [Certified]',
+                ],
+                default => [],
+            };
+        }
+
     public function openEditSignatoryModal($signatoryId){
+        // $this->resetFields();
+
         $signatory = Signatory::find($signatoryId);
         $this->signatoryName = $signatory->name;
         $this->position = $signatory->position;
         $this->section = $signatory->agency_section_id;
         $this->office = $signatory->office;
         $this->type = $signatory->type;
-        $this->signatoryDocu = $signatory->signatoryDocu;
+        $this->signatoryDocu = $signatory->docu;
 
         $this->signatoryId = $signatory->id;
 
         $this->isEditMode = true;
     }
-        
 
     public function addSignatoryForm()
     {
-        
         $this->validate([
             'signatoryName' => 'required',
             'position' => 'required',

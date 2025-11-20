@@ -1,7 +1,7 @@
 <div class="p-2">
+
   <div class="row">
     <div class="col-md-6">
-      {{-- <button class="btn btn-primary rounded-pill text-white py-2 px-4 mb-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addSignatoryModal"><i class="bi bi-plus-lg"></i> Add Signatory</button> --}}
     </div>
     <div class="col-md-6">
       <div class="input-group mb-3">

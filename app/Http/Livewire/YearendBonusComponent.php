@@ -54,7 +54,7 @@ class YearendBonusComponent extends Component
                         'emp_id' => $user->employee_id,
                         'name' => $user->full_name,
                         'position_title' => $user->position,
-                        'daily_rate' => $user->monthly_rate / 22,
+                        'daily_rate' => null,
                         'monthly_rate' => $user->monthly_rate,
                         'year_end_bonus' => $user->monthly_rate,
                         'cash_gift' => bcdiv((float) $cleanedCg, 1, 2),
@@ -99,10 +99,14 @@ class YearendBonusComponent extends Component
                     });
                 }, 'users' => function ($query) use ($fund){
                     $query->where('fund_id', '=', $fund->id); 
-                    $query->where('employment_status', '=', 'PERMANENT'); 
-                    $query->orWhere('employment_status', '=', 'COTERMINOUS'); 
+                    // $query->where('employment_status', '=', 'PERMANENT'); 
+                    // $query->orWhere('employment_status', '=', 'COTERMINOUS'); 
+                    $query->where(function ($query) {
+                        $query->where('employment_status', 'PERMANENT')
+                            ->orWhere('employment_status', 'COTERMINOUS');
+                    });
                     $query->where('is_active', '=', 1); 
-                    $query->where('include_to_payroll', '=', 1);
+                    // $query->where('include_to_payroll', '=', 1);
 
                 }, 'users.yebs' => function ($query){
                     $query->where('year', '=', $this->year); // Filter yebs by year 2024

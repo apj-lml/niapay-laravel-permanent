@@ -133,15 +133,15 @@
                                                         <th scope="col" rowspan="2" style="width:2%"
                                                             class="text-center align-middle">No.
                                                         </th>
-                                                        <th scope="col" rowspan="2" style="width:15%"
+                                                        <th scope="col" rowspan="2" style="width:10%"
                                                             class="text-center align-middle ">Name
                                                         </th>
                                                         <th scope="col" rowspan="2"
-                                                            class="text-center align-middle" style="width:10%">Position Title/ JG / Step
+                                                            class="text-center align-middle" style="width:15%">Position Title/ JG / Step
                                                         </th>
-                                                        <th scope="col" rowspan="2"
+                                                        {{-- <th scope="col" rowspan="2"
                                                             class="text-center align-middle" style="width:5%">Daily Rate
-                                                        </th>
+                                                        </th> --}}
                                                         <th scope="col" rowspan="2"
                                                             class="text-center align-middle" style="width:5%">Monthly Rate
                                                         </th>
@@ -183,8 +183,10 @@
                                                     @php
                                                         $payrollUsers = $payrollFund->users()
                                                             ->with('agencyUnit.agencySection') // Eager load the related agencyUnit and agencySection
-                                                            ->where('employment_status', 'PERMANENT') // Filter by employment_status
-                                                            ->orWhere('employment_status', 'COTERMINOUS') // Filter by employment_status
+                                                            ->where(function ($query) {
+                                                                $query->where('employment_status', 'PERMANENT')
+                                                                    ->orWhere('employment_status', 'COTERMINOUS');
+                                                                })
                                                             ->where('is_active', 1) // Filter by active users
                                                             ->get()
                                                             ->sortBy('full_name'); // Sort by full name
@@ -245,13 +247,13 @@
                                                                     {{ $payrollUser->sg_jg }}</td>
                                                                 <td scope="row"
                                                                     class="text-center align-middle p-0">
-                                                                    {{ number_format((float) $payrollUser->daily_rate, 2) }}
+                                                                    {{ number_format((float) $payrollUser->monthly_rate, 2) }}
                                                                 </td>
-                                                                <td scope="row"
+                                                                {{-- <td scope="row"
                                                                     class="text-center align-middle p-0">
                                                                     {{ number_format(bcdiv((float) $payrollUser->daily_rate * 22, 1, 2), 2) }}
 
-                                                                </td>
+                                                                </td> --}}
                                                                 <td scope="row"
                                                                     class="text-center align-middle p-0">
                                                                     @livewire('yearend-bonus-input-component', [
@@ -289,7 +291,7 @@
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td colspan=5 style="text-align: right;"><b>TOTAL</b></td>
+                                                        <td colspan="4" style="text-align: right;"><b>TOTAL</b></td>
                                                         <td><b>{{ number_format(bcdiv((float) $total_year_end_bonus, 1, 2), 2) }}</b></td>
                                                         <td><b>{{ number_format(bcdiv((float) $total_cash_gift, 1, 2), 2) }}</b></td>
                                                         <td><b>{{ number_format(bcdiv((float) $total_year_end_bonus + $total_cash_gift, 1, 2), 2) }}</b></td>

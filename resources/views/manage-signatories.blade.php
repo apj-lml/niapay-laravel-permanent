@@ -38,7 +38,12 @@
 
 <div class="container-fluid col-sm-12 mb-3">
 
-    <button class="btn btn-primary rounded-pill text-white py-2 px-4 mb-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addSignatoryModal"><i class="bi bi-plus-lg"></i> Add Signatory</button>
+    <button class="btn btn-primary rounded-pill text-white py-2 px-4 mb-3 shadow-sm" 
+        data-bs-toggle="modal" 
+        data-bs-target="#addSignatoryModal" 
+        wire:click="$emit('openAddSignatoryModal', '{{ $signatoryDocu ?? 'wages' }}')">
+        <i class="bi bi-plus-lg"></i> Add Signatory
+    </button>
 
     <div class="card wow fadeInUp shadow-sm" data-wow-delay="0.1s">
         <div class="card-header bg-primary text-white fw-1">{{ __('Manage Signatories for Payroll') }}</div>
@@ -53,16 +58,24 @@
 
 <div class="container-fluid col-sm-12">
     <div class="card wow fadeInUp shadow-sm" data-wow-delay="0.1s">
-        <div class="card-header bg-primary text-white fw-1">{{ __('Manage Signatories for Year-end Bonus & Cash Gift') }}</div>
+        <div class="card-header bg-primary text-white fw-1">{{ __('Manage Signatories for Other Bonuses') }}</div>
 
         <div class="card-body">
                 
-            @livewire('manage-signatory-component', ["signatoryDocu" => "yeb"])
+            @livewire('manage-signatory-component', ["signatoryDocu" => "other_bonus"])
 
         </div>
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const addModal = document.getElementById('addSignatoryModal');
+        addModal.addEventListener('show.bs.modal', function () {
+            Livewire.emit('resetFields');
+        });
+    });
+</script>
 
 
 

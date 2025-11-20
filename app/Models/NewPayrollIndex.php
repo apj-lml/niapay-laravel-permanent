@@ -41,9 +41,13 @@ class NewPayrollIndex extends Model
         'phic_no',
         'hdmf',
         'days_rendered',
+        'first_half_basic_pay',
+        'second_half_basic_pay',
         'basic_pay',
         'funding_charges',
         'fund_acct_no',
+        'atm_no',
+        'is_less_fifteen',
         'filename',
             ];
 

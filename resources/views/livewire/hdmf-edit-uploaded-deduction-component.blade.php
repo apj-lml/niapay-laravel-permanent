@@ -107,7 +107,8 @@
                                 <td>
                                     <div class="form-check">
                                       @php
-                                        $isCheckedAmort = collect($listTobeSaved)->firstWhere('user_id', $finalToBeUpdated['user_id'])['monthly_amortization'] ?? 0;
+                                        // $isCheckedAmort = collect($listTobeSaved)->firstWhere('user_id', $finalToBeUpdated['user_id'])['monthly_amortization'] ?? 0;
+                                        $isCheckedAmort = collect($listTobeSaved)->firstWhere('application_no', $finalToBeUpdated['excel_data']['applno'])['monthly_amortization'] ?? 0;
                                         $deductionType = '';
 
                                         if(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '448') || Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '469')){
@@ -129,7 +130,7 @@
                                       <input
                                           type="checkbox"
                                           class="form-check-input"
-                                          id="HDMF_MPLCheck{{ $counter }}"
+                                          id="HDMF_{{ $deductionType }}_{{ $counter }}"
                                           wire:change="updateListToBeSaved({{ $finalToBeUpdated['user_id'] }},
                                                         $event.target.checked ? {{ $finalToBeUpdated['excel_data']['monthly_amo'] }} : 0,
                                                         {{ $finalToBeUpdated['excel_data']['applno'] }},
@@ -137,7 +138,7 @@
                                                         '{{ $finalToBeUpdated['excel_data']['start_term'] }}',
                                                         '{{ $finalToBeUpdated['excel_data']['end_term'] }}')"
                                           @if ($isCheckedAmort > 0) checked @endif>
-                                      <label class="form-check-label @if($validatedAmortVal) text-danger @endif" for="HDMF_MPLCheck{{ $counter }}">
+                                      <label class="form-check-label @if($validatedAmortVal) text-danger @endif" for="HDMF_{{ $deductionType }}_{{ $counter }}">
                                           {{ number_format($finalToBeUpdated['excel_data']['monthly_amo'], 2) }}
                                       </label>
                                     </div>
@@ -176,26 +177,8 @@
                             <th>End Term</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        
+                    <tbody>                      
                         @forelse ($listOfToBeNotUpdated as $toBeNotUpdated)
-                        {{-- @php
-                            $amounts = $toBeNotUpdated->employeeDeductions
-                                ->whereIn('id', [3, 4])
-                                ->map(function ($deduction) {
-                                    return $deduction->pivot->amount ?? '';
-                                });
-                            $descriptions = $toBeNotUpdated->employeeDeductions
-                                ->whereIn('id', [3, 4])
-                                ->map(function ($deduction) {
-                                    return $deduction->description ?? '';
-                                });
-                            $endTerms = $toBeNotUpdated->employeeDeductions
-                                ->whereIn('id', [3, 4])
-                                ->map(function ($deduction) {
-                                    return $deduction->pivot->end_term ?? '';
-                                });
-                        @endphp --}}
 
                         @php
                             $amounts = collect($toBeNotUpdated['employeeDeductions'] ?? [])

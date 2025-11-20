@@ -72,7 +72,7 @@ class EmployeeDeductionsComponent extends Component
 
             $this->openEmployeeDeductionsTab($this->employee->id);
 
-            $this->reset('amount', 'remarks', 'loan_granted', 'end_term');
+            $this->reset('amount', 'remarks', 'application_no', 'loan_granted', 'start_term', 'end_term');
 
             $this->emit('refreshProcessPayrollJobOrderComponent');
 
@@ -133,7 +133,7 @@ class EmployeeDeductionsComponent extends Component
         $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Successfully updated deduction!']);
         $this->editMode = false;
         $this->amount = '';
-        $this->deduction = 28;
+        $this->deduction = 6;
         $this->active_status = 1;
         $this->remarks = 'N/A';
         $this->loan_granted = "";

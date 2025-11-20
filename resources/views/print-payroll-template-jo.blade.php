@@ -1775,10 +1775,10 @@
                     {{-- OBLIGATION CIB,LCCA --}}
                     <tr>
                       <td>
-                        <strong>Cash in Bank - Local Currency, Current Account</strong>
+                        <strong>Due to Officers & Employees</strong>
                       </td>
                       <td style="text-align: right;">
-                        <strong>111 (1-01-02-020)</strong>
+                        <strong>403 (2-01-01-020)</strong>
                       </td>
                       <td>
                         &nbsp;

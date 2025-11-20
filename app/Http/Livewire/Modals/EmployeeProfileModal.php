@@ -51,6 +51,7 @@ class EmployeeProfileModal extends Component
         'employeeProfile.daily_rate' => 'nullable',
         'employeeProfile.monthly_rate' => 'nullable',
         'employeeProfile.fund_id' => 'required',
+        'employeeProfile.atm_no' => 'required',
         'employeeProfile.tin' => 'required',
         'employeeProfile.phic_no' => 'required',
         'employeeProfile.hdmf' => 'required',
@@ -80,23 +81,15 @@ class EmployeeProfileModal extends Component
 
     public function openEmployeeProfileModal($userId)
     {
-        // $this->reset('employeeProfile');
-        // $this->employeeProfile = User::findOrFail($userId);
-
+        
         $this->userId = $userId;
         $this->employeeProfile = User::findOrFail($userId);
-
-
 
         $this->userDailyRate = $this->employeeProfile->daily_rate;
         $this->userMonthlyRate = $this->employeeProfile->monthly_rate;
         $this->userSgJg = $this->employeeProfile->sg_jg;
         $this->activeStatus = $this->employeeProfile->is_active;
         $this->isLessFifteen = $this->employeeProfile->is_less_fifteen;
-
- 
-
-        // $this->emit('openEmployeeAllowancesTab', $userId);
 
     }
 

@@ -299,6 +299,7 @@ class ProcessPayrollJobOrderComponent extends Component
                                     'period_covered_to' => $dateto,
                                     'funding_charges' => $thisFund->fund_description,
                                     'fund_acct_no' => $thisFund->acct_no,
+                                    'atm_no' => $user->atm_no,
                                     'gsis' => $user->gsis,
                                     'gsis_crn' => $user->gsis_crn,
                                     'tin' => $user->tin,
@@ -307,9 +308,12 @@ class ProcessPayrollJobOrderComponent extends Component
                                     'first_half' => $flattenedUserAttendance[0]['first_half'],
                                     'second_half' => $flattenedUserAttendance[0]['second_half'],
                                     'days_rendered' => $flattenedUserAttendance[0]['days_rendered'],
+                                    //this is netpay -- I missed name
                                     'first_half_basic_pay' => $user->first_half,
+                                    //this is netpay -- I missed name
                                     'second_half_basic_pay' => $user->second_half,
                                     'basic_pay' => $user->basic_pay,
+                                    'is_less_fifteen' => $user->is_less_fifteen,
                                     'filename' => '',
                                     'created_at' => now(),
                                     'user_id' => $user->id,
@@ -402,7 +406,6 @@ class ProcessPayrollJobOrderComponent extends Component
     
                             }else{
                                 error_log("DUPLICATE NA ENTRIES SA INDEXING");
-
                                 foreach ($checkPayrollIndexDupe as $payrollIndex) {
                                     $payrollIndex->update([
                                         'name' => $user->full_name,
@@ -430,6 +433,8 @@ class ProcessPayrollJobOrderComponent extends Component
                                         'period_covered_to' => $dateto,
                                         'funding_charges' => $thisFund->fund_description,
                                         'fund_acct_no' => $thisFund->acct_no,
+                                        'atm_no' => $user->atm_no,
+                                        'is_less_fifteen' => $user->is_less_fifteen,
                                         'gsis' => $user->gsis,
                                         'gsis_crn' => $user->gsis_crn,
                                         'tin' => $user->tin,
@@ -786,7 +791,7 @@ class ProcessPayrollJobOrderComponent extends Component
                             }
 
 
-                            if(!$JOUser->employeeDeductions->isEmpty() && $this->isLessFifteen != 'less_fifteen_second_half'){                                                  //->where('status', 'ACTIVE')
+                            if(!$JOUser->employeeDeductions->isEmpty() && $this->isLessFifteen != 'less_fifteen_second_half'){                                            //->where('status', 'ACTIVE')
                                 $employeeDeductions = $JOUser->employeeDeductions()->wherePivot('active_status', 1)->get();
                                 $employeeDeductions = collect($employeeDeductions)->sortBy('sort_position')->groupBy('deduction_group');
                                 $JOUser->user_deductions = $employeeDeductions;
@@ -807,14 +812,20 @@ class ProcessPayrollJobOrderComponent extends Component
                                             // $JOUser->total_user_deduction += $deduction_users->pivot->amount;
                                     }
                                 }
-
                             }
                             
-                            $JOUser->first_half = round(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / 2), 2);
-                            $JOUser->second_half = round(($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction, 2) - $JOUser->first_half;
-
-                            // $JOUser->first_half = round(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / $days_rendered) * ($days_rendered/2), 2);
-                            // $JOUser->second_half = bcdiv(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / $days_rendered) * ($days_rendered/2), 1, 2);
+                            if($this->isLessFifteen == 'less_fifteen_first_half'){
+                                $JOUser->first_half = round(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction)), 2);
+                                $JOUser->second_half = 0.00;
+                            }else if($this->isLessFifteen == 'less_fifteen_second_half'){
+                                //FOR SECOND HALF ONLY
+                                $JOUser->first_half = 0.00;
+                                $JOUser->second_half = round(($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction, 2) - $JOUser->first_half;
+                            }else{
+                                $JOUser->first_half = round(((($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction) / 2), 2);
+                                $JOUser->second_half = round(($JOUser->basic_pay + $JOUser->total_user_allowance) - $JOUser->total_user_deduction, 2) - $JOUser->first_half;
+                            }
+                            
                         }else{
                             $JOUser->basic_pay = 0.00;
                             $JOUser->first_half = 0.00;
@@ -836,9 +847,6 @@ class ProcessPayrollJobOrderComponent extends Component
                                         $section[0]->total_first_half += $JOUser->first_half;
                                         $section[0]->total_second_half += $JOUser->second_half;
                                         $section[0]->total_net_pay += (((float)$JOUser->basic_pay + (float)$JOUser->total_user_allowance) - $JOUser->total_user_deduction);
-                                        // $section[0]->total_first_half += $JOUser->first_half;
-                                        // $section[0]->total_second_half += $JOUser->second_half;
-                                        // $section[0]->total_net_pay += (((float)$JOUser->basic_pay + (float)$JOUser->total_user_allowance) - $JOUser->total_user_deduction);
                                     }
 
                                     // END

@@ -207,9 +207,9 @@ class HdmfEditUploadedDeductionComponent extends Component
     {
         // Find the entry in the final list to update
         $found = false;
-
+        // dd($this->listTobeSaved);
         foreach ($this->listTobeSaved as $key => $entry) {
-            if ($entry['user_id'] == $id) {
+            if ($entry['user_id'] == $id && $entry['application_no'] == $applNo) {
                 if ($amortization > 0) {
                     $this->listTobeSaved[$key]['monthly_amortization'] = $amortization;
                 } else {
@@ -219,7 +219,7 @@ class HdmfEditUploadedDeductionComponent extends Component
                 return; // Exit after update or delete
             }
         }
-        unset($entry);
+        // unset($entry); <-- removing this removes the behaviour that if Names are duplicate (MPL and CL), both are unchecked when 1 is clicked 
     
         if (! $found && $amortization > 0) {
             $this->listTobeSaved[] = [

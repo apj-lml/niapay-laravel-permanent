@@ -330,7 +330,6 @@
                                         </div>
                                     </div>
                                 </div>
-        
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="form-floating">
@@ -380,6 +379,17 @@
                                     <div class="flex-fill"><hr></div>
                                 </div>
                                 <div class="row mb-3 mx-auto">
+                                    <div class="col-md-12 mb-3 p-1">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control @error('employeeProfile.atm_no') is-invalid @enderror" id="atm" name="atm" placeholder="ATM No." value="{{ old('employeeProfile.atm_no') }}" wire:model="employeeProfile.atm_no">
+                                            <label for="atm_no">LBP ATM No.</label>
+                                            @error('employeeProfile.atm_no')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     <div class="col-md-6 mb-3 p-1">
                                         <div class="form-floating">
                                             <input type="text" class="form-control @error('employeeProfile.tin') is-invalid @enderror" id="tin" name="tin" placeholder="TIN" value="{{ old('employeeProfile.tin') }}" wire:model="employeeProfile.tin">

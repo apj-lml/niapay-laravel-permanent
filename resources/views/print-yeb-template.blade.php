@@ -233,11 +233,13 @@
                 $total_net_amount = 0;
 
                 $payrollUsers = $payrollFund->users(null, false, null, null, $office)
-                    ->where('employment_status', 'PERMANENT') // Filter by employment_status
-                    ->orWhere('employment_status', 'COTERMINOUS') // Filter by employment_status
-                    ->where('is_active', 1) // Filter by active users
+                    ->where(function ($query) {
+                        $query->where('employment_status', 'PERMANENT')
+                            ->orWhere('employment_status', 'COTERMINOUS');
+                    })
+                    ->where('is_active', 1)
                     ->get()
-                    ->sortBy('full_name'); // Sort by full name
+                    ->sortBy('full_name');
                                              
                 @endphp
 
@@ -256,12 +258,18 @@
                                         <div class="col-sm-12">
                                             <span class="fw-sm text-start" style="font-size: 7px;">
                                                 @foreach ($payrollUsers as $payrollUser)
-                                                    @if($payrollUser->yebs->where('year', $year)->first()->mc != "" && $payrollUser->yebs->where('year', $year)->first()->mc != null)
-                                                        {{ $payrollUser->yebs->where('year', $year)->first()->mc }}
-                                                    @else
-                                                        NIA MC No.__________series of_________
-                                                    @endif
-                                                    @break
+                                                @php
+                                                    $yeb = $payrollUser->yebs->where('year', $year)->first();
+                                                    // dd($yeb);
+                                                @endphp
+                                                    {{-- @isset($yeb?->mc) --}}
+                                                            @if($yeb != null && $yeb->mc != null)
+                                                                {{ $yeb->mc }}
+                                                            @else
+                                                                NIA MC No.__________series of_________
+                                                            @endif
+                                                        @break
+                                                    {{-- @endisset --}}
                                                 @endforeach
                                             </span>
                                         </div>
@@ -275,15 +283,15 @@
                                                     <th scope="col" rowspan="2" style="width:1.5%"
                                                         class="text-center align-middle">NO.
                                                     </th>
-                                                    <th scope="col" rowspan="2" style="width:12%"
+                                                    <th scope="col" rowspan="2" style="width:10%"
                                                         class="text-center align-middle ">NAME
                                                     </th>
                                                     <th scope="col" rowspan="2"
-                                                        class="text-center align-middle" style="width:14%">POSITION TITLE / JG
+                                                        class="text-center align-middle" style="width:16%">POSITION TITLE / JG
                                                     </th>
-                                                    <th scope="col" rowspan="2"
+                                                    {{-- <th scope="col" rowspan="2"
                                                         class="text-center align-middle" style="width:5%">DAILY RATE
-                                                    </th>
+                                                    </th> --}}
                                                     <th scope="col" rowspan="2"
                                                         class="text-center align-middle" style="width:5%">MONTHLY RATE
                                                     </th>
@@ -365,13 +373,13 @@
                                                                 {{ $payrollUser->sg_jg }}</td>
                                                             <td scope="row"
                                                                 class="text-center align-middle p-0" style="text-align: right;">
-                                                                {{ number_format((float) $payrollUser->daily_rate, 2) }}
+                                                                {{ number_format((float) $payrollUser->monthly_rate, 2) }}
                                                             </td>
-                                                            <td scope="row"
+                                                            {{-- <td scope="row"
                                                                 class="text-center align-middle p-0" style="text-align: right;">
                                                                 {{ number_format(bcdiv((float) $payrollUser->daily_rate * 22, 1, 2), 2) }}
 
-                                                            </td>
+                                                            </td> --}}
                                                             <td scope="row"
                                                                 class="text-center align-middle p-0" style="text-align: right;">
                                                                 {{ number_format((float) $payrollUser->yebs->first()->year_end_bonus, 2) }}
@@ -401,7 +409,7 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan=5 style="text-align: right;"><b>TOTAL</b></td>
+                                                    <td colspan="4" style="text-align: right;"><b>TOTAL</b></td>
                                                     <td>{{ number_format($total_year_end_bonus, 2) }}</td>
                                                     <td>{{ number_format($total_cash_gift, 2) }}</td>
                                                     <td>{{ number_format($total_year_end_bonus + $total_cash_gift, 2) }}</td>
@@ -444,12 +452,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $preparer->name ?? '' }}
+                                                            <b>{{ $preparer->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $preparer->position ?? '' }}
+                                                            <i>{{ $preparer->position ?? '' }}<i>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -461,12 +469,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $certifier->name ?? '' }}
+                                                            <b>{{ $certifier->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $certifier->position ?? '' }}
+                                                            <i>{{ $certifier->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -482,19 +490,19 @@
                                         </tr>
                                         <tr>
                                             <td><br></td>
-                                            <td>Each employee whose name appears on the payroll has been paid and the corresponding net amount opposite his/her name was credited to his/</td>
+                                            <td>Each employee whose name appears on the payroll has been paid and the corresponding net amount opposite his/her name was credited to his/her payroll account.</td>
                                         </tr>
                                         <tr>
                                             <td style="padding-left: 50px;">
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $approver->name ?? '' }}
+                                                            <b>{{ $approver->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $approver->position ?? '' }}
+                                                            <i>{{ $approver->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -503,12 +511,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $afsChief->name ?? '' }}
+                                                            <b>{{ $afsChief->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $afsChief->position ?? '' }}
+                                                            <i>{{ $afsChief->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                 </table>

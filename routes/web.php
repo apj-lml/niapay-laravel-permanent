@@ -48,9 +48,16 @@ Route::get('/remittances-landing-page', function () {
     return view('remittances-landing-page');
 })->name('remittances-landing-page');
 
+Route::get('/findes-generator-landing-page', function () {
+    return view('findes-generator-landing-page');
+})->name('findes-generator-landing-page');
+
 
 Route::get('/download/remittance/{filename}', [App\Http\Controllers\RemittanceController::class, 'download'])
     ->name('download.remittance');
+
+Route::get('/download/findes/{filename}', [App\Http\Controllers\FindesGeneratorController::class, 'download'])
+    ->name('download.findes');
 
 Auth::routes();
 

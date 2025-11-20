@@ -113,7 +113,7 @@ class EditUploadedDeductionComponent extends Component
 
             if ($row['excel_data']['SALARY_LOAN'] > 0 && $this->validateValueWithChanges($row['id'], 'SALARY_LOAN', $row['excel_data']['SALARY_LOAN'])) {
                 $entry['SALARY_LOAN'] = $row['excel_data']['SALARY_LOAN'];
-                $entry['deduction_id'] = 17; // 10 is the ID for GSIS SALARY LOAN
+                $entry['deduction_id'] = 17; // 17 is the ID for GSIS SALARY LOAN
             }
         
             if ($row['excel_data']['MPL'] > 0 && $this->validateValueWithChanges($row['id'], 'MPL', $row['excel_data']['MPL'])) {
@@ -133,12 +133,12 @@ class EditUploadedDeductionComponent extends Component
 
             if ($row['excel_data']['EMRGYLN'] > 0 && $this->validateValueWithChanges($row['id'], 'EMRGYLN', $row['excel_data']['EMRGYLN'])) {
                 $entry['EMRGYLN'] = $row['excel_data']['EMRGYLN'];
-                $entry['deduction_id'] = 13; // 13 is the ID for GSIS EMRGYLN
+                $entry['deduction_id'] = 15; // 13 is the ID for GSIS EMRGYLN
             }
 
             if ($row['excel_data']['GFAL'] > 0 && $this->validateValueWithChanges($row['id'], 'GFAL', $row['excel_data']['GFAL'])) {
                 $entry['GFAL'] = $row['excel_data']['GFAL'];
-                $entry['deduction_id'] = 13; // 13 is the ID for GSIS GFAL
+                $entry['deduction_id'] = 16; // 13 is the ID for GSIS GFAL
             }
 
             if ($row['excel_data']['CPL'] > 0 && $this->validateValueWithChanges($row['id'], 'CPL', $row['excel_data']['CPL'])) {

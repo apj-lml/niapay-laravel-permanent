@@ -17,7 +17,7 @@
                 <div class="form-floating mb-3">
                   <select class="form-select @error('type') is-invalid @enderror" aria-label="signatoryDocu" wire:model="signatoryDocu">
                     <option value="wages">Wages</option>
-                    <option value="yeb">Year-end Bonus & Cash Gift</option>
+                    <option value="other_bonus">Year-end Bonus & Cash Gift</option>
                   </select>
                   <label for="floatingSelect">Payroll Type</label>
                   @error('type')
@@ -26,28 +26,21 @@
                       </span>
                   @enderror
               </div>
-                <div class="form-floating mb-3">
-                  <select class="form-select @error('type') is-invalid @enderror" aria-label="signatory" wire:model="type">
-                    @if($signatoryDocu == "wages")
-                      <option value="Box A [Preparer]">Box A [Preparer]</option>
-                      <option value="Box B [Section Chief Concerned]">Box B [Section Chief Concerned]</option>
-                      <option value="Box C [Finance Unit Head]">Box C [Finance Unit Head]</option>
-                      <option value="Box D [Approver]">Box D [Approver]</option>
-                      <option value="Box E [Certified]">Box E [Certified]</option>
-                    @elseif($signatoryDocu == "yeb")
-                      <option value="Box A [Preparer]">Box A [Preparer]</option>
-                      <option value="Box B [Certified]">Box B [Certified]</option>
-                      <option value="Box C [Approved for Payment]">Box C [Approved for Payment]</option>
-                      <option value="Box D [Certified]">Box D [Certified]</option>
-                    @endif
-                  </select>
-                  <label for="floatingSelect">Type</label>
-                  @error('type')
-                      <span class="invalid-feedback" role="alert">
-                          <strong>{{ $message }}</strong>
-                      </span>
-                  @enderror
-              </div>
+              
+              <div class="form-floating mb-3">
+                <select class="form-select @error('type') is-invalid @enderror" aria-label="signatory" wire:model="type">
+                    <option value="">-- Select Type --</option>
+                    @foreach($this->typeOptions as $option)
+                        <option value="{{ $option }}">{{ $option }}</option>
+                    @endforeach
+                </select>
+                <label for="floatingSelect">Type</label>
+                @error('type')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
 
               <div class="form-floating mb-3">
                 <input type="text" class="form-control @error('signatoryName') is-invalid @enderror" placeholder="Name" wire:model="signatoryName">

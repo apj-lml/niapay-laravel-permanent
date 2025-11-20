@@ -33,7 +33,7 @@
 @section('hero')
 {{-- <div class="container-xxl position-relative p-0"> --}}
 
-    <div class="@if(Route::is('payslip')) container-fluid @else container-xxl @endif bg-primary page-header">
+    <div class="@if(Route::is('edit-uploaded-deductions-landing-page')) container-fluid @else container-xxl @endif bg-primary page-header">
         <div class="container text-center">
             
         </div>

@@ -16,29 +16,33 @@ class ManageSignatoryComponent extends Component
     public $searchVal = "";
 
     public $signatoryDocu = "";
-    // protected $listeners = ['deleteSignatory', 'refreshManageSignatories'];
-
-    // public function refreshManageSignatories()
-    // {
-    //     $this->dispatchBrowserEvent('refreshComponent', ['componentName' => '#signatoryTable']);
-    // }
 
 
-
-    public function signatoryDocuClick($signatoryDocuVal){
+    public function signatoryDocuClick($signatoryDocuVal)
+    {
         $this->signatoryDocu = $signatoryDocuVal;
     }
 
-    public function deleteSignatoryConfirmation($signatoryId){
-        
+    public function deleteSignatoryConfirmation($signatoryId)
+    {
         $this->dispatchBrowserEvent('deleteSignatoryConfirmation', ['signatoryId' => $signatoryId]);
-
     }
 
     public function deleteSignatory($signatoryId){
-            Signatory::findOrFail($signatoryId)->delete();
-            // $this->resetPage();
-            $this->dispatchBrowserEvent('fireToast', ['icon' => 'success', 'title' => 'Successfully deleted Signatory!']);
+        try {
+            $signatory = Signatory::findOrFail($signatoryId);
+            $signatory->delete();
+    
+            $this->dispatchBrowserEvent('fireToast', [
+                'icon' => 'success',
+                'title' => 'Successfully deleted Signatory!'
+            ]);
+        } catch (\Exception $e) {
+            // $this->dispatchBrowserEvent('fireToast', [
+            //     'icon' => 'error',
+            //     'title' => 'Failed to delete signatory.'
+            // ]);
+        }
     }
 
     public function showEditSignatoryModal($signatoryId)
@@ -46,12 +50,17 @@ class ManageSignatoryComponent extends Component
         $this->emit('openEditSignatoryModal', $signatoryId);
     }
 
+    public function getPageName()
+    {
+        return 'page_' . $this->signatoryDocu;
+    }
 
     public function render()
     {
-        // $listOfSignatories = Signatory::paginate(10);
-        // $listOfSignatories = Signatory::all();
-        $listOfSignatories = Signatory::where('name', 'like', '%'. $this->searchVal .'%')->where('docu', $this->signatoryDocu)->orderBy('office')->orderBy('name')->paginate(5);
+
+        $listOfSignatories = Signatory::where('docu', $this->signatoryDocu)
+            ->orderBy('id', 'desc')
+            ->paginate(5, ['*'], $this->getPageName()); // ✅ pass unique page name
         
         return view('livewire.manage-signatory-component', ['listOfSignatories'=>$listOfSignatories]);
     }
