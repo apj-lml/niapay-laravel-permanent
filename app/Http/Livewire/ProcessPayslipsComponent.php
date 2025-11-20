@@ -144,7 +144,9 @@ class ProcessPayslipsComponent extends Component
             'joAllowances' => $allowances,
         ];
 
-        $pdf = PDF::loadView('payslip-template-jo', $data);
+        $pdf = PDF::loadView('payslip-template-jo', $data)->setOption([
+            // 'dpi' => 300
+        ]);
         $dompdf = $pdf->getDomPDF();
         $dompdf->set_option('compress', true);
         $dompdf->getOptions()->setIsFontSubsettingEnabled(true);

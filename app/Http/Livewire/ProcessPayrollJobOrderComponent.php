@@ -161,7 +161,7 @@ class ProcessPayrollJobOrderComponent extends Component
 
                         // $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption(['dpi' => 118,]);
                         $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption([
-                            'dpi' => 300,
+                            'dpi' => 150,
                             'isHtml5ParserEnabled' => true,
                             'isRemoteEnabled' => true,
                         ]);
