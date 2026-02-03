@@ -252,7 +252,7 @@
         @php $counter = 1; @endphp
         <div wire:ignore.self class="tab-pane fade" id="listOfToBeNotUpdated" role="tabpanel"
             aria-labelledby="listOfToBeNotUpdated-tab">
-            <h1 class="mt-2 mb-0">Records to be Not Updated</h1> 
+            <h1 class="mt-2 mb-0">Records NOT to be Updated</h1> 
             <h5>(From Payroll System)</h5>
             <div class="col-sm-12">
                 <table class="table table-bordered border-primary table-hover table-striped w-50">
@@ -265,23 +265,73 @@
                             <th>FirstName</th>
                             <th>MI</th>
                             <th>APPELLATION</th>
+                            <th>PS</th>
+                            <th>CONSOLOAN</th>
+                            <th>SALARY_LOAN</th>
+                            <th>MPL</th>
+                            <th>MPL_LITE</th>
+                            <th>PL_REG</th>
+                            <th>EMEGYLN</th>
+                            <th>GFAL</th>
+                            <th>CPL</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($listOfToBeNotUpdated as $toBeNotUpdated)
+                        @forelse ($listOfToBeNotUpdated as $user)
+                        {{-- @dd($toBeNotUpdated) --}}
                             <tr>
                                 <td>{{ $counter }}</td>
-                                <td>{{ $toBeNotUpdated['id'] }}</td>
-                                <td>{{ $toBeNotUpdated['gsis'] }}</td>
-                                <td>{{ $toBeNotUpdated['last_name'] }}</td>
-                                <td>{{ $toBeNotUpdated['first_name'] }}</td>
-                                <td>{{ $toBeNotUpdated['middle_name'] }}</td>
-                                <td>{{ $toBeNotUpdated['name_extn'] }}</td>
+                                <td>{{ $user['id'] }}</td>
+                                <td @if(\Illuminate\Support\Str::length($user['gsis']) != 10) class="text-danger" @endif>{{ $user['gsis'] }}</td>
+                                <td>{{ $user['last_name'] }}</td>
+                                <td>{{ $user['first_name'] }}</td>
+                                <td>{{ $user['middle_name'] }}</td>
+                                <td>{{ $user['name_extn'] }}</td>
+                                {{-- <td class="{{ $user['deductions_flat']['PS'] != 0 ? 'text-danger' : '' }}">
+                                    {{ $user['deductions_flat']['PS'] == 0 ? '-' : number_format($user['deductions_flat']['PS'], 2) }}
+                                </td> --}}
+                                <td class="{{ ($user['deductions_flat']['PS'] ?? 0) != 0 ? 'text-danger' : '' }}">
+                                    {{ ($user['deductions_flat']['PS'] ?? 0) == 0 ? '-' : number_format(($user['deductions_flat']['PS'] ?? 0), 2) }}
+                                </td>
+                                <td class="{{ ($user['deductions_flat']['CONSOLOAN'] ?? 0) != 0 ? 'text-danger' : '' }}">
+                                    {{ ($user['deductions_flat']['CONSOLOAN'] ?? 0) == 0 ? '-' : number_format(($user['deductions_flat']['CONSOLOAN'] ?? 0), 2) }}
+                                </td>
+                                <td class="{{ ($user['deductions_flat']['SALARY_LOAN'] ?? 0) != 0 ? 'text-danger' : '' }}">
+                                    {{ ($user['deductions_flat']['SALARY_LOAN'] ?? 0) == 0 ? '-' : number_format(($user['deductions_flat']['SALARY_LOAN'] ?? 0), 2) }}
+                                </td>
+                                <td class="{{ ($user['deductions_flat']['MPL'] ?? 0) != 0 ? 'text-danger' : '' }}">
+                                    {{ ($user['deductions_flat']['MPL'] ?? 0) == 0 ? '-' : number_format(($user['deductions_flat']['MPL'] ?? 0), 2) }}
+                                </td>
+                                <td class="{{ ($user['deductions_flat']['MPL_LITE'] ?? 0) != 0 ? 'text-danger' : '' }}">
+                                    {{ ($user['deductions_flat']['MPL_LITE'] ?? 0) == 0 ? '-' : number_format(($user['deductions_flat']['MPL_LITE'] ?? 0), 2) }}
+                                </td>
+                                <td class="{{ ($user['deductions_flat']['PL_REG'] ?? 0) != 0 ? 'text-danger' : '' }}">
+                                    {{ ($user['deductions_flat']['PL_REG'] ?? 0) == 0 ? '-' : number_format(($user['deductions_flat']['PL_REG'] ?? 0), 2) }}
+                                </td>
+                                <td class="{{ ($user['deductions_flat']['EMRGYLN'] ?? 0) != 0 ? 'text-danger' : '' }}">
+                                    {{ ($user['deductions_flat']['EMRGYLN'] ?? 0) == 0 ? '-' : number_format(($user['deductions_flat']['EMRGYLN'] ?? 0), 2) }}
+                                </td>
+                                <td class="{{ ($user['deductions_flat']['GFAL'] ?? 0) != 0 ? 'text-danger' : '' }}">
+                                    {{ ($user['deductions_flat']['GFAL'] ?? 0) == 0 ? '-' : number_format(($user['deductions_flat']['GFAL'] ?? 0), 2) }}
+                                </td>
+                                <td class="{{ ($user['deductions_flat']['CPL'] ?? 0) != 0 ? 'text-danger' : '' }}">
+                                    {{ ($user['deductions_flat']['CPL'] ?? 0) == 0 ? '-' : number_format(($user['deductions_flat']['CPL'] ?? 0), 2) }}
+                                </td>
+
+                                
+                                {{-- <td @if($user['deductions_flat']['CONSOLOAN'] != 0)  class="text-danger" @endif>{{ number_format($user['deductions_flat']['CONSOLOAN'], 2) }}</td>
+                                <td @if($user['deductions_flat']['SALARY_LOAN'] != 0)  class="text-danger" @endif>{{ number_format($user['deductions_flat']['SALARY_LOAN'], 2) }}</td>
+                                <td @if($user['deductions_flat']['MPL'] != 0)  class="text-danger" @endif>{{ number_format($user['deductions_flat']['MPL'], 2) }}</td>
+                                <td @if($user['deductions_flat']['MPL_LITE'] != 0)  class="text-danger" @endif>{{ number_format($user['deductions_flat']['MPL_LITE'], 2) }}</td>
+                                <td @if($user['deductions_flat']['PL_REG'] != 0)  class="text-danger" @endif>{{ number_format($user['deductions_flat']['PL_REG'], 2) }}</td>
+                                <td @if($user['deductions_flat']['EMRGYLN'] != 0)  class="text-danger" @endif>{{ number_format($user['deductions_flat']['EMRGYLN'], 2) }}</td>
+                                <td @if($user['deductions_flat']['GFAL'] != 0)  class="text-danger" @endif>{{ number_format($user['deductions_flat']['GFAL'], 2) }}</td>
+                                <td @if($user['deductions_flat']['CPL'] != 0)  class="text-danger" @endif>{{ number_format($user['deductions_flat']['CPL'], 2) }}</td> --}}
                             </tr>
                             @php $counter++; @endphp
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center">No data found</td>
+                                <td colspan="16" class="text-center">No data found</td>
                             </tr>
                         @endforelse
                     </tbody>

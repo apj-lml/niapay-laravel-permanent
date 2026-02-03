@@ -20,6 +20,18 @@ class EditUploadedDeductionComponent extends Component
 
     public $listTobeSaved = [];
 
+    public $deductionMap = [
+        'PS' => 9,
+        'CONSOLOAN' => 10,
+        'MPL' => 11,
+        'CPL' => 12,
+        'PLREG' => 13,
+        'MPL_LITE' => 14,
+        'EMRGYLN' => 15,
+        'GFAL' => 16,
+        'SALARY_LOAN' => 17,
+    ];
+
     public function mount($file, $selectedDeductionType)
     {
         $this->file = $file;
@@ -61,7 +73,6 @@ class EditUploadedDeductionComponent extends Component
         $seenGsisFromExcel = [];
 
 
-        // dd($data);
 
         foreach ($data as $row) {
             $bpno = trim($row['BPNO'] ?? ''); // GSIS from Excel
@@ -86,11 +97,83 @@ class EditUploadedDeductionComponent extends Component
             }
         }
 
-        // === Step 3: Check employees NOT in Excel ===
-        $this->listOfToBeNotUpdated = $this->listOfEmployees->filter(function ($user) use ($seenGsisFromExcel) {
+        // === Step 3: Employees NOT in Excel ===
+        $listNotInExcel = $this->listOfEmployees->filter(function ($user) use ($seenGsisFromExcel) {
             return $user->gsis && !in_array($user->gsis, $seenGsisFromExcel);
-        })->values()->all();
+        });
 
+        // === Step 3.5: Employees with a loan in DB but Excel shows 0 ===
+        $deductionIds = $this->deductionMap;
+
+        $loanMismatchList = $this->listOfEmployees->filter(function ($user) use ($deductionIds) {
+
+            foreach ($deductionIds as $dedType => $dedId) {
+                // If user has loan in DB AND loan in Excel = 0 → mismatch
+                if ($this->validateIsWithDeduction($user->id, $dedType, 0)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        // === MERGE both lists and REMOVE duplicates ===
+        $this->listOfToBeNotUpdated = $listNotInExcel
+            ->merge($loanMismatchList)
+            ->unique('id')
+            ->values();
+
+
+
+        // === FORMAT deductions for table display ===
+        $this->listOfToBeNotUpdated = $this->listOfToBeNotUpdated->map(function ($user) use ($data) {
+
+            // Create default 0 values
+            $deductions = [
+                'PS'          => 0,
+                'CONSOLOAN'   => 0,
+                'SALARY_LOAN' => 0,
+                'MPL'         => 0,
+                'MPL_LITE'    => 0,
+                'PL_REG'      => 0,
+                'EMRGYLN'     => 0,
+                'GFAL'        => 0,
+                'CPL'         => 0
+            ];
+
+            // Merge actual deductions
+            foreach ($user['employeeDeductions'] ?? [] as $ded) {
+                if($ded['deduction_group'] != 'GSIS'){
+                    continue;
+                }
+                $type = $ded['deduction_type'] ?? null;
+                if ($type == 'PL_REG') {
+                    $type = 'PLREG'; //in excel it's PLREG
+                }
+                // if ($type && isset($deductions[$type])) {
+                //     // $deductions[$type] = $ded['pivot']['amount'] ?? $ded['amount'] ?? 0;
+                //     $deductions[$type] = $ded['pivot']['amount'];
+                // }
+                if ($type && isset($deductions[$type])) {
+                    foreach ($data as $row) {
+                        $bpno = trim($row['BPNO'] ?? ''); // GSIS from Excel
+                        if ($bpno == $user['gsis']) {
+                            if($row[$type] == 0 && $ded['pivot']['amount'] > 0){
+                                $deductions[$type] = $ded['pivot']['amount'];
+                            }
+                            break;
+                        }
+                    }
+
+                    // $deductions[$type] = $ded['pivot']['amount'] ?? $ded['amount'] ?? 0;
+                }
+            }
+            // dd($deductions);
+            // Attach processed values to the user
+            $user['deductions_flat'] = $deductions;
+
+            return $user;
+        });
 
         // === Step 4: Prepare final list to be saved ===
         foreach ($this->listOfFinalToBeUpdated as $row) {
@@ -99,6 +182,9 @@ class EditUploadedDeductionComponent extends Component
             
             $entry['gsis_birthdate'] = !empty($row['excel_data']['BirthDate'])
             ? Carbon::parse($row['excel_data']['BirthDate'])->format('Y-m-d')
+            : null;
+            $entry['effectivity_date'] = !empty($row['excel_data']['Effectivity Date'])
+            ? Carbon::parse($row['excel_data']['Effectivity Date'])->format('Y-m-d')
             : null;
 
             if ($row['excel_data']['PS'] > 0 && $this->validateValueWithChanges($row['id'], 'PS', $row['excel_data']['PS'])) {
@@ -186,17 +272,8 @@ class EditUploadedDeductionComponent extends Component
 
     public function validateValueWithChanges($id, $dedType, $value){
         $user = User::find($id);
-        $deductionMap = [
-            'PS' => 9,
-            'CONSOLOAN' => 10,
-            'MPL' => 11,
-            'CPL' => 12,
-            'PLREG' => 13,
-            'MPL_LITE' => 14,
-            'EMRGYLN' => 15,
-            'GFAL' => 16,
-            'SALARY_LOAN' => 17,
-        ];
+        $deductionMap = $this->deductionMap;
+
         $DbDeduction = $deductionMap[$dedType] ?? null;
         $currentDeduction = $user->employeeDeductions()->where('deduction_id', $DbDeduction)->first();
         if ($currentDeduction) {
@@ -210,6 +287,24 @@ class EditUploadedDeductionComponent extends Component
         }
         return false; // No change
         // dd($this->listTobeSaved);
+    }
+
+    public function validateIsWithDeduction($id, $dedType, $value){
+        $user = User::find($id);
+        $deductionMap = $this->deductionMap;
+
+        $DbDeduction = $deductionMap[$dedType] ?? null;
+        $currentDeduction = $user->employeeDeductions()->where('deduction_id', $DbDeduction)->first();
+        if ($currentDeduction) {
+            $currentValue = $currentDeduction->pivot->amount;
+            if ($value == 0 && $currentValue > 0) {
+                return true; // No deduction at excel file
+            }
+        } else {
+            // with deduction at excel file
+            return false;
+        }
+        
     }
 
     public function saveRecords(){

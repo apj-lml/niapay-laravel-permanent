@@ -34,7 +34,7 @@ class PeiComponent extends Component
             ->where('user_id', $user->id)
             ->get();
 
-            if($checkDupePei->isNotEmpty() && $this->mc != ""){
+            if($checkDupePei->isNotEmpty()){
                 foreach ($checkDupePei as $user) {
                     $user->update([
                         'mc' => $this->mc,
@@ -85,7 +85,8 @@ class PeiComponent extends Component
                     $query->where('fund_id', '=', $fund->id); 
                     $query->where('employment_status', '=', 'PERMANENT')
                         ->orWhere('employment_status', '=', 'COTERMINOUS'); 
-                    $query->where('is_active', '=', 1); 
+                    // $query->where('fund_id', '=', $fund->id); 
+                    $query->where('is_active', '=', 1);
                     $query->where('include_to_payroll', '=', 1); 
                 }, 'users.peis' => function ($query){
                     $query->where('year', '=', $this->year); // Filter peis by year 2024

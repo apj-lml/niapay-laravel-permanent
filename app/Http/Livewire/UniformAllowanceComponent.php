@@ -35,7 +35,7 @@ class UniformAllowanceComponent extends Component
             ->where('user_id', $user->id)
             ->get();
 
-            if($checkDupeUniformAllowance->isNotEmpty() && $this->mc != ""){
+            if($checkDupeUniformAllowance->isNotEmpty()){
                 foreach ($checkDupeUniformAllowance as $user) {
                     $user->update([
                         'mc' => $this->mc,

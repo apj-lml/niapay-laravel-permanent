@@ -20,20 +20,6 @@ class EmployeeProfileModal extends Component
             $userSgJg,
             $activeStatus,
             $isLessFifteen;
-            // $employee_id,
-            // $name,
-            // $last_name,
-            // $first_name,
-            // $middle_name,
-            // $name_extn,
-            // $agency_unit_id,
-            // $position,
-            // $employment_status,
-            // $sg_jg,
-            // $step,
-            // $daily_rate,
-            // $monthly_rate,
-            // $fund_id;
 
     protected $rules = [
         'employeeProfile.employee_id' => 'required',
@@ -88,8 +74,8 @@ class EmployeeProfileModal extends Component
         $this->userDailyRate = $this->employeeProfile->daily_rate;
         $this->userMonthlyRate = $this->employeeProfile->monthly_rate;
         $this->userSgJg = $this->employeeProfile->sg_jg;
-        $this->activeStatus = $this->employeeProfile->is_active;
-        $this->isLessFifteen = $this->employeeProfile->is_less_fifteen;
+        $this->activeStatus = $this->employeeProfile->is_active ? '1' : '0';
+        $this->isLessFifteen = $this->employeeProfile->is_less_fifteen ? '1' : '0';
 
     }
 
@@ -103,25 +89,16 @@ class EmployeeProfileModal extends Component
 
         $this->userMonthlyRate = (float) str_replace(",","", $value);
     }
-    
 
     public function changeActiveStatus()
     {
-        if($this->activeStatus == 1){
-            $this->employeeProfile->is_active = 0;
-        }else{
-            $this->employeeProfile->is_active = 1;
-        }
+        $this->employeeProfile->is_active = $this->activeStatus;
 
     }
 
     public function changeIsLessFifteen()
     {
-        if($this->isLessFifteen == 1){
-            $this->employeeProfile->is_less_fifteen = 0;
-        }else{
-            $this->employeeProfile->is_less_fifteen = 1;
-        }
+        $this->employeeProfile->is_less_fifteen = $this->isLessFifteen;
     }
 
     //Commented out call to AutoAddDeduction() function in the saveProfile() function
@@ -232,6 +209,9 @@ class EmployeeProfileModal extends Component
         $this->validate();
         // $this->AutoAddDeduction();
         $this->employeeProfile['monthly_rate'] = (float) str_replace(",", "", $this->employeeProfile['monthly_rate']);
+        $this->employeeProfile['is_active'] = boolval($this->activeStatus);
+        $this->employeeProfile['include_to_payroll'] = boolval($this->activeStatus);
+        $this->employeeProfile['is_less_fifteen'] = boolval($this->isLessFifteen);
         $this->employeeProfile->save();
 
         $this->employeeProfile['monthly_rate'] = number_format(

@@ -87,103 +87,103 @@ class ProcessPayslipsComponent extends Component
         // Define the folder where PDFs will be saved
         $folderPath = storage_path('app/payslips/');
     
-    // Create the folder if it doesn't exist
-    if (!file_exists($folderPath)) {
-        mkdir($folderPath, 0777, true);
-    }
+        // Create the folder if it doesn't exist
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath, 0777, true);
+        }
 
-    $generatedFiles = []; // <<<<<< Store generated PDF paths here
+        $generatedFiles = []; // <<<<<< Store generated PDF paths here
 
-    foreach($employees as $employee){
-        $this->updateLoadingProgress();
+        foreach($employees as $employee){
+            $this->updateLoadingProgress();
 
-        $filename = $employee[0]->user->employee_id . '_' . $this->payrollDateFrom . ' to ' . $this->payrollDateTo . "_" . $employee[0]->name . ".pdf";
+            $filename = $employee[0]->user->employee_id . '_' . $this->payrollDateFrom . ' to ' . $this->payrollDateTo . "_" . $employee[0]->name . ".pdf";
 
-        if(round($this->loadingProgress, 2) > 99){
-            $this->loadingTxt = 'Finished generating payslips!';
+            if(round($this->loadingProgress, 2) > 99){
+                $this->loadingTxt = 'Finished generating payslips!';
+            } else {
+                $this->loadingTxt = 'Generating ' . $filename . '...';
+            }
+
+            foreach($employee as $employeeData){
+                $employeeData->total_user_deduction = 0.00;
+                $employeeData->total_user_allowance = 0.00;
+
+                $employeeDeductions = $employeeData->newPayrollIndexAllDed()->get();
+                $employeeDeductions = collect($employeeDeductions->where('npiad_type', 'DEDUCTION'))->sortBy('npiad_sort_position')->groupBy('npiad_group');
+                $employeeData->user_deductions = $employeeDeductions;
+
+                $user_deductions_per_deduction = $employeeData->newPayrollIndexAllDed()->get();
+                $user_deductions_per_deduction = collect($user_deductions_per_deduction)->sortBy('npiad_sort_position')->groupBy('npiad_type');
+                $employeeData->user_deductions_per_deduction = $user_deductions_per_deduction;
+
+                $employeeAllowances = $employeeData->newPayrollIndexAllDed()->get();
+                $employeeAllowances = collect($employeeAllowances->where('npiad_type', 'ALLOWANCE'))->sortBy('npiad_sort_position')->groupBy('npiad_group');
+                $employeeData->user_allowances = $employeeAllowances;
+
+                $user_allowances_per_allowance = $employeeData->newPayrollIndexAllDed()->get();
+                $user_allowances_per_allowance = collect($user_allowances_per_allowance)->sortBy('npiad_sort_position')->groupBy('npiad_type');
+                $employeeData->user_allowances_per_allowance = $user_allowances_per_allowance;
+
+                foreach($employeeDeductions as $eDeductions){
+                    foreach($eDeductions as $deduction){
+                        $employeeData->total_user_deduction += $deduction->npiad_amount;
+                    }
+                }
+
+                foreach($employeeAllowances as $eAllowances){
+                    foreach($eAllowances as $allowance){
+                        $employeeData->total_user_allowance += $allowance->npiad_amount;
+                    }
+                }
+            }
+
+            $data = [
+                'employee' => $employee,
+                'joDeductions' => $deductions,
+                'joAllowances' => $allowances,
+            ];
+
+            $pdf = PDF::loadView('payslip-template-jo', $data)->setOption([
+                'dpi' => 300
+            ]);
+            $dompdf = $pdf->getDomPDF();
+            $dompdf->set_option('compress', true);
+            $dompdf->getOptions()->setIsFontSubsettingEnabled(true);
+            $pdf->set_option('isFontSubsettingEnabled', true);
+            $pdf->set_option("isPhpEnabled", true);
+
+            $trimmedFilename = preg_replace('/\s+/', ' ', $filename);
+            $path = $folderPath . $trimmedFilename;
+
+            // Save the PDF to storage
+            file_put_contents($path, $pdf->output());
+
+            // Collect generated file path
+            $generatedFiles[] = $path;
+        }
+
+        // ----------------- AFTER FOREACH, ZIP ONLY GENERATED FILES -----------------
+
+        $zipFilename = 'payslip-' . $this->payrollDateFrom . '-' . $this->payrollDateTo . '.zip';
+        $zipPath = storage_path('app/payslips/' . $zipFilename);
+
+        $zip = new ZipArchive;
+
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+            foreach ($generatedFiles as $filePath) {
+                $relativeName = basename($filePath); // We only want the filename inside the zip
+                $zip->addFile($filePath, $relativeName);
+            }
+            $zip->close();
         } else {
-            $this->loadingTxt = 'Generating ' . $filename . '...';
+            throw new \Exception('Cannot create zip file.');
         }
 
-        foreach($employee as $employeeData){
-            $employeeData->total_user_deduction = 0.00;
-            $employeeData->total_user_allowance = 0.00;
+        // ------------- RETURN ZIP FOR DOWNLOAD -----------------
 
-            $employeeDeductions = $employeeData->newPayrollIndexAllDed()->get();
-            $employeeDeductions = collect($employeeDeductions->where('npiad_type', 'DEDUCTION'))->sortBy('npiad_sort_position')->groupBy('npiad_group');
-            $employeeData->user_deductions = $employeeDeductions;
-
-            $user_deductions_per_deduction = $employeeData->newPayrollIndexAllDed()->get();
-            $user_deductions_per_deduction = collect($user_deductions_per_deduction)->sortBy('npiad_sort_position')->groupBy('npiad_type');
-            $employeeData->user_deductions_per_deduction = $user_deductions_per_deduction;
-
-            $employeeAllowances = $employeeData->newPayrollIndexAllDed()->get();
-            $employeeAllowances = collect($employeeAllowances->where('npiad_type', 'ALLOWANCE'))->sortBy('npiad_sort_position')->groupBy('npiad_group');
-            $employeeData->user_allowances = $employeeAllowances;
-
-            $user_allowances_per_allowance = $employeeData->newPayrollIndexAllDed()->get();
-            $user_allowances_per_allowance = collect($user_allowances_per_allowance)->sortBy('npiad_sort_position')->groupBy('npiad_type');
-            $employeeData->user_allowances_per_allowance = $user_allowances_per_allowance;
-
-            foreach($employeeDeductions as $eDeductions){
-                foreach($eDeductions as $deduction){
-                    $employeeData->total_user_deduction += $deduction->npiad_amount;
-                }
-            }
-
-            foreach($employeeAllowances as $eAllowances){
-                foreach($eAllowances as $allowance){
-                    $employeeData->total_user_allowance += $allowance->npiad_amount;
-                }
-            }
-        }
-
-        $data = [
-            'employee' => $employee,
-            'joDeductions' => $deductions,
-            'joAllowances' => $allowances,
-        ];
-
-        $pdf = PDF::loadView('payslip-template-jo', $data)->setOption([
-            // 'dpi' => 300
-        ]);
-        $dompdf = $pdf->getDomPDF();
-        $dompdf->set_option('compress', true);
-        $dompdf->getOptions()->setIsFontSubsettingEnabled(true);
-        $pdf->set_option('isFontSubsettingEnabled', true);
-        $pdf->set_option("isPhpEnabled", true);
-
-        $trimmedFilename = preg_replace('/\s+/', ' ', $filename);
-        $path = $folderPath . $trimmedFilename;
-
-        // Save the PDF to storage
-        file_put_contents($path, $pdf->output());
-
-        // Collect generated file path
-        $generatedFiles[] = $path;
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
-
-    // ----------------- AFTER FOREACH, ZIP ONLY GENERATED FILES -----------------
-
-    $zipFilename = 'payslip-' . $this->payrollDateFrom . '-' . $this->payrollDateTo . '.zip';
-    $zipPath = storage_path('app/payslips/' . $zipFilename);
-
-    $zip = new ZipArchive;
-
-    if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-        foreach ($generatedFiles as $filePath) {
-            $relativeName = basename($filePath); // We only want the filename inside the zip
-            $zip->addFile($filePath, $relativeName);
-        }
-        $zip->close();
-    } else {
-        throw new \Exception('Cannot create zip file.');
-    }
-
-    // ------------- RETURN ZIP FOR DOWNLOAD -----------------
-
-    return response()->download($zipPath)->deleteFileAfterSend(true);
-}
 
 
 

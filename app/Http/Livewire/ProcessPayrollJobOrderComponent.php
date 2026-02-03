@@ -161,7 +161,7 @@ class ProcessPayrollJobOrderComponent extends Component
 
                         // $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption(['dpi' => 118,]);
                         $pdf = PDF::loadView('print-payroll-template-jo', $data)->setOption([
-                            'dpi' => 150,
+                            'dpi' => 300,
                             'isHtml5ParserEnabled' => true,
                             'isRemoteEnabled' => true,
                         ]);
@@ -245,6 +245,17 @@ class ProcessPayrollJobOrderComponent extends Component
 
     public function insertIndexDeductions(){
 
+        $inputIsLessFifteen = 0;
+
+
+        if($this->isLessFifteen != 'full_month'){
+            $inputIsLessFifteen = 1;
+            
+        }else{
+            $inputIsLessFifteen = 0;
+
+        }
+
         foreach($this->payrollFunds as $thisFund){
             // foreach($thisFund->sections as $myFund){
             //     // dd($myFund);
@@ -275,6 +286,7 @@ class ProcessPayrollJobOrderComponent extends Component
                             $checkPayrollIndexDupe = NewPayrollIndex::where('user_id', $user->id)
                                             ->where('period_covered_from', $datefrom)
                                             ->where('period_covered_to', $dateto)
+                                            ->where('is_less_fifteen', $inputIsLessFifteen)
                                             ->get();
 
 
@@ -308,9 +320,9 @@ class ProcessPayrollJobOrderComponent extends Component
                                     'first_half' => $flattenedUserAttendance[0]['first_half'],
                                     'second_half' => $flattenedUserAttendance[0]['second_half'],
                                     'days_rendered' => $flattenedUserAttendance[0]['days_rendered'],
-                                    //this is netpay -- I missed name
+                                    //this is netpay -- I misnamed it
                                     'first_half_basic_pay' => $user->first_half,
-                                    //this is netpay -- I missed name
+                                    //this is netpay -- I misnamed it
                                     'second_half_basic_pay' => $user->second_half,
                                     'basic_pay' => $user->basic_pay,
                                     'is_less_fifteen' => $user->is_less_fifteen,
@@ -759,8 +771,6 @@ class ProcessPayrollJobOrderComponent extends Component
                         // GET USER ATTENDANCE TO CALCULATE BASIC PAY
                         if($attendances->isNotEmpty()){
      
-                            // $JOUser->basic_pay = bcdiv((float)((float)$JOUser->daily_rate) * ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->days_rendered), 1, 2);
-                            // $JOUser->basic_pay = bcdiv(((float)$JOUser->monthly_rate), 1, 2);
                             $JOUser->basic_pay = $JOUser->monthly_rate;
                             $JOUser->daily_rate = $JOUser->monthly_rate / 22; // Assuming 22 working days in a month
                             $days_rendered = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->days_rendered);
@@ -768,7 +778,7 @@ class ProcessPayrollJobOrderComponent extends Component
                             $days_rendered_second_half = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->second_half);
 
                             //test
-                            $JOUser->basic_pay = round(bcdiv((float)($JOUser->daily_rate * $days_rendered), 1, 2));
+                            $JOUser->basic_pay = round(bcdiv((float)($JOUser->daily_rate * $days_rendered), 1, 2), 2);
 
                             // Setting User Allowances
                             if(!$JOUser->employeeAllowances->isEmpty()){
@@ -907,12 +917,9 @@ class ProcessPayrollJobOrderComponent extends Component
                                                     }
             
                                                 }
-            
                                             }
                                         }
-            
                                     }
-
                                     // }// THIS IS MY TEST IF
 
                                     }

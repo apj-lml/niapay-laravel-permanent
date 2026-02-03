@@ -23,7 +23,7 @@
          font-family: Cambria,Georgia,serif; 
      }
 
-     .calibri{
+    .calibri{
          font-family: "Calibri", sans-serif;
      }
      table {
@@ -31,6 +31,12 @@
          table-layout: fixed;
          width: 100%;
      }
+
+     table.payslip-details td{
+      vertical-align: top;
+      font-size: 36px;
+      padding: 5px;
+    }
 
      table.payroll td{
       text-align: right;
@@ -42,12 +48,12 @@
 
      th, td {
          padding: 5px;
-         font-size:10px;
+         font-size:32px;
          border: 0.5px solid black;
      }
 
      th {
-      font-size:10px;
+      font-size:32px;
       font-weight: bolder;
       word-wrap: break-word;
      }
@@ -63,27 +69,24 @@
 
     .page{
       padding: auto;
-      transform: scale(0.75);
+      transform: scale(0.80);
       transform-origin: top left;
       /* width: 133%; */
-      width: 144%;
-      margin-left: -30px;
+      width: 133%;
+      margin-left: -70px;
+      
     }
 
-    .deduction-table{
-      border:0;
 
-    }
-
-    table.deduction-table td{
-      border:0;
-      padding: 0;
-      vertical-align: top;
+    .gross-table{
+      /* border:0; */
+      padding:0 25px;
     }
 
     table.gross-table td{
       border:0;
-      padding: 0;
+      padding: 0 15px;
+      margin: 0 15px;
       vertical-align: top;
     }
 
@@ -120,9 +123,19 @@
     }
 
     
-    table.payslip-details td{
+
+
+    .deduction-table{
+      border:0;
+      padding:0 15px;
+    }
+
+    table.deduction-table td{
+      border:0;
+      padding:0;
       vertical-align: top;
     }
+
 
   hr{
     border: 0.2px solid ;
@@ -137,7 +150,7 @@
 
   .header-img{
     position: absolute;
-    margin-top: -30px;
+    margin-top: -130px;
     margin-left: -15px;
     z-index: -999;
   }
@@ -147,16 +160,25 @@
     width: 100%;
   }
 
-  .footer-img-old{
-    position: absolute;
-    margin-left: 630px;
-    margin-top: 20px;
+  .footer-container p{
+    font-size: 32px;
+    margin: 0;
+    position:absolute;
+    margin-left: 8px; 
+  }
+
+  .footer-container p.form-no{
+    margin:0%;
+    font-size: 32px;
+    position:absolute;
+    margin-top:290px;
+    margin-left:8px;
   }
 
   .footer-img{
     position: absolute;
     margin-left: 0px;
-    margin-top: -70px;
+    margin-top: -320px;
     z-index: -999;
   }
 
@@ -170,14 +192,15 @@
     @if($copy > 1)
       {{-- <div class="page-break"></div> <----This will create another page --}}
       {{-- <div style="border-top: 1px dashed #000; margin: 1rem 0; padding:0;"></div> --}}
-      <div style="margin: .75rem 0; padding:0;"></div>
+      <div style="margin:1rem; padding:0;"></div>
     @endif
     <div class="main">
       <div class="header-container">
         {{-- <img class="header-img" src="{{ public_path('img/test-header.jpg') }}" width="600.315px" alt="nia header"> --}}
-        <img class="header-img" src="{{ public_path('img/test-header-test.jpg') }}" width="450.315px" alt="nia header">
+        {{-- <img class="header-img" src="{{ public_path('img/test-header-test.jpg') }}" width="1450.315px" alt="nia header"> --}}
+        <img class="header-img" src="{{ public_path('img/payslip-header.jpg') }}" width="100%" alt="nia header">
       </div>
-      <table class="payslip-details" style="margin-top: 57px; z-index:999;" width="100%">
+      <table class="payslip-details" style="margin-top: 127px; z-index:999;" width="100%">
         <thead>
           <tr>
             <td style="width: 15%;">Employee Name: </td>
@@ -202,7 +225,7 @@
       <tbody>
           <tr>
             <td colspan="3" width="70%">
-              <table class="gross-table" style="margin-bottom: 15px;">
+              <table class="gross-table" style="margin-bottom: 15px; margin">
                 <thead>
                   <tr>
                     <td colspan="4" style="vertical-align: center">
@@ -237,7 +260,6 @@
                   $overAllAllowanceTotal = 0.00;
     
                   foreach ($employee as $employeeData){
-                
                     if(isset($employeeData->user_allowances['PERA'])){
                       foreach ($joAllowances->where('allowance_group', 'PERA')->sortBy('sort_position') as $joAllowance){
                         if (!isset($allowanceTotals['PERA'][$joAllowance->description])) {
@@ -321,8 +343,6 @@
                                 {{-- DED DESC --}}
                                 <td colspan="3">{{ $allowDescription }}</td>
                                 <td style="vertical-align: center; text-align: center;"> {{ number_format(bcdiv($joAllowance, 1, 2), 2) }}</td>
-                              
-
                             </tr>    
                           @endforeach
                       @else
@@ -713,16 +733,21 @@
                   <td style="vertical-align: bottom; text-align:center"><i>Certified correct:</i></td>
                 </tr>
                 <tr>
-                  <td height="40" style="vertical-align: bottom; text-align:center"><b>MARC BRYAN O. DUZON</b></td>
+                  @if ($employee[0]->name == 'RIVERA, RYAN AGUACITO')
+                    <td height="40" style="vertical-align: bottom; text-align:center"><b>MARC BRYAN O. DUZON</b></td>
+                    <td style="vertical-align: bottom; text-align:center"><i>Head, Administrative Unit</i></td>
+                  @else
+                    <td height="40" style="vertical-align: bottom; text-align:center"><b>RYAN A. RIVERA</b></td>
+                   <td style="vertical-align: bottom; text-align:center"><i>Chief, Administrative and Finance Section</i></td>
+                  @endif
                   {{-- <td height="40" style="vertical-align: bottom; text-align:center"><b>MARILYN D. BAUTISTA</b></td> --}}
                 </tr>
                 <tr>
                   {{-- <td><i>Data Encoder</i></td> --}}
-                  <td style="vertical-align: bottom; text-align:center"><i>Head, Administrative Unit</i></td>
                 </tr>
               </table>
             </td>
-            <td colspan="1" style="width:30%">
+            <td colspan="1" style="width:30%; padding:20px;">
               <table class="netpay-table">
                 <tr style="vertical-align: bottom;">
                   <td style="vertical-align: bottom;"><b><h2 style="margin-bottom:0%;">N E T  P A Y :</h2></b></td>
@@ -736,7 +761,7 @@
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <p>
+                    <p style="font-size: 30px;">
                     <b>
                       {{ strtoupper(Helper::numberToWord(sprintf("%.2f", bcdiv(number_format($totalGrossPay - $overAllDeductionTotal, 6, ".", ""), 1, 2) ))) }}
                     </b>
@@ -752,12 +777,12 @@
       {{-- </caption> --}}
       <div class="footer-container">
         {{-- <img class="footer-img" src="{{ public_path('img/test-footer-test.jpg') }}" width="827.315px" height="98px" alt="nia footer"> --}}
-        <p style="margin:0; font-size: 9px; position:absolute; margin-top:40px; margin-left:8px;" class="calibri"><b>Brgy. Bayaoas, Urdaneta City, Pangasinan, Ilocos Region, 2428 Philippines</b></p>
-        <p style="margin:0; font-size: 9px; position:absolute; margin-top:52px; margin-left:8px;" class="calibri">Telephone / Telefax No: (075) 632-2775</p>
-        <p style="margin:0; font-size: 9px; position:absolute; margin-top:64px; margin-left:8px;" class="calibri">Email: r1.pangasinan-imo@nia.gov.ph &#x2022; Website: https://region1.nia.gov.ph &#x2022; TIN: 000916415</p>
+        <p style="margin-top:100px;" class="calibri"><b>Brgy. Bayaoas, Urdaneta City, Pangasinan, Ilocos Region, 2428 Philippines</b></p>
+        <p style="margin-top:140px;" class="calibri">Telephone / Telefax No: (075) 632-2775</p>
+        <p style="margin-top:174px;" class="calibri">Email: r1.pangasinan-imo@nia.gov.ph &#x2022; Website: https://region1.nia.gov.ph &#x2022; TIN: 000916415</p>
         {{-- <p style="margin:0; font-size: 11px; position:absolute; margin-top:66px; margin-left:8px;">TIN: 000916415</p> --}}
         <img class="footer-img" src="{{ public_path('img/test-footer-test.jpg') }}" width="100%" alt="nia footer">
-        <p style="margin:0%; font-size: 9px; position:absolute; margin-top:98px; margin-left:8px;">
+        <p class="form-no" style="">
           <i>NIA-PIMO-AFS-ADM-INT-Form35 Rev.03</i>
         </p>
       </div>

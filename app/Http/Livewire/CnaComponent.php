@@ -35,7 +35,7 @@ class CnaComponent extends Component
             ->where('user_id', $user->id)
             ->get();
 
-            if($checkDupeCna->isNotEmpty() && $this->mc != ""){
+            if($checkDupeCna->isNotEmpty()){
                 foreach ($checkDupeCna as $user) {
                     $user->update([
                         'mc' => $this->mc,

@@ -24,7 +24,7 @@ use ZipArchive;
 
 class HdmfRemittancesComponent extends Component
 {
-    public $payrollDateFrom, $payrollDateTo, $loadingTxt = "", $loadingProgress = 0, $loadingState = false, $listOfDeductions, $listOfGsisOfficeCodes, $listOfBirAccounts, $listOfHdmfEmployerNo, $deduction = 1, $isLessFifteen = 'full_month';
+    public $payrollDateFrom, $payrollDateTo, $loadingTxt = "", $loadingProgress = 0, $loadingState = false, $listOfDeductions, $listOfGsisOfficeCodes, $listOfBirAccountsCOB, $listOfBirAccountsCARP, $listOfHdmfIdNo, $listOfHdmfEmployerNo, $deduction = 1, $isLessFifteen = 'full_month';
 
     public function mount()
     {
@@ -41,6 +41,16 @@ class HdmfRemittancesComponent extends Component
         ];
 
         //This is not used yet
+        $this->listOfHdmfIdNo = [
+            'PIMO'   => '202273369900',
+            'ASRIS'  => '202273369900',
+            'SFDRIS' => '202273369900',
+            'CARP'   => '202273369900',
+            'LARIS'  => 'N/A',
+            'ADRIS'  => 'N/A',
+        ];
+
+        //This is not used yet
         $this->listOfGsisOfficeCodes = [
             'PIMO'   => '1000020661',
             'ASRIS'  => '1000020661',
@@ -50,12 +60,20 @@ class HdmfRemittancesComponent extends Component
             'ADRIS'  => 'N/A',
         ];
 
-        //This is not used yet
-        $this->listOfBirAccounts = [
+        //This is used
+        $this->listOfBirAccountsCOB = [
             'PIMO'   => '000 916 415 050',
             'ASRIS'  => '000 916 415 051',
             'SFDRIS' => '000 916 415 042',
-            'CARP'   => '000 916 415 174',
+            'LARIS'  => 'N/A',
+            'ADRIS'  => 'N/A',
+        ];
+
+        //This is used
+        $this->listOfBirAccountsCARP = [
+            'PIMO'   => '000 916 415 174',
+            'ASRIS'  => 'N/A',
+            'SFDRIS' => 'N/A',
             'LARIS'  => 'N/A',
             'ADRIS'  => 'N/A',
         ];
@@ -268,7 +286,7 @@ class HdmfRemittancesComponent extends Component
         ])
         ->where('include_to_payroll', 1)
         ->where('is_active', 1)
-        ->where('is_less_fifteen', $isBelowFifteen)
+        // ->where('is_less_fifteen', $isBelowFifteen)
         ->whereHas('employeeDeductions', function ($query) use ($deduction) {
             $query->where('deductions.deduction_group', 'HDMF')
                   ->where('deductions.id', $deduction)
@@ -602,7 +620,7 @@ class HdmfRemittancesComponent extends Component
                                     ?->where('npiad_deduction_id', 9)
                                     ->first();
 
-                                    $gs = $npiUser?->daily_monthly_rate * .12;
+                                    $gs = bcdiv(($npiUser?->daily_monthly_rate * .12), 1, 2);
 
                                     $ec = 100;
 
@@ -756,7 +774,7 @@ class HdmfRemittancesComponent extends Component
                 ])
                 ->where('users.include_to_payroll', 1)
                 ->where('users.is_active', 1)
-                ->where('users.is_less_fifteen', $isBelowFifteen)
+                // ->where('users.is_less_fifteen', $isBelowFifteen)
                 ->whereHas('employeeDeductions', function ($query) use ($deduction) {
                     $query->where('deductions.deduction_group', 'GSIS')
                           ->where('deduction_user.active_status', 1);
@@ -895,17 +913,17 @@ class HdmfRemittancesComponent extends Component
                                     $newSheet->setCellValue("F{$rowStart}", $npiUser?->birthdate); // birthdate
                                     $newSheet->setCellValue("G{$rowStart}", $npiUser?->gsis_crn ?? 'NO CRN'); // CRN
                                     $newSheet->setCellValue("H{$rowStart}", $npiUser?->monthly_rate); // Monthly Salary
-                                    // $newSheet->setCellValue("J{$rowStart}", 'wala pa'); // Effectivity Date
-                                    $newSheet->setCellValue("I{$rowStart}", $ps?->pivot->amount ?? 0); // PS
-                                    $newSheet->setCellValue("J{$rowStart}", $gs);
-                                    $newSheet->setCellValue("K{$rowStart}", $ec);
-                                    $newSheet->setCellValue("L{$rowStart}", $consoloan?->pivot->amount ?? 0);
-                                    $newSheet->setCellValue("M{$rowStart}", $mplite?->pivot->amount ?? 0);
-                                    $newSheet->setCellValue("N{$rowStart}", $emergency?->pivot->amount ?? 0);
-                                    $newSheet->setCellValue("O{$rowStart}", $pl?->pivot->amount ?? 0);
-                                    $newSheet->setCellValue("P{$rowStart}", $gfal?->pivot->amount ?? 0);
-                                    $newSheet->setCellValue("Q{$rowStart}", $mpl?->pivot->amount ?? 0);
-                                    $newSheet->setCellValue("R{$rowStart}", $cpl?->pivot->amount ?? 0);
+                                    $newSheet->setCellValue("I{$rowStart}", $npiUser?->effectivity_date); // Effectivity Date
+                                    $newSheet->setCellValue("J{$rowStart}", $ps?->pivot->amount ?? 0); // PS
+                                    $newSheet->setCellValue("K{$rowStart}", $gs);
+                                    $newSheet->setCellValue("L{$rowStart}", $ec);
+                                    $newSheet->setCellValue("M{$rowStart}", $consoloan?->pivot->amount ?? 0);
+                                    $newSheet->setCellValue("N{$rowStart}", $mplite?->pivot->amount ?? 0);
+                                    $newSheet->setCellValue("O{$rowStart}", $emergency?->pivot->amount ?? 0);
+                                    $newSheet->setCellValue("P{$rowStart}", $pl?->pivot->amount ?? 0);
+                                    $newSheet->setCellValue("Q{$rowStart}", $gfal?->pivot->amount ?? 0);
+                                    $newSheet->setCellValue("R{$rowStart}", $mpl?->pivot->amount ?? 0);
+                                    $newSheet->setCellValue("S{$rowStart}", $cpl?->pivot->amount ?? 0);
         
                         
                                     $totalPs += $ps?->pivot->amount ?? 0;
@@ -1061,7 +1079,7 @@ class HdmfRemittancesComponent extends Component
             ])
             ->where('include_to_payroll', 1)
             ->where('is_active', 1)
-            ->where('is_less_fifteen', $isBelowFifteen)
+            // ->where('is_less_fifteen', $isBelowFifteen)
             ->whereHas('employeeDeductions', function ($query) use ($deduction) {
                 $query->where('deduction_group', 'TAX')
                     ->where('deductions.id', $deduction)
@@ -1314,8 +1332,11 @@ class HdmfRemittancesComponent extends Component
 
             // Write rich text back into cell
             $newSheetDV->getCell("A16")->setValue($richText);
-
-            $tin = $this->listOfBirAccounts[$officeName] ?? 'N/A';
+            if(str_contains($fundName, 'CARP')){
+                $tin = $this->listOfBirAccountsCARP[$officeName] ?? 'N/A';
+            }else{
+                $tin = $this->listOfBirAccountsCOB[$officeName] ?? 'N/A';
+            }
             $payeeStr = "LBP - URDANETA for the Account of BIR NIA Pangasinan IMO / ".$officeName." - " . $tin;
 
             $newSheetDV->setCellValue("E12", $payeeStr);
@@ -1336,6 +1357,17 @@ class HdmfRemittancesComponent extends Component
             $formattedDate = Carbon::parse($date)->format('F Y'); // e.g. "October 2025"
 
             // Set variables
+            $preparer = '';
+            $preparer_position_title = '';
+
+            if($payee != 'GSIS'){
+                $preparer = 'CHRISTIAN A. EVANGELISTA';
+                $preparer_position_title = 'Records Assistant';
+            }else{
+                $preparer = 'DARIEL F. GABRILLO';
+                $preparer_position_title = 'Cashiering Assistant';
+            }
+
             $template->setValue('FUND', $fundName);
             $template->setValue('ACCT_NO', $acctNo);
             $template->setValue('PAYEE', $payee);
@@ -1345,6 +1377,8 @@ class HdmfRemittancesComponent extends Component
             $template->setValue('DATE', $formattedDate);
             $template->setValue('AMOUNT', number_format($amount, 2));
             $template->setValue('TOTAL_AMOUNT', number_format($totalAmount, 2));
+            $template->setValue('PREPARER', $preparer);
+            $template->setValue('PREPAPER_POSITION_TITLE', $preparer_position_title);
 
             // Define save path
             $fileName = 'ada_' . Str::slug($fundName . '_' . $officeName, '_') . '_' . now()->format('Ymd_His') . '.docx';

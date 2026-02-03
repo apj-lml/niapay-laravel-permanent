@@ -28,7 +28,8 @@ class ListOfEmployees extends Component
             $monthly_rate,
             $fund,
             $include_to_payroll,
-            $searchVal = "";
+            $searchVal = "",
+            $tab = 'active'; // track which tab is active;;
  
     public function editUser($id)
     {
@@ -37,6 +38,17 @@ class ListOfEmployees extends Component
 
     public function updatingSearchVal()
     {
+        $this->resetPage();
+    }
+
+    public function setTab($tab)
+    {
+        $this->tab = $tab;
+
+        // If you are updating search/filter results
+        $this->updatingSearchVal();
+
+        // Reset pagination if needed
         $this->resetPage();
     }
 
@@ -63,14 +75,9 @@ class ListOfEmployees extends Component
     public function showIndexModal($userId)
     {
         $this->emit('openIndexModal', $userId);
-
     }
 
-    // public function showPayslipModal($userId)
-    // {
-    //     $this->emit('openPayslipModal', $userId);
 
-    // }
 
     public function render()
     {
@@ -82,19 +89,31 @@ class ListOfEmployees extends Component
         // ->orderby('first_name')
         // ->paginate(20);
 
-        $users = User::whereIn('employment_status', ['PERMANENT', 'COTERMINOUS'])
-        ->where(function ($query) {
+        $query = User::whereIn('employment_status', ['PERMANENT', 'COTERMINOUS'])->where(function ($query) {
             $query->where('first_name', 'like', "%{$this->searchVal}%")
                 ->orWhere('middle_name', 'like', "%{$this->searchVal}%")
                 ->orWhere('last_name', 'like', "%{$this->searchVal}%");
-        })
-        ->orderBy('last_name')
-        ->orderBy('first_name')
-        ->paginate(20);
+        })->orderBy('last_name')
+        ->orderBy('first_name');
+
+         // Filter depending on tab
+         if ($this->tab === 'active') {
+            $query->where('is_active', 1);
+        } else {
+            $query->where('is_active', 0);
+        }
+
+        $activeCount = User::where('employment_status', ['PERMANENT', 'COTERMINOUS'])->where('is_active', 1)->count();
+        $inactiveCount = User::where('employment_status', ['PERMANENT', 'COTERMINOUS'])->where('is_active', 0)->count();
+
+
+        $users = $query->paginate(10);
         
 
         return view('livewire.list-of-employees',[
-            'users' => $users
+            'users' => $users,
+            'activeCount' => $activeCount,
+            'inactiveCount' => $inactiveCount,
         ]);
     }
 

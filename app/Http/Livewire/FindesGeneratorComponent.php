@@ -51,7 +51,7 @@ class FindesGeneratorComponent extends Component
 
         // ✅ Initialize ZIP
         $zip = new ZipArchive();
-        $zipFileName = 'FINDES_' . now()->format('Ymd_His') . '.zip';
+        $zipFileName = 'FINDES_' . now()->format('Y_m_d_His') ."_". $this->frequency . '.zip';
         $zipPath = storage_path("app/findes/{$zipFileName}");
 
         if (!file_exists(dirname($zipPath))) {
@@ -101,7 +101,7 @@ class FindesGeneratorComponent extends Component
             $writer->setLineEnding("\r\n");
             $writer->setSheetIndex(0);
 
-            $fileName = "{$fundName}_" . now()->format('Y_m') . ".csv";
+            $fileName = "{$fundName}_" . now()->format('Y_m') . "_{$this->frequency}" . ".csv";
             $tempPath = storage_path("app/findes/tmp/{$fileName}");
 
             if (!file_exists(dirname($tempPath))) {

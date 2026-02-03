@@ -233,6 +233,8 @@
                     ->with('cnas')
                     ->where('employment_status', 'PERMANENT') // Filter by employment_status
                     ->orWhere('employment_status', 'COTERMINOUS') // Filter by employment_status
+                    ->where('fund_id', $payrollFund->id) // Filter by fund
+
                     ->where('is_active', 1) // Filter by active users
                     ->get()
                     ->sortBy('full_name'); // Sort by full name
@@ -408,12 +410,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $preparer->name ?? '' }}
+                                                            <b>{{ $preparer->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $preparer->position ?? '' }}
+                                                            <i>{{ $preparer->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -425,12 +427,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $certifier->name ?? '' }}
+                                                            <b>{{ $certifier->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $certifier->position ?? '' }}
+                                                            <i>{{ $certifier->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -446,19 +448,19 @@
                                         </tr>
                                         <tr>
                                             <td><br></td>
-                                            <td>Each employee whose name appears on the payroll has been paid and the corresponding net amount opposite his/her name was credited to his/</td>
+                                            <td>Each employee whose name appears on the payroll has been paid and the corresponding net amount opposite his/her name was credited to his/her LBP payroll account.</td>
                                         </tr>
                                         <tr>
                                             <td style="padding-left: 50px;">
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $approver->name ?? '' }}
+                                                            <b>{{ $approver->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $approver->position ?? '' }}
+                                                            <i>{{ $approver->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -467,12 +469,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $afsChief->name ?? '' }}
+                                                            <b>{{ $afsChief->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $afsChief->position ?? '' }}
+                                                            <i>{{ $afsChief->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                 </table>

@@ -490,7 +490,7 @@
                                         </tr>
                                         <tr>
                                             <td><br></td>
-                                            <td>Each employee whose name appears on the payroll has been paid and the corresponding net amount opposite his/her name was credited to his/her payroll account.</td>
+                                            <td>Each employee whose name appears on the payroll has been paid and the corresponding net amount opposite his/her name was credited to his/her LBP payroll account.</td>
                                         </tr>
                                         <tr>
                                             <td style="padding-left: 50px;">
