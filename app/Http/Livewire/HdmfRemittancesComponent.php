@@ -528,218 +528,6 @@ class HdmfRemittancesComponent extends Component
 
     }
 
-    // GSIS that generates based on historical data AKA NPI and NPIAD
-    public function createExcelFileGsisOrig($filterSection = null, $filterFund = null)
-        {
-                ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
-
-                $templatePath = storage_path('app/excel_templates/gsis_remittance_template.xlsx');
-                $spreadsheet = IOFactory::load($templatePath);
-        
-                DB::statement("SET SQL_MODE=''"); // Allow GROUP BY
-                $deduction = $this->deduction;
-                $newPayroll = NewPayrollIndex::with([
-                    'user.fund',
-                    'user.agencyUnit.agencySection',
-                    'newPayrollIndexAllDed'
-                ])
-                    ->where('period_covered_from', $this->payrollDateFrom)
-                    ->where('period_covered_to', $this->payrollDateTo)
-                    ->whereHas('newPayrollIndexAllDed', function ($query) use ($deduction) {
-                        $query->where('npiad_group', 'GSIS');
-                        $query->where('npiad_type', 'DEDUCTION');
-                    });
-
-                // dd($newPayroll->get());
-                
-                if ($filterSection !== null) {
-                    $newPayroll->where('office', $filterSection);
-                }
-                
-                if ($filterFund !== null) {
-                    $newPayroll->whereHas('user.fund', function ($query) {
-                        $query->where('id', $this->filterFund);
-                    });
-                }
-                
-                $funds = $newPayroll->get()
-                    ->groupBy(function ($item) {
-                        return $item->funding_charges ?? 'Unknown Fund';
-                    })
-                    ->map(function ($groupedByFund) {
-                        return $groupedByFund->groupBy(function ($item) {
-                            return $item->office; // Office-level grouping
-                        });
-                    });
-        
-            
-        
-                if ($funds->isEmpty()) {
-                    return collect([]);
-                }
-        
-                foreach ($funds as $fundName => $offices) {
-        
-        
-                        // foreach($payrollSection as $section){
-                            // Clone the template sheet for each fund
-        
-        
-                            foreach($offices as $officeName => $payrollEntries){
-        
-                                $templateSheet = $spreadsheet->getSheet(0);
-                                $newSheet = clone $templateSheet;
-                
-                                $sheetName = Str::limit(preg_replace('/[\\\\\\/\\?\\*\\[\\]:]/', '', $fundName ." ". $officeName), 31, '');
-                                $newSheet->setTitle($sheetName ?: 'GSIS attachment');
-                
-                                // Add the sheet to the spreadsheet
-                                $spreadsheet->addSheet($newSheet);
-                
-                                $totalRemittance = 0;
-                                $totalPs = 0;
-                                $totalGs = 0;
-                                $totalEc = 0;
-                                $totalConsoloan = 0;
-                                $totalMplite = 0;
-                                $totalEmergency = 0;
-                                $totalPl = 0;
-                                $totalGfal = 0;
-                                $totalMpl = 0;
-                                $totalCpl = 0;
-
-                                $counter = 0;
-                
-                                $rowStart = 7; // Start inserting rows at 7
-        
-                                foreach($payrollEntries->sortBy(['last_name', 'first_name']) as $npiUser) {
-        
-                                    $deduction;
-        
-                                    $ps = $npiUser->newPayrollIndexAllDed()
-                                    ?->where('npiad_deduction_id', 9)
-                                    ->first();
-
-                                    $gs = bcdiv(($npiUser?->daily_monthly_rate * .12), 1, 2);
-
-                                    $ec = 100;
-
-                                    $consoloan = $npiUser->newPayrollIndexAllDed()
-                                    ?->where('npiad_deduction_id', 10)
-                                    ->first();
-
-                                    $mplite = $npiUser->newPayrollIndexAllDed()
-                                    ?->where('npiad_deduction_id', 14)
-                                    ->first();
-
-                                    $emergency = $npiUser->newPayrollIndexAllDed()
-                                    ?->where('npiad_deduction_id', 15)
-                                    ->first();
-
-                                    $pl = $npiUser->newPayrollIndexAllDed()
-                                    ?->where('npiad_deduction_id', 13)
-                                    ->first();
-
-                                    $gfal = $npiUser->newPayrollIndexAllDed()
-                                    ?->where('npiad_deduction_id', 16)
-                                    ->first();
-
-                                    $mpl = $npiUser->newPayrollIndexAllDed()
-                                    ?->where('npiad_deduction_id', 11)
-                                    ->first();
-
-                                    $cpl = $npiUser->newPayrollIndexAllDed()
-                                    ?->where('npiad_deduction_id', 12)
-                                    ->first();
-        
-                                    // Insert data for each user
-                                    $newSheet->insertNewRowBefore($rowStart);
-                                    $newSheet->setCellValue("A{$rowStart}", $npiUser?->gsis);
-                                    $newSheet->setCellValue("B{$rowStart}", $npiUser?->last_name);
-                                    $newSheet->setCellValue("C{$rowStart}", '=TRIM("' . $npiUser?->first_name .'")');
-                                    $newSheet->setCellValue("D{$rowStart}", $npiUser?->middle_name);
-                                    $newSheet->setCellValue("E{$rowStart}", $npiUser?->name_extn);
-                                    $newSheet->setCellValue("F{$rowStart}", $npiUser?->birthdate); // birthdate
-                                    $newSheet->setCellValue("G{$rowStart}", $npiUser?->gsis_crn ?? 'NO CRN'); // CRN
-                                    $newSheet->setCellValue("H{$rowStart}", $npiUser?->daily_monthly_rate); // Monthly Salary
-                                    // $newSheet->setCellValue("J{$rowStart}", 'wala pa'); // Effectivity Date
-                                    $newSheet->setCellValue("I{$rowStart}", $ps?->npiad_amount ?? 0); // PS
-                                    $newSheet->setCellValue("J{$rowStart}", $gs);
-                                    $newSheet->setCellValue("K{$rowStart}", $ec);
-                                    $newSheet->setCellValue("L{$rowStart}", $consoloan?->npiad_amount ?? 0);
-                                    $newSheet->setCellValue("M{$rowStart}", $mplite?->npiad_amount ?? 0);
-                                    $newSheet->setCellValue("N{$rowStart}", $emergency?->npiad_amount ?? 0);
-                                    $newSheet->setCellValue("O{$rowStart}", $pl?->npiad_amount ?? 0);
-                                    $newSheet->setCellValue("P{$rowStart}", $gfal?->npiad_amount ?? 0);
-                                    $newSheet->setCellValue("Q{$rowStart}", $mpl?->npiad_amount ?? 0);
-                                    $newSheet->setCellValue("R{$rowStart}", $cpl?->npiad_amount ?? 0);
-        
-                        
-                                    $totalPs += $ps?->npiad_amount ?? 0;
-                                    $totalGs += $gs;
-                                    $totalEc += $ec;
-                                    $totalConsoloan += $consoloan?->npiad_amount ?? 0;
-                                    $totalMplite += $mplite?->npiad_amount ?? 0;
-                                    $totalEmergency += $emergency?->npiad_amount ?? 0;
-                                    $totalPl += $pl?->npiad_amount ?? 0;
-                                    $totalGfal += $gfal?->npiad_amount ?? 0;
-                                    $totalMpl += $mpl?->npiad_amount ?? 0;
-                                    $totalCpl += $cpl?->npiad_amount ?? 0;
-
-                                    $totalRemittance += ($ps?->npiad_amount ?? 0) + $gs + $ec + ($consoloan?->npiad_amount ?? 0) + ($mplite?->npiad_amount ?? 0) + ($emergency?->npiad_amount ?? 0) + ($pl?->npiad_amount ?? 0) + ($gfal?->npiad_amount ?? 0) + ($mpl?->npiad_amount ?? 0) + ($cpl?->npiad_amount ?? 0);
-        
-                                    $rowStart++; // Move to next row
-                                    $counter++;
-                                }
-
-
-                                $newSheet->setCellValue('I'. $rowStart, $totalPs);
-                                $newSheet->setCellValue('J'. $rowStart, $totalGs);
-                                $newSheet->setCellValue('K'. $rowStart, $totalEc);
-                                $newSheet->setCellValue('L'. $rowStart, $totalConsoloan);
-                                $newSheet->setCellValue('M'. $rowStart, $totalMplite);
-                                $newSheet->setCellValue('N'. $rowStart, $totalEmergency);
-                                $newSheet->setCellValue('O'. $rowStart, $totalPl);
-                                $newSheet->setCellValue('P'. $rowStart, $totalGfal);
-                                $newSheet->setCellValue('Q'. $rowStart, $totalMpl);
-                                $newSheet->setCellValue('R'. $rowStart, $totalCpl);
-
-
-                                $formattedDate = Carbon::parse($npiUser?->period_covered_to)->format('m/Y');
-                                $newSheet->setCellValue("B3", $formattedDate);
-                                // Set totals
-                                // $newSheet->setCellValue('N'. $rowStart + 17, $totalRemittance);
-
-                                $newSheet->setCellValue('M'. $rowStart + 12, "FUND " . $fundName);
-
-            
-                                // Remove the template row
-                                $newSheet->removeRow(6);
-        
-                            }
-
-        
-                                // }
-                            // }
-                        }
-        
-                    // Delete the original template sheet
-                    $spreadsheet->removeSheetByIndex(0);
-        
-                    // Save the Excel file to storage temporarily
-                    $fileName = 'gsis_remittance' . now()->format('Ymd_His') . '.xlsx';
-                    $modifiedPath = storage_path("app/gsis_reports/{$fileName}");
-                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-                    $writer->save($modifiedPath);
-        
-                    // Dispatch browser event to trigger download
-                    $this->dispatchBrowserEvent('fileDownload', [
-                        'url' => route('download.remittance', ['filename' => $fileName])
-                    ]);
-        
-                    return $modifiedPath; // Optional: return path if you also want to use it later
-        
-        }
 
     //GSIS that generates based on Current Deduction
     public function createExcelFileGsis($filterSection = null, $filterFund = null)
@@ -943,16 +731,16 @@ class HdmfRemittancesComponent extends Component
                                     $counter++;
                                 }
 
-                                $newSheet->setCellValue('I'. $rowStart, $totalPs);
-                                $newSheet->setCellValue('J'. $rowStart, $totalGs);
-                                $newSheet->setCellValue('K'. $rowStart, $totalEc);
-                                $newSheet->setCellValue('L'. $rowStart, $totalConsoloan);
-                                $newSheet->setCellValue('M'. $rowStart, $totalMplite);
-                                $newSheet->setCellValue('N'. $rowStart, $totalEmergency);
-                                $newSheet->setCellValue('O'. $rowStart, $totalPl);
-                                $newSheet->setCellValue('P'. $rowStart, $totalGfal);
-                                $newSheet->setCellValue('Q'. $rowStart, $totalMpl);
-                                $newSheet->setCellValue('R'. $rowStart, $totalCpl);
+                                $newSheet->setCellValue('J'. $rowStart, $totalPs);
+                                $newSheet->setCellValue('K'. $rowStart, $totalGs);
+                                $newSheet->setCellValue('L'. $rowStart, $totalEc);
+                                $newSheet->setCellValue('M'. $rowStart, $totalConsoloan);
+                                $newSheet->setCellValue('N'. $rowStart, $totalMplite);
+                                $newSheet->setCellValue('O'. $rowStart, $totalEmergency);
+                                $newSheet->setCellValue('P'. $rowStart, $totalPl);
+                                $newSheet->setCellValue('Q'. $rowStart, $totalGfal);
+                                $newSheet->setCellValue('R'. $rowStart, $totalMpl);
+                                $newSheet->setCellValue('S'. $rowStart, $totalCpl);
 
                                 $formattedDate = Carbon::parse($this->payrollDateTo)->format('m/Y');
                                 $newSheet->setCellValue("B3", $formattedDate);
@@ -1362,7 +1150,7 @@ class HdmfRemittancesComponent extends Component
 
             if($payee != 'GSIS'){
                 $preparer = 'CHRISTIAN A. EVANGELISTA';
-                $preparer_position_title = 'Records Assistant';
+                $preparer_position_title = 'Industrial Relations Management Officer C';
             }else{
                 $preparer = 'DARIEL F. GABRILLO';
                 $preparer_position_title = 'Cashiering Assistant';

@@ -229,12 +229,13 @@
                 $total_uniform_allowance = 0;
 
                 $payrollUsers = $payrollFund->users(null, false, null, null, $office)
-                    ->where('employment_status', 'PERMANENT') // Filter by employment_status
-                    ->orWhere('employment_status', 'COTERMINOUS') // Filter by employment_status
-                    ->where('is_active', 1) // Filter by active users
+                    ->where(function ($query) {
+                        $query->where('employment_status', 'PERMANENT')
+                            ->orWhere('employment_status', 'COTERMINOUS');
+                    })
+                    ->where('is_active', 1)
                     ->get()
-                    ->sortBy('full_name'); // Sort by full name
-
+                    ->sortBy('full_name');
             @endphp
 
                     {{-- @foreach ($payrollSection as $office => $payrollUserSections) --}}
@@ -245,18 +246,21 @@
                                         {{-- <img class="header-img" src="{{ public_path('img/a4-landscape-header.png') }}" width="450.315px" alt="nia header"> --}}
                                         <img class="header-img" src="{{ public_path('img/a4-landscape-header.png') }}" alt="nia header">
                                     </div>
-                                    <caption>
+                                    <caption style="margin-top: 60px;">
                                           <h2>G E N E R A L &nbsp; P A Y R O L L</h2>
                                           <div style="margin-left: 5px; margin-bottom: 3px;">
                                     </caption>
                                         <div class="col-sm-12">
                                             <span class="fw-sm text-start" style="font-size: 7px;">
                                             @foreach ($payrollUsers as $payrollUser)
-                                                @if($payrollUser->uniformAllowances->where('year', $year)->first()->mc != "" && $payrollUser->uniformAllowances->where('year', $year)->first()->mc != null)
-                                                    {{ $payrollUser->uniformAllowances->where('year', $year)->first()->mc }}
-                                                @else
-                                                    NIA MC No.__________series of_________
-                                                @endif
+                                                @php
+                                                    $uniformAllowances = $payrollUser->yebs->where('year', $year)->first();
+                                                @endphp
+                                                    @if($uniformAllowances != null && $uniformAllowances->mc != null)
+                                                        {{ $uniformAllowances->mc }}
+                                                    @else
+                                                        NIA MC No.__________series of_________
+                                                    @endif
                                                 @break
                                             @endforeach
                                         </span>
@@ -293,7 +297,6 @@
                                                    @php
                                                         $counter = $counter + 1;
                                                         $total_uniform_allowance += $payrollUser->uniformAllowances->where('year', $year)->first()->uniform_allowance;
-
                                                    @endphp
 
                                                     @php

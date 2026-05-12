@@ -7,36 +7,40 @@ use App\Models\MidyearBonus;
 
 class MidyearBonusInputComponent extends Component
 {
-    public $mybId, $myb, $year, $cg; //, $casabloan;
+    public $mybId, $year, $casabloan; //, $casabloan;
 
     public function mount($payrollUser)
     {
         if($payrollUser){
             if ($payrollUser->mybs->isNotEmpty()) {
-                $userYeb = $payrollUser->mybs->where('year', $this->year)->first();
-                $this->myb = number_format(bcdiv((float) $userYeb->mid_year_bonus, 1, 2), 2);
-                $this->mybId = $userYeb->id;
+                $userMyb= $payrollUser->mybs->where('year', $this->year)->first();
+                $this->casabloan = number_format(bcdiv((float) $userMyb->casab_loan, 1, 2), 2);
+                $this->mybId = $userMyb->id;
             }
         }
 
     }
 
-    public function updatedMyb()
+    public function updatedCasabloan()
     {
-        $checkYeb = MidyearBonus::find($this->mybId);
-        if($checkYeb){
-            $cgVal = $checkYeb->cash_gift;
-            $casabloan = $checkYeb->casab_loan;
-            $mybVal = str_replace( ',', '', $this->myb);
+        $checkMyb = MidyearBonus::find($this->mybId);
+        if($checkMyb){
 
-            $checkYeb->update([
-                'mid_year_bonus' => bcdiv((float) $mybVal, 1, 2),
-                'total_mid_year_bonus' => bcdiv((float) ($cgVal + (float) $mybVal), 1, 2),
-                'net_amount' => bcdiv((float) ($cgVal + (float) $mybVal) - $casabloan, 1, 2),
+            $myb = $checkMyb->mid_year_bonus;
+            // $casabloan = $checkMyb->casab_loan;
+            $casabloan = str_replace( ',', '', $this->casabloan);
+
+            $checkMyb->update([
+                'mid_year_bonus' => bcdiv((float) $myb, 1, 2),
+                // 'total_mid_year_bonus' => bcdiv((float) ((float) $myb), 1, 2),
+                'casab_loan' =>  $casabloan,
+                'net_amount' => bcdiv((float) ((float) $myb) - $casabloan, 1, 2),
             ]);
+
+            $this->casabloan = number_format(bcdiv((float) $casabloan, 1, 2), 2);
+
         }
 
-        $this->myb = number_format(bcdiv((float) $mybVal, 1, 2), 2);
 
         $this->emit('refreshMybComponent', $this->mybId);
         

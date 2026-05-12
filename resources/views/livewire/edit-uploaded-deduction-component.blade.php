@@ -279,6 +279,7 @@
                     <tbody>
                         @forelse ($listOfToBeNotUpdated as $user)
                         {{-- @dd($toBeNotUpdated) --}}
+                        {{-- @dd($user) --}}
                             <tr>
                                 <td>{{ $counter }}</td>
                                 <td>{{ $user['id'] }}</td>

@@ -190,8 +190,6 @@
                                                             ->where('is_active', 1) // Filter by active users
                                                             ->get()
                                                             ->sortBy('full_name'); // Sort by full name
-
-
                                                     @endphp
 
                             {{-- @foreach ($payrollUserSections as $payrollUserSection) --}}

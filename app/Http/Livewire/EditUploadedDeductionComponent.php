@@ -147,19 +147,32 @@ class EditUploadedDeductionComponent extends Component
                     continue;
                 }
                 $type = $ded['deduction_type'] ?? null;
+                if ($type == 'GSIS_PREM') {
+                    $type = 'PS'; //in excel it's PS
+                }
                 if ($type == 'PL_REG') {
                     $type = 'PLREG'; //in excel it's PLREG
                 }
-                // if ($type && isset($deductions[$type])) {
-                //     // $deductions[$type] = $ded['pivot']['amount'] ?? $ded['amount'] ?? 0;
-                //     $deductions[$type] = $ded['pivot']['amount'];
-                // }
+                if ($type == 'GSIS_MPL') {
+                    $type = 'MPL'; //in excel it's MPL
+                }
+                if ($type == 'CONSO_LOAN') {
+                    $type = 'CONSOLOAN'; //in excel it's CONSOLOAN
+                }
                 if ($type && isset($deductions[$type])) {
                     foreach ($data as $row) {
                         $bpno = trim($row['BPNO'] ?? ''); // GSIS from Excel
                         if ($bpno == $user['gsis']) {
-                            if($row[$type] == 0 && $ded['pivot']['amount'] > 0){
-                                $deductions[$type] = $ded['pivot']['amount'];
+                            $excelVal = (float)$row[$type];
+                            $dbVal = (float) ($ded['pivot']['amount'] ?? 0);
+                            if ($excelVal == 0 && $dbVal > 0) {
+                                // dd($type);
+                                // if($type == "MPL"){
+                                //     dd($excelVal, $dbVal);
+
+                                // }
+
+                                $deductions[$type] = $dbVal;
                             }
                             break;
                         }
@@ -168,7 +181,6 @@ class EditUploadedDeductionComponent extends Component
                     // $deductions[$type] = $ded['pivot']['amount'] ?? $ded['amount'] ?? 0;
                 }
             }
-            // dd($deductions);
             // Attach processed values to the user
             $user['deductions_flat'] = $deductions;
 
@@ -237,8 +249,6 @@ class EditUploadedDeductionComponent extends Component
                 $this->listTobeSaved[] = $entry;
             }
         }
-
-        // dd($this->listOfCannotFindInDatabase);
     }
 
     public function updateListToBeSaved($id, $dedType, $value)
@@ -286,13 +296,11 @@ class EditUploadedDeductionComponent extends Component
             return $value > 0;
         }
         return false; // No change
-        // dd($this->listTobeSaved);
     }
 
     public function validateIsWithDeduction($id, $dedType, $value){
         $user = User::find($id);
         $deductionMap = $this->deductionMap;
-
         $DbDeduction = $deductionMap[$dedType] ?? null;
         $currentDeduction = $user->employeeDeductions()->where('deduction_id', $DbDeduction)->first();
         if ($currentDeduction) {
@@ -308,7 +316,6 @@ class EditUploadedDeductionComponent extends Component
     }
 
     public function saveRecords(){
-        // dd($this->listTobeSaved);
         foreach ($this->listTobeSaved as $entry) {
             $user = User::find($entry['id']);
             if ($user) {
@@ -316,6 +323,7 @@ class EditUploadedDeductionComponent extends Component
 
                     $user->gsis_crn = $entry['crn'] ?? null;
                     $user->birthdate = $entry['gsis_birthdate'] ?? null;
+                    $user->effectivity_date = $entry['effectivity_date'] ?? null;
                     
                     if ($key != 'id') {
                         $deductionId = null;

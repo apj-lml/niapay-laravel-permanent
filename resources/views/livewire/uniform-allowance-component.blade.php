@@ -148,13 +148,13 @@
                                                     @php
                                                         $payrollUsers = $payrollFund->users()
                                                             ->with('agencyUnit.agencySection') // Eager load the related agencyUnit and agencySection
-                                                            ->where('employment_status', 'PERMANENT') // Filter by employment_status
-                                                            ->orWhere('employment_status', 'COTERMINOUS') // Filter by employment_status
+                                                            ->where(function ($query) {
+                                                                $query->where('employment_status', 'PERMANENT')
+                                                                    ->orWhere('employment_status', 'COTERMINOUS');
+                                                                })
                                                             ->where('is_active', 1) // Filter by active users
                                                             ->get()
                                                             ->sortBy('full_name'); // Sort by full name
-
-
                                                     @endphp
 
                             {{-- @foreach ($payrollUserSections as $payrollUserSection) --}}

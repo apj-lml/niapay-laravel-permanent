@@ -27,7 +27,7 @@ class UniformAllowanceComponent extends Component
 
     public function mount()
     {
-        $users = User::all('id', 'employee_id', 'last_name', 'first_name', 'middle_name', 'name_extn', 'position', 'sg_jg', 'step', 'daily_rate');
+        $users = User::all('id', 'employee_id', 'last_name', 'first_name', 'middle_name', 'name_extn', 'position', 'sg_jg', 'step', 'monthly_rate');
         foreach($users as $user){
             // Add or update the user
 
@@ -42,6 +42,8 @@ class UniformAllowanceComponent extends Component
                     ]);
                 }
             }else{
+                $cleanedUniformAllowance = str_replace(',', '', $this->cuniformAllowanceg);
+
                 $user = UniformAllowance::create(
                     [
                         'mc' => $this->mc,
@@ -49,7 +51,7 @@ class UniformAllowanceComponent extends Component
                         'name' => $user->full_name,
                         'position_title' => $user->position,
                         'sgjg' => $user->sg_jg,
-                        'uniform_allowance' => $this->uniformAllowance,
+                        'uniform_allowance' => $this->cleanedUniformAllowance,
                         'remarks' => null,
                         'user_id' => $user->id,
                     ]
@@ -58,47 +60,7 @@ class UniformAllowanceComponent extends Component
         }
     }
 
-    // public function processUniformAllowancePayroll($filterSection = null, $filterFund = null){
-
-    //     DB::statement("SET SQL_MODE=''"); //this is the trick, use it just before your query to be able to GROUP
-    //         $funds = Fund::with(['users' => function ($query) use ($filterSection) {
-
-    //             if ($filterSection !== null) {
-    //                 $query->whereHas('agencyUnit.agencySection', function ($subQuery) use ($filterSection) {
-    //                     $subQuery->where('office', $filterSection);
-    //                 });
-    //             }
-            
-    //         }, 'users.agencyUnit', 'users.agencyUnit.agencySection', 'users.uniformAllowances'])
-    //             ->has('users') // Ensure that the Fund has users
-    //             ->get();
-            
-    //     if ($filterFund !== null && $filterFund != 0 ) {
-    //         $funds = $funds->where('id', $filterFund);
-    //     }
-
-        
-    //     if($funds->isEmpty()){
-    //         return collect([]);
-    //     }else{
-    //         foreach($funds as $fund){
-    //             $fund->sections = AgencySection::with(['users' => function ($query) use ($fund){
-    //                 $query->where('fund_id', '=', $fund->id); 
-    //                 $query->where('employment_status', '=', 'PERMANENT')->orWhere('employment_status', '=', 'COTERMINOUS'); 
-    //                 $query->where('is_active', '=', 1); 
-    //                 $query->where('include_to_payroll', '=', 1); 
-    //             }])->select('*')->get()->groupBy('office');
-
-    //         }
-
-
-    //         $payrollFunds = $funds;
-    //     }
-
-    //     return $payrollFunds;
-    // }
-
-    public function processUniformAllowancePayroll($filterSection = null, $filterFund = null)
+    public function processUniformAllowancePayrollOld($filterSection = null, $filterFund = null)
     {
         // Fetch Funds that have active users meeting the criteria
         $funds = Fund::whereHas('users', function ($query) use ($filterSection) {
@@ -155,6 +117,69 @@ class UniformAllowanceComponent extends Component
         return $funds;
     }
 
+    public function processUniformAllowancePayroll($filterSection = null, $filterFund = null)
+    {
+        DB::statement("SET SQL_MODE=''"); //this is the trick, use it just before your query to be able to GROUP
+        $funds = Fund::with(['users' => function ($query) use ($filterSection) {
+
+            if ($filterSection !== null) {
+                $query->whereHas('agencyUnit.agencySection', function ($subQuery) use ($filterSection) {
+                    $subQuery->where('office', $filterSection);
+                });
+            }
+        
+        }, 'users.agencyUnit', 'users.agencyUnit.agencySection', 'users.uniformAllowances'])
+            ->has('users') // Ensure that the Fund has users
+            ->get();
+        
+        if ($filterFund !== null && $filterFund != 0 ) {
+            $funds = $funds->where('id', $filterFund);
+        }
+
+        
+        if($funds->isEmpty()){
+            return collect([]);
+        }else{
+            foreach($funds as $fund){
+                $fund->sections = AgencySection::with([
+                    'signatories' => function ($query) {
+                    $query->whereHas('agencySection', function ($subQuery) {
+                        $subQuery->where('docu', 'other_bonus');
+                    });
+                }, 'users' => function ($query) use ($fund){
+                    $query->where('fund_id', '=', $fund->id); 
+                    $query->where(function ($query) {
+                        $query->where('employment_status', 'PERMANENT')
+                            ->orWhere('employment_status', 'COTERMINOUS');
+                    });
+                    $query->where('is_active', '=', 1);
+
+                }, 'users.uniformAllowances' => function ($query){
+                    $query->where('year', '=', $this->year); // Filter uniformAllowances by year
+                }])->select('*')->get()->groupBy('office');
+
+                $total_uniform_allowance_per_office = 0.00;
+
+                // Calculate totals per section
+                foreach ($fund->sections as $office => $sections) {
+                
+                        $total_uniform_allowance_per_office += $fund->users(null, false, null, null, $office)->get()->sum(function ($user) {
+                            return $user->yebs->sum('uniform_allowance');
+                        });
+
+                        $sections->put('total_uniform_allowance_per_office', $total_uniform_allowance_per_office);
+
+                        $total_uniform_allowance_per_office = 0.00;
+                }
+            }
+
+
+            $payrollFunds = $funds;
+        }
+
+        return $payrollFunds;
+    }
+
     public function createPdf()
     {
         $payrollFunds = $this->processUniformAllowancePayroll();
@@ -167,7 +192,7 @@ class UniformAllowanceComponent extends Component
             foreach($payrollFund->sections as $office => $payrollSection){
                 foreach($payrollSection as $section){
                     
-                    // dd($payrollSection['total_year_end_bonus_per_office']);
+                    // dd($payrollSection['total_uniform_allowance_per_office']);
                     $data = [
                         'payrollSection' => $payrollSection,
                         'payrollFund' => $payrollFund,
@@ -176,7 +201,7 @@ class UniformAllowanceComponent extends Component
                         'signatories' => $signatories,
                         ];
 
-                        $pdf = PDF::loadView('print-uniform-allowance-template', $data)->setOption(['dpi' => 60]);
+                        $pdf = PDF::loadView('print-uniform-allowance-template', $data)->setOption(['dpi' => 70]);
                         $pdf->set_option("isPhpEnabled", true);
     
                     $employeesOfThisSection = [];

@@ -55,7 +55,7 @@
      caption>h2 {
       margin-top: 0;
       margin-bottom: 0;
-      font-size: 14px;
+      font-size: 54px;
      }
 
      caption>p {
@@ -83,14 +83,15 @@
      }
 
      th, td {
-         padding: 2.5px;
-         font-size:7px;
-         border: 0.5px solid black;
-         /* height:15px */
-     }
-
+            height: 80px;
+            padding: 0 10px;
+            font-size: 28px;
+            border: 0.5px solid black;
+            overflow: hidden;
+            white-space: wrap;
+        }
      th {
-      font-size:6.5px;
+      font-size:28px;
       font-weight: bolder;
       word-wrap: break-word;
      }
@@ -110,17 +111,12 @@
         'header header header header header header'
         'main main main main main main'
         'footer footer footer footer footer footer';
-      gap: 5px;
+        gap: 5px;
       /* background-color: #2196F3; */
       /* padding: 10px; */
     }
 
-    .grid-container > div {
-      /* background-color: rgba(255, 255, 255, 0.8);
-      text-align: center;
-      padding: 20px 0;
-      font-size: 30px; */
-    }
+
 
     .fw-sm{
       font-size: 9px;
@@ -151,6 +147,13 @@
     table.signatory{
       /* border:1px dashed red;  UNCOMMENT TO SEE BORDERS: 0; */
       border: 0;
+    }
+
+    table.main-table th {
+        height: 45px;
+        font-size: 14px;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
   .signatory-job{
@@ -254,12 +257,12 @@
                                         {{-- <img class="header-img" src="{{ public_path('img/test-header.jpg') }}" width="600.315px" alt="nia header"> --}}
                                         <img class="header-img" src="{{ public_path('img/a4-landscape-header.png') }}" width="450.315px" alt="nia header">
                                       </div>
-                                      <div style="margin-left: 5px; margin-bottom: 3px; margin-top: 10px;">
+                                      <div style="margin-left: 5px; margin-bottom: 3px; margin-top: 220px;">
                                         <caption>
                                             <h2>G E N E R A L &nbsp; P A Y R O L L</h2>
                                         </caption>
                                         <div class="col-sm-12">
-                                            <span class="fw-sm text-start" style="font-size: 7px;">
+                                            <span class="fw-sm text-start" style="font-size: 37px;">
                                                 @foreach ($payrollUsers as $payrollUser)
                                                     @if($payrollUser->mybs->where('year', $year)->first()->mc != "" && $payrollUser->mybs->where('year', $year)->first()->mc != null)
                                                         {{ $payrollUser->mybs->where('year', $year)->first()->mc }}
@@ -271,7 +274,7 @@
                                             </span>
                                         </div>
                                         <div class="col-sm-12">
-                                            <i class="fw-sm" style="font-size: 7px;"> Mid-year Bonus for CY {{ $year }}</i>
+                                            <i class="fw-sm" style="font-size: 37px;"> Mid-year Bonus for CY {{ $year }}</i>
                                         </div>
                                           </div>
                                         <table class="main-table">
@@ -286,9 +289,9 @@
                                                     <th scope="col" rowspan="2"
                                                         class="text-center align-middle" style="width:14%">POSITION TITLE / JG
                                                     </th>
-                                                    <th scope="col" rowspan="2"
+                                                    {{-- <th scope="col" rowspan="2"
                                                         class="text-center align-middle" style="width:5%">DAILY RATE
-                                                    </th>
+                                                    </th> --}}
                                                     <th scope="col" rowspan="2"
                                                         class="text-center align-middle" style="width:5%">MONTHLY RATE
                                                     </th>
@@ -362,24 +365,24 @@
                                                                         {{ $payrollUser->full_name }}
                                                                 </strong>
                                                             </td>
-                                                            <td scope="row" class="text-start" style="font-size: 7px;">
+                                                            <td scope="row" class="text-start" >
                                                                 {{ $payrollUser->position }} /
                                                                 {{ $payrollUser->sg_jg }}</td>
-                                                            <td scope="row"
+                                                            {{-- <td scope="row"
                                                                 class="text-center align-middle p-0" style="text-align: right;">
                                                                 {{ number_format(bcdiv((float) $payrollUser->monthly_rate / 22, 1, 2), 2) }}
-                                                            </td>
+                                                            </td> --}}
                                                             <td scope="row"
                                                                 class="text-center align-middle p-0" style="text-align: right;">
                                                                 {{ number_format((float) $payrollUser->monthly_rate, 2) }}
                                                             </td>
                                                             <td scope="row"
                                                                 class="text-center align-middle p-0" style="text-align: right;">
-                                                                {{ number_format((float) $payrollUser->mybs->first()->mid_year_bonus, 2) }}
+                                                                {{ number_format((float) $payrollUser->mybs->where('year', $year)->first()->mid_year_bonus, 2) }}
                                                             </td>
                                                             {{-- <td scope="row"
                                                                 class="text-center align-middle p-0" style="text-align: right;">
-                                                                {{ number_format((float) $payrollUser->mybs->first()->cash_gift, 2) }}
+                                                                {{ number_format((float) $payrollUser->mybs->where('year', $year)->first()->cash_gift, 2) }}
                                                             </td> --}}
                                                             {{-- <td scope="row"
                                                                 class="text-center align-middle p-0" style="text-align: right;">
@@ -387,7 +390,7 @@
                                                             </td> --}}
                                                             <td
                                                                 class="text-center align-middle p-0" style="text-align: right;">
-                                                                {{ number_format((float) $payrollUser->mybs->first()->casab_loan, 2) }}
+                                                                {{ number_format((float) $payrollUser->mybs->where('year', $year)->first()->casab_loan, 2) }}
                                                             </td>
                                                             <td scope="row"
                                                                 class="text-center align-middle p-0" style="text-align: right;">
@@ -401,7 +404,7 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="5" style="text-align: right;"><b>TOTAL</b></td>
+                                                    <td colspan="4" style="text-align: right;"><b>TOTAL</b></td>
                                                     <td>{{ number_format($total_mid_year_bonus_per_office, 2) }}</td>
                                                     {{-- <td>{{ number_format($total_cash_gift_per_office, 2) }}</td> --}}
                                                     {{-- <td>{{ number_format($grand_total_mid_year_bonus_per_office, 2) }}</td> --}}
@@ -444,12 +447,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $preparer->name ?? '' }}
+                                                            <b>{{ $preparer->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $preparer->position ?? '' }}
+                                                           <i>{{ $preparer->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -461,12 +464,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $certifier->name ?? '' }}
+                                                            <b>{{ $certifier->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $certifier->position ?? '' }}
+                                                            <i>{{ $certifier->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -489,12 +492,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $approver->name ?? '' }}
+                                                            <b>{{ $approver->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $approver->position ?? '' }}
+                                                            <i>{{ $approver->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -503,12 +506,12 @@
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
                                                         <td style="padding: 0px; padding-top: 20px;">
-                                                            {{ $afsChief->name ?? '' }}
+                                                            <b>{{ $afsChief->name ?? '' }}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding: 0px;">
-                                                            {{ $afsChief->position ?? '' }}
+                                                            <i>{{ $afsChief->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -547,7 +550,7 @@
           // Add additional text in the left footer
           $leftText = "";
           $leftWidth = $fontMetrics->get_text_width($leftText, $font, $size);
-          $pdf->page_text(20, $y, $leftText, $font, $size, $color, $word_space, $char_space, $angle);
+          $pdf->page_text(10, $y, $leftText, $font, $size, $color, $word_space, $char_space, $angle);
       }
   </script>
 </body>

@@ -26,24 +26,53 @@ class DeductionSummaryComponent extends Component
         ->get();
 
         // Sum the deductions grouped by `deduction_id`
-        $funds = $funds->map(function ($fund) {
-            $fund->deductions_summary = $fund->users
-            ->where('include_to_payroll', 1)
-            ->where('is_active', 1)
-            ->flatMap(function ($user) {
-                // Access the pivot table data
-                return $user->employeeDeductions
-                    // ->where('active_status', 1)
-                    ->map(function ($deduction) {
-                    return [
-                        'description' => $deduction->description,
-                        'amount' => (float) $deduction->pivot->amount,
-                    ];
-                });
-            })->groupBy('description')->map(function ($deductions) {
-                return $deductions->sum('amount');
-            });
 
+        // $funds = $funds->map(function ($fund) {
+        //     $fund->deductions_summary = $fund->users
+        //     ->where('include_to_payroll', 1)
+        //     ->where('is_active', 1)
+        //     ->flatMap(function ($user) {
+        //         // Access the pivot table data
+        //         return $user->employeeDeductions
+        //             // ->where('active_status', 1)
+        //             ->map(function ($deduction) {
+        //             return [
+        //                 'description' => $deduction->deduction_group . " - " .$deduction->description . " | " . ,
+        //                 'amount' => (float) $deduction->pivot->amount,
+        //             ];
+        //         });
+        //     })->groupBy('description')->map(function ($deductions) {
+        //         return $deductions->sum('amount');
+        //     })->sortKeys(); // 👈 HERE;
+
+        //     return $fund;
+        // });
+
+        $funds = $funds->map(function ($fund) {
+
+            $fund->deductions_summary = $fund->users
+                ->where('include_to_payroll', 1)
+                ->where('is_active', 1)
+                ->flatMap(function ($user) {
+                    return $user->employeeDeductions->map(function ($deduction) use ($user) {
+                        return [
+                            'description' => $deduction->deduction_group . ' - ' . $deduction->description,
+                            'amount'      => (float) $deduction->pivot->amount,
+                            'user_id'     => $user->id, // 👈 needed for counting
+                        ];
+                    });
+                })
+                ->groupBy('description')
+                ->mapWithKeys(function ($items, $description) {
+                    $userCount = $items->pluck('description')->count();
+
+                    return [
+                        $description . ' | ' . $userCount => $items->sum('amount')
+                    ];
+                })
+                ->sortKeysDesc();
+                // ->sortBy('description');
+                        
             return $fund;
         });
 

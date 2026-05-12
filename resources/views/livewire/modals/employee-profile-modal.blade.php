@@ -310,7 +310,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <select class="form-select @error('employeeProfile.step') is-invalid @enderror" id="step" aria-label="step" onchange="myRate();" {{ $isStepDisabled }}>
+                                            <select class="form-select @error('employeeProfile.step') is-invalid @enderror" id="step" aria-label="step" onchange="myRate();" {{ $isStepDisabled }} wire:model="employeeProfile.step">
                                                 <option value="1" selected>1</option>
                                                 <option value="2">2</option>
                                                 <option value="3">3</option>
@@ -476,6 +476,10 @@
 @push('scripts')
 
 <script type="text/javascript">
+
+window.addEventListener('format-monthly-rate', event => {
+        myRate();
+    });
 
 window.addEventListener('closeDeductionsTab', event => {
       
@@ -659,7 +663,7 @@ function myRate(){
     // step = 1;
 
     if (emp_status == "PERMANENT" || emp_status == "COTERMINOUS" || emp_status == "TEMPORARY"){
-        monthly_rate.value = monthly_rate_permanent[sg_jg][step];
+        monthly_rate.value = monthly_rate_permanent_pg[sg_jg][step];
         var temp_m_rate = parseFloat(monthly_rate.value.replace(/,/g, ''));
         monthly_rate.value = temp_m_rate.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         @this.set('employeeProfile.monthly_rate', monthly_rate.value);
@@ -667,21 +671,6 @@ function myRate(){
         daily_rate.value = "";
         // daily_rate.disabled = true;
 
-    }else if (emp_status == "JOB ORDER" || emp_status == "CONTRACT OF SERVICE"){
-        daily_rate.value = daily_rate_jo[sg_jg];
-        var temp_m_rate = parseFloat(daily_rate.value.replace(/,/g, ''));
-        daily_rate.value = temp_m_rate.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        @this.set('employeeProfile.daily_rate', daily_rate.value);
-        monthly_rate.value = "";
-        // monthly_rate.disabled = true;
-
-    
-    }else if (emp_status == "CASUAL"){
-        daily_rate.value = daily_rate_casual[sg_jg][step];
-        var temp_m_rate = parseFloat(daily_rate.value.replace(/,/g, ''));
-        daily_rate.value = temp_m_rate.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        @this.set('employeeProfile.daily_rate', daily_rate.value);
-        monthly_rate.value = "";
     }
 
     // getDeductionRate(daily_rate_jo[sg_jg])

@@ -8,6 +8,7 @@ use Livewire\Component;
 use App\Models\User;
 use App\Models\DeductionUser;
 use App\Models\AllowanceUser;
+use App\Helper\Helper;
 
 class EmployeeProfileModal extends Component
 {
@@ -76,6 +77,7 @@ class EmployeeProfileModal extends Component
         $this->userSgJg = $this->employeeProfile->sg_jg;
         $this->activeStatus = $this->employeeProfile->is_active ? '1' : '0';
         $this->isLessFifteen = $this->employeeProfile->is_less_fifteen ? '1' : '0';
+        $this->dispatchBrowserEvent('format-monthly-rate');
 
     }
 
@@ -86,14 +88,13 @@ class EmployeeProfileModal extends Component
 
     public function updatedEmployeeProfileMonthlyRate($value)
     {
-
         $this->userMonthlyRate = (float) str_replace(",","", $value);
+
     }
 
     public function changeActiveStatus()
     {
         $this->employeeProfile->is_active = $this->activeStatus;
-
     }
 
     public function changeIsLessFifteen()
@@ -126,7 +127,7 @@ class EmployeeProfileModal extends Component
                             ->where('user_id', '=', $this->userId)
                             ->first();
 
-        $gsisAmount = (($this->userDailyRate * 22) * .09);
+        $gsisAmount = (($this->userMonthlyRate) * .09);
         if(!$checkDupeGsis){
             DeductionUser::create([
                 'user_id' => $this->userId,
@@ -145,12 +146,12 @@ class EmployeeProfileModal extends Component
         }
         
 
-        $phicAmount = (($this->userDailyRate * 22) * .025);
+        $phicAmount = (($this->userMonthlyRate) * .025);
         if(!$checkDupePhic){
             DeductionUser::create([
                 'user_id' => $this->userId,
                 'deduction_id'=> 5,
-                'amount'=> $phicAmount,
+                'amount'=> Helper::truncateString($phicAmount, 2),
                 'frequency'=> 1,
                 'active_status'=> 1
             ]);
@@ -158,33 +159,32 @@ class EmployeeProfileModal extends Component
             $checkDupePhic->update([
                 'user_id' => $this->userId,
                 'deduction_id' => 5,
-                'amount' => $phicAmount,
+                'amount' => Helper::truncateString($phicAmount,2 ),
                 'frequency'=> 1
             ]);
         }
         
 
-        $pagIbigAmount = (($this->userDailyRate * 22) * .02);
+        // $pagIbigAmount = (($this->userDailyRate * 22) * .02);
 
-        if(!$checkDupePagIbig){
-            DeductionUser::create([
-                'user_id' => $this->userId,
-                'deduction_id'=> 1,
-                'amount'=> $pagIbigAmount,
-                'frequency'=> 1,
-                'active_status'=> 1
-            ]);
-        }else{
-            $checkDupePagIbig->update([
-                'user_id' => $this->userId,
-                'deduction_id' => 1,
-                'amount' => $pagIbigAmount,
-                'frequency' => 1,
-            ]);
-        }
+        // if(!$checkDupePagIbig){
+        //     DeductionUser::create([
+        //         'user_id' => $this->userId,
+        //         'deduction_id'=> 1,
+        //         'amount'=> $pagIbigAmount,
+        //         'frequency'=> 1,
+        //         'active_status'=> 1
+        //     ]);
+        // }else{
+        //     $checkDupePagIbig->update([
+        //         'user_id' => $this->userId,
+        //         'deduction_id' => 1,
+        //         'amount' => $pagIbigAmount,
+        //         'frequency' => 1,
+        //     ]);
+        // }
         
     }
-
 
 
     public function dailyOrMonthly($employmentStatus = "PERMANENT")
@@ -207,7 +207,7 @@ class EmployeeProfileModal extends Component
     public function saveProfile()
     {
         $this->validate();
-        // $this->AutoAddDeduction();
+        $this->AutoAddDeduction();
         $this->employeeProfile['monthly_rate'] = (float) str_replace(",", "", $this->employeeProfile['monthly_rate']);
         $this->employeeProfile['is_active'] = boolval($this->activeStatus);
         $this->employeeProfile['include_to_payroll'] = boolval($this->activeStatus);

@@ -148,14 +148,14 @@
                                                         <th scope="col"
                                                             class="text-center align-middle" style="width:5%">Mid-year Bonus
                                                         </th>
-                                                        {{-- <th scope="col"
+                                                        <th scope="col"
                                                             class="text-center align-middle" style="width:5%">COOP<br>(CASABLOAN)
-                                                        </th> --}}
+                                                        </th>
                                                         <th scope="col"
                                                             class="text-center align-middle" style="width:5%">Net Amount
                                                         </th>
                                                     </tr>
-                                                    {{-- <tr style="padding: 0px;">
+                                                    <tr style="padding: 0px;">
                                                         <th scope="col"
                                                             class="text-center align-middle">A
                                                         </th>
@@ -165,7 +165,7 @@
                                                         <th scope="col"
                                                             class="text-center align-middle">C = A - B
                                                         </th>
-                                                    </tr> --}}
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
                                                     @php
@@ -240,10 +240,15 @@
                                                                 </td>
                                                                 <td scope="row"
                                                                     class="text-center align-middle p-0">
+                                                                    {{-- {{ number_format(bcdiv((float) $payrollUser->monthly_rate * 22, 1, 2), 2) }} --}}
+                                                                    {{ number_format((float) $payrollUser->monthly_rate, 2) }}
+                                                                </td>
+                                                                <td scope="row"
+                                                                    class="text-center align-middle p-0">
                                                                     @livewire('midyear-bonus-input-component', [
                                                                         'payrollUser'=>$payrollUser, 'year' => $year,
-                                                                        'cg' => $payrollUser->mybs->where('year', $year)->first()->cash_gift,
-                                                                        ], key('myb' . $payrollUser->id))
+                                                                        'casabloan' => $payrollUser->mybs->where('year', $year)->first()->casabloan,
+                                                                        ], key('casabloan' . $payrollUser->id))
                                                                 </td>
                                                            
                                                                 {{-- <td
@@ -267,7 +272,7 @@
                                                     <tr>
                                                         <td colspan=4 style="text-align: right;"><b>TOTAL</b></td>
                                                         <td><b>{{ number_format(bcdiv((float) $total_mid_year_bonus, 1, 2), 2) }}</b></td>
-                                                        {{-- <td><b>{{ number_format(bcdiv((float) $total_casab_loan, 1, 2), 2) }}</b></td> --}}
+                                                        <td><b>{{ number_format(bcdiv((float) $total_casab_loan, 1, 2), 2) }}</b></td>
                                                         <td><b>{{ number_format(bcdiv((float) ($total_mid_year_bonus) - $total_casab_loan, 1, 2), 2) }}</b></td>
                                                     </tr>
                                                 </tfoot>

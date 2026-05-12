@@ -196,7 +196,7 @@
                             <tr>
                                 <td>{{ $counter }}</td>
                                 <td>{{ $toBeNotUpdated['id'] }}</td>
-                                <td>{{ $toBeNotUpdated['gsis'] }}</td>
+                                <td>{{ $toBeNotUpdated['hdmf'] }}</td>
                                 <td>{{ $toBeNotUpdated['last_name'] }}</td>
                                 <td>{{ $toBeNotUpdated['first_name'] }}</td>
                                 <td>{{ $toBeNotUpdated['middle_name'] }}</td>

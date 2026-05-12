@@ -177,7 +177,7 @@ class MidyearBonusComponent extends Component
         $payrollFunds = $this->processMidYearPayroll();
         $oMerger = PDFMerger::init();
         $signatories = Signatory::where('docu', 'other_bonus')->get();
-        
+        $year = $this->year;
         foreach ($payrollFunds as $payrollFund) {
             $counter = 0;
     
@@ -199,9 +199,9 @@ class MidyearBonusComponent extends Component
 
                     $users = $payrollFund->users(null, false, null, null, $office)->get();
 
-                    $total_mid_year_bonus_per_office = $users->sum(fn($user) => $user->mybs->sum('mid_year_bonus'));
-                    $total_cash_gift_per_office = $users->sum(fn($user) => $user->mybs->sum('cash_gift'));
-                    $total_casab_loan_per_office = $users->sum(fn($user) => $user->mybs->sum('casab_loan'));
+                    $total_mid_year_bonus_per_office = $users->sum(fn($user) => $user->mybs->where('year', $year)->sum('mid_year_bonus'));
+                    $total_cash_gift_per_office = $users->sum(fn($user) => $user->mybs->where('year', $year)->sum('cash_gift'));
+                    $total_casab_loan_per_office = $users->sum(fn($user) => $user->mybs->where('year', $year)->sum('casab_loan'));
 
                     $grand_total_mid_year_bonus_per_office = bcdiv($total_mid_year_bonus_per_office + $total_cash_gift_per_office, 1, 2);
                     $net_amount = bcdiv($grand_total_mid_year_bonus_per_office - $total_casab_loan_per_office, 1, 2);
@@ -223,7 +223,7 @@ class MidyearBonusComponent extends Component
                         'net_amount' => $net_amount,
                     ];
     
-                    $pdf = PDF::loadView('print-myb-template', $data)->setOption(['dpi' => 80]);
+                    $pdf = PDF::loadView('print-myb-template', $data)->setOption(['dpi' => 300]);
                     $pdf->set_option("isPhpEnabled", true);
     
                     // Get employees per office/section

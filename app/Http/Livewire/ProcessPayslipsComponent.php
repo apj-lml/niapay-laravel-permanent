@@ -34,8 +34,9 @@ class ProcessPayslipsComponent extends Component
             $oMerger = PDFMerger::init();
              if($this->isLessFifteen == 'full_month'){
                 $employees = NewPayrollIndex::where(function($query) {
-                    $query->whereBetween('period_covered_from', [$this->payrollDateFrom, $this->payrollDateTo])
-                         ->orWhereBetween('period_covered_to', [$this->payrollDateFrom, $this->payrollDateTo]);
+                    $query->where('period_covered_from', $this->payrollDateFrom)
+                         ->where('period_covered_to', $this->payrollDateTo)
+                         ->where('is_less_fifteen', 0);
                     })
                     ->with('newPayrollIndexAllDed')
                     ->get()
@@ -43,7 +44,7 @@ class ProcessPayslipsComponent extends Component
                     ->groupBy('user_id');
              }else{
                 $employees = NewPayrollIndex::where(function($query) {
-                    $query->where('period_covered_from', $this->payrollDateFrom)->where('period_covered_to', $this->payrollDateTo);
+                    $query->where('period_covered_from', $this->payrollDateFrom)->where('period_covered_to', $this->payrollDateTo)->where('is_less_fifteen', 1);
                         // ->orWhereBetween('period_covered_to', [$this->payrollDateFrom, $this->payrollDateTo]);
                     })
                     ->with('newPayrollIndexAllDed')

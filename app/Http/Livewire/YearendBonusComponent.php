@@ -95,7 +95,7 @@ class YearendBonusComponent extends Component
                 $fund->sections = AgencySection::with([
                     'signatories' => function ($query) {
                     $query->whereHas('agencySection', function ($subQuery) {
-                        $subQuery->where('docu', 'yeb');
+                        $subQuery->where('docu', 'other_bonus');
                     });
                 }, 'users' => function ($query) use ($fund){
                     $query->where('fund_id', '=', $fund->id); 
@@ -151,10 +151,6 @@ class YearendBonusComponent extends Component
 
             $payrollFunds = $funds;
         }
-
-                                
-    
-
 
         return $payrollFunds;
     }

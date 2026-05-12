@@ -49,7 +49,7 @@
                 </a>
               </td>
               <td>{{ $user->employment_status }}</td>
-              <td>{{ $user->sg_jg }}</td>
+              <td>{{ $user->sg_jg }}-{{ $user->step }}</td>
               <td>{{ number_format($user->monthly_rate, 2) }}</td>
               <td>
                 <a href="{{ url('payslip', ['userId' => $user->id]) }}" class="btn btn-sm btn-outline-primary">

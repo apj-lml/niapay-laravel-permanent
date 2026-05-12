@@ -1023,12 +1023,12 @@
                               @endfor
                             @endif
                           @endif --}}
-                          @if ($hasPERA)
+                          @if ($hasMEDICAL)
                             @if(isset($payrollUserSection->grand_total_allowance))
-                              @for($y=0; $y<$joAllowances->countBy('allowance_group')['PERA']; $y++)
+                              @for($y=0; $y<$joAllowances->countBy('allowance_group')['MEDICAL']; $y++)
                               <td style="border-left: 1.5px solid black; background-color: #b4c1e3f1;">
                                 @foreach ($payrollUserSection->grand_total_allowance as $grandTotalAllowance)
-                                  @if($grandTotalAllowance['allowance_group'] == 'PERA')
+                                  @if($grandTotalAllowance['allowance_group'] == 'MEDICAL')
                                     {{-- @if ($grandTotalAllowance['sort_position'] == $y+1) --}}
                                       <strong>{{ number_format((float)$grandTotalAllowance['total'],2) }}</strong>
                                     {{-- @endif --}}
@@ -1037,7 +1037,7 @@
                               </td>
                               @endfor
                             @else
-                              @for($y=1; $y<=$joAllowances->countBy('allowance_group')['PERA']; $y++)
+                              @for($y=1; $y<=$joAllowances->countBy('allowance_group')['MEDICAL']; $y++)
                                 <td style="background-color: #b4c1e3f1;"></td>
                               @endfor
                             @endif

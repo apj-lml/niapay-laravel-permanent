@@ -777,8 +777,9 @@ class ProcessPayrollJobOrderComponent extends Component
                             $days_rendered_first_half = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->first_half);
                             $days_rendered_second_half = ((float)$JOUser->attendances()->where('start_date', '=', $from)->where('end_date', '=', $to)->first()->second_half);
 
-                            //test
-                            $JOUser->basic_pay = round(bcdiv((float)($JOUser->daily_rate * $days_rendered), 1, 2), 2);
+                            //this calculated the basic pay short of .01
+                            // $JOUser->basic_pay = round(bcdiv((float)($JOUser->daily_rate * $days_rendered), 1, 2), 2);
+                            $JOUser->basic_pay = round((float)($JOUser->daily_rate * $days_rendered), 2);
 
                             // Setting User Allowances
                             if(!$JOUser->employeeAllowances->isEmpty()){
