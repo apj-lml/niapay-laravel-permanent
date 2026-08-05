@@ -693,30 +693,23 @@
 
                       {{-- @endforeach --}}
 
-                      @if ($overAllDeductionTotal == 0.00)
-                        <tr>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>&nbsp;</td>
-                        </tr>
-                      @endif
+                      @php
+                        $deductionCount = array_sum(array_map('count', $deductionTotals));
+                        $blankRows = max(0, 16 - $deductionCount);
+
+                        if ($overAllDeductionTotal == 0.00) {
+                          $blankRows = max(0, 6 - $deductionCount);
+                        }
+                        // $blankRows = min($blankRows, 6);
+                      @endphp
+                        @for ($i = 0; $i < $blankRows; $i++)
+                            <tr>
+                                <td>&nbsp;</td>
+                            </tr>
+                        @endfor
 
                     </tbody>
-
-                    </table>
+                  </table>
                 </td>
               </tr>
               <tr>

@@ -35,53 +35,43 @@ class ProcessPayslipsComponent extends Component
              if($this->isLessFifteen == 'full_month'){
                 $employees = NewPayrollIndex::where(function($query) {
                     $query->where('period_covered_from', $this->payrollDateFrom)
-                         ->where('period_covered_to', $this->payrollDateTo)
-                         ->where('is_less_fifteen', 0);
+                         ->where('period_covered_to', $this->payrollDateTo);
+                        //  ->where('is_less_fifteen', 0);
                     })
                     ->with('newPayrollIndexAllDed')
                     ->get()
                     ->sortByDesc('period_covered_from')
                     ->groupBy('user_id');
-             }else{
+             } elseif ($this->isLessFifteen == 'less_fifteen_first_half') {
                 $employees = NewPayrollIndex::where(function($query) {
-                    $query->where('period_covered_from', $this->payrollDateFrom)->where('period_covered_to', $this->payrollDateTo)->where('is_less_fifteen', 1);
-                        // ->orWhereBetween('period_covered_to', [$this->payrollDateFrom, $this->payrollDateTo]);
+                        // $query->whereBetween('period_covered_from', [$this->payrollDateFrom, $this->payrollDateTo])
+                        //     ->orWhereBetween('period_covered_to', [$this->payrollDateFrom, $this->payrollDateTo]);
+                        $query->where('period_covered_from', $this->payrollDateFrom)
+                            ->where('period_covered_to', $this->payrollDateTo);
                     })
+                    ->where('first_half', '<>', 0.000)
+                    ->where('second_half', '=', 0.000)
                     ->with('newPayrollIndexAllDed')
                     ->get()
                     ->sortByDesc('period_covered_from')
                     ->groupBy('user_id');
-             }
-            // else if($this->isLessFifteen == 'less_fifteen_first_half'){
-            //         $employees = NewPayrollIndex::where(function($query) {
-            //             $query->whereBetween('period_covered_from', [$this->payrollDateFrom, $this->payrollDateTo]);
-            //                 // ->orWhereBetween('period_covered_to', [$this->payrollDateFrom, $this->payrollDateTo]);
-            //             })
-            //             // ->where('first_half','<>', 0.000)
-            //             ->where('days_rendered','<>', 0.000)
-            //             ->with('newPayrollIndexAllDed')
-            //             ->get()
-            //             ->sortByDesc('period_covered_from')
-            //             ->groupBy('user_id');
-            // }else{
-            //         $employees = NewPayrollIndex::where(function($query) {
-            //             $query->whereBetween('period_covered_from', [$this->payrollDateFrom, $this->payrollDateTo]);
-            //                 // ->orWhereBetween('period_covered_to', [$this->payrollDateFrom, $this->payrollDateTo]);
-            //             })
-            //             // ->where('first_half','=', 0.000)
-            //             ->where('days_rendered','<>', 0.000)
-            //             ->with('newPayrollIndexAllDed')
-            //             ->get()
-            //             ->sortByDesc('period_covered_from')
-            //             ->groupBy('user_id');
-            // }
-
-            if($employees->isEmpty()){
-                // dd('NO DATA SELECTED');
+            } else {
+                $employees = NewPayrollIndex::where(function($query) {
+                        // $query->whereBetween('period_covered_from', [$this->payrollDateFrom, $this->payrollDateTo])
+                        //     ->orWhereBetween('period_covered_to', [$this->payrollDateFrom, $this->payrollDateTo]);
+                        $query->where('period_covered_from', $this->payrollDateFrom)
+                            ->where('period_covered_to', $this->payrollDateTo);
+                    })
+                    ->where('first_half', '=', 0.000)
+                    ->where('second_half', '<>', 0.000)
+                    ->with('newPayrollIndexAllDed')
+                    ->get()
+                    ->sortByDesc('period_covered_from')
+                    ->groupBy('user_id');
             }
     
-        $deductions = Deduction::all();
-        $allowances = Allowance::all();
+        $deductions = Deduction::where('status', 'ACTIVE')->get();
+        $allowances = Allowance::where('status', 'ACTIVE')->get();
     
         $this->loadingProgressMax = count($employees);
     

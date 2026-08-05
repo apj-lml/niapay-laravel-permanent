@@ -18,7 +18,14 @@
 
 
  @page { size: 21cm 29.7cm landscape; margin-top: 0;}
- /* @page { size: 21.59cm 39cm landscape; margin-top: 0; } */
+ @media print {
+    thead { display: table-header-group; }
+    /* tfoot { display: table-footer-group; } */
+    .spacer td {
+        height: 20px;
+        border: none;
+    }
+  }
 
      body {
          /* background: #fb887c; */
@@ -49,7 +56,7 @@
      caption {
       /* border: 1.5px solid black; */
       border: 0;
-      margin-top: 45px;
+      margin:10px 45px;
      }
 
      caption>h2 {
@@ -83,7 +90,7 @@
      }
 
      th, td {
-            height: 80px;
+            height: 70px;
             padding: 0 10px;
             font-size: 28px;
             border: 0.5px solid black;
@@ -91,6 +98,7 @@
             white-space: wrap;
         }
      th {
+     padding: 5px;
       font-size:28px;
       font-weight: bolder;
       word-wrap: break-word;
@@ -151,7 +159,7 @@
 
     table.main-table th {
         height: 45px;
-        font-size: 14px;
+        font-size: 28px;
         overflow: hidden;
         white-space: nowrap;
     }
@@ -255,9 +263,9 @@
                                 <div class="col-sm-12">
                                     <div class="header-container">
                                         {{-- <img class="header-img" src="{{ public_path('img/test-header.jpg') }}" width="600.315px" alt="nia header"> --}}
-                                        <img class="header-img" src="{{ public_path('img/a4-landscape-header.png') }}" width="450.315px" alt="nia header">
+                                        {{-- <img class="header-img" src="{{ public_path('img/a4-landscape-header.png') }}" width="450.315px" alt="nia header"> --}}
                                       </div>
-                                      <div style="margin-left: 5px; margin-bottom: 3px; margin-top: 220px;">
+                                      {{-- <div style="margin-left: 5px; margin-bottom: 3px; margin-top: 220px;">
                                         <caption>
                                             <h2>G E N E R A L &nbsp; P A Y R O L L</h2>
                                         </caption>
@@ -276,9 +284,46 @@
                                         <div class="col-sm-12">
                                             <i class="fw-sm" style="font-size: 37px;"> Mid-year Bonus for CY {{ $year }}</i>
                                         </div>
-                                          </div>
+                                          </div> --}}
                                         <table class="main-table">
                                             <thead class="sticky-top">
+                                                <tr class="spacer">
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="7" style="height:265px;">
+                                                        <img class="header-img" src="{{ public_path('img/a4-landscape-header.png') }}" width="450.315px" alt="nia header">
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="7">
+                                                        <caption>
+                                                            <h2>G E N E R A L &nbsp; P A Y R O L L</h2>
+                                                        </caption>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="7" style="text-align: left; height:80px;">
+                                                        <div class="col-sm-12">
+                                                            <span  style="font-size: 27px;">
+                                                                @foreach ($payrollUsers as $payrollUser)
+                                                                @php
+                                                                    $yeb = $payrollUser->mybs->where('year', $year)->first();
+                                                                @endphp
+                                                                    @if($yeb && $yeb->mc != '')
+                                                                        {{ $payrollUser->mybs->where('year', $year)->first()->mc }}
+                                                                    @else
+                                                                        NIA MC No.__________series of_________
+                                                                    @endif
+                                                                    @break
+                                                                @endforeach
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                            <i style="font-size: 27px;">Mid-year Bonus for CY {{ $year }}</i>
+                                                        </div>
+                                                    </th>
+                                                </tr>
                                                 <tr>
                                                     <th scope="col" style="width:1.5%" rowspan="2"
                                                         class="text-center align-middle">NO.
@@ -446,13 +491,9 @@
                                             <td style="padding-left: 50px;">
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
-                                                        <td style="padding: 0px; padding-top: 20px;">
-                                                            <b>{{ $preparer->name ?? '' }}</b>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 0px;">
-                                                           <i>{{ $preparer->position ?? '' }}</i>
+                                                        <td style="padding: 0px; padding-top: 60px;">
+                                                            <b>{{ $preparer->name ?? '' }}</b><br>
+                                                            <i>{{ $preparer->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -463,12 +504,8 @@
                                             <td style="vertical-align: top; padding-left: 50px;">
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
-                                                        <td style="padding: 0px; padding-top: 20px;">
-                                                            <b>{{ $certifier->name ?? '' }}</b>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 0px;">
+                                                        <td style="padding: 0px; padding-top: 60px;">
+                                                            <b>{{ $certifier->name ?? '' }}</b><br>
                                                             <i>{{ $certifier->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
@@ -491,12 +528,8 @@
                                             <td style="padding-left: 50px;">
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
-                                                        <td style="padding: 0px; padding-top: 20px;">
-                                                            <b>{{ $approver->name ?? '' }}</b>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 0px;">
+                                                        <td style="padding: 0px; padding-top: 60px;">
+                                                            <b>{{ $approver->name ?? '' }}</b><br>
                                                             <i>{{ $approver->position ?? '' }}</i>
                                                         </td>
                                                     </tr>
@@ -505,12 +538,8 @@
                                             <td style="padding-left: 50px;">
                                                 <table style="width: 50%; border: 0px;">
                                                     <tr>
-                                                        <td style="padding: 0px; padding-top: 20px;">
-                                                            <b>{{ $afsChief->name ?? '' }}</b>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 0px;">
+                                                        <td style="padding: 0px; padding-top: 60px;">
+                                                            <b>{{ $afsChief->name ?? '' }}</b><br>
                                                             <i>{{ $afsChief->position ?? '' }}</i>
                                                         </td>
                                                     </tr>

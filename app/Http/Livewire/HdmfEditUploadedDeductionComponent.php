@@ -139,6 +139,19 @@ class HdmfEditUploadedDeductionComponent extends Component
                     $entry['end_term'] = $row['excel_data']['end_term'];
                     $entry['deduction_id'] = $deductionId;
                 }
+            } elseif (Str::contains($row['excel_data']['scheme_desc'], '493')) {
+                $typeOfHdmfDeduction = "SAFE";
+                $deductionId = 23;
+        
+                if ($this->validateValueWithChanges($row['user_id'], 'SAFE', $typeOfHdmfDeduction)) {
+                    $entry['deduction_type'] = 'SAFE';
+                    $entry['application_no'] = $row['excel_data']['applno'];
+                    $entry['monthly_amortization'] = $row['excel_data']['monthly_amo'];
+                    $entry['loan_granted'] = $row['excel_data']['loan_grante'];
+                    $entry['start_term'] = $row['excel_data']['start_term'];
+                    $entry['end_term'] = $row['excel_data']['end_term'];
+                    $entry['deduction_id'] = $deductionId;
+                }
             }
         
             // Only push if more than ID AND deduction does NOT exist in DB
@@ -177,6 +190,7 @@ class HdmfEditUploadedDeductionComponent extends Component
         $deductionMap = [
             'HDMF_MPL' => 3,
             'HDMF_CAL' => 4,
+            'SAFE' => 23,
         ];
     
         $DbDeduction = $deductionMap[$dedType] ?? null;
@@ -248,6 +262,8 @@ class HdmfEditUploadedDeductionComponent extends Component
                                 $deductionId = 3; // HDMF MPL
                             } elseif ($value == 'HDMF_CAL') {
                                 $deductionId = 4; // HDMF_CAL
+                            } elseif ($value == 'SAFE') {
+                                $deductionId = 23; // SAFE
                             } 
                         }
 

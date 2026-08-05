@@ -99,6 +99,8 @@
                                         MPL
                                     @elseif(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '449') || Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '470'))
                                         Calamity Loan
+                                    @elseif(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '493'))
+                                        SAFE
                                     @else
                                         Unknown Loan Type
                                     @endif
@@ -117,8 +119,10 @@
                                         } elseif(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '449') || Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '470')) {
                                             $isCheckedCAL = $isCheckedAmort;
                                             $deductionType = 'HDMF_CAL';
+                                        } elseif(Str::contains($finalToBeUpdated['excel_data']['scheme_desc'], '493')) {
+                                            $isCheckedSAFE = $isCheckedAmort;
+                                            $deductionType = 'SAFE';
                                         }
-
                                         $validatedAmortVal = false;
                                           
                                         // Validate HDMF_MPL value if it exists in the list to be saved

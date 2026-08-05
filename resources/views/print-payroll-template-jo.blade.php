@@ -374,9 +374,10 @@
           <div class="main">
             <caption>
               <div class="logo-container">
-                <img class="logo" src="{{ public_path('img/op-logo.jpg') }}" alt="op logo" height="150px" width="150px">
-                <img class="logo" src="{{ public_path('img/nia.jpg') }}" alt="nia logo" height="150px" width="150px" style="margin-left: 150px;">
-                <img class="logo" src="{{ public_path('img/bagong-pilipinas.jpg') }}" alt="bagong pilipinas" height="150px" width="150px" style="margin-left: 3575px;">
+                {{-- <img class="logo" src="{{ public_path('img/op-logo.jpg') }}" alt="op logo" height="150px" width="150px"> --}}
+                {{-- <img class="logo" src="{{ public_path('img/nia.jpg') }}" alt="nia logo" height="150px" width="150px" style="margin-left: 150px;"> --}}
+                <img class="logo" src="{{ public_path('img/nia.jpg') }}" alt="nia logo" height="150px" width="150px" style="">
+                {{-- <img class="logo" src="{{ public_path('img/bagong-pilipinas.jpg') }}" alt="bagong pilipinas" height="150px" width="150px" style="margin-left: 3575px;"> --}}
               </div>
                 <h2>G E N E R A L &nbsp; P A Y R O L L</h2>
                 <p>for the period {{ $payrollDateFrom->format('F') }} {{ $payrollDateFrom->format('j') }}-{{ $payrollDateTo->format('j') }}, {{ $payrollDateFrom->format('Y') }}</p>

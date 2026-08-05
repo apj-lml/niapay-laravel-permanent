@@ -503,12 +503,21 @@ class ProcessPayrollJobOrderComponent extends Component
                                                 }
 
                                                 // Delete deductions not in the current list, but only within the same payroll period
-                                                NewPayrollIndexAllDed::where('new_payroll_index_id', $payrollIndex->id)
-                                                ->whereRelation('newPayrollIndex', 'period_covered_from', $datefrom)
-                                                ->whereRelation('newPayrollIndex', 'period_covered_to', $dateto)
-                                                ->whereNotIn('npiad_deduction_id', $currentDeductionIds)
-                                                ->delete();
+                                                // NewPayrollIndexAllDed::where('new_payroll_index_id', $payrollIndex->id)
+                                                // ->whereRelation('newPayrollIndex', 'period_covered_from', $datefrom)
+                                                // ->whereRelation('newPayrollIndex', 'period_covered_to', $dateto)
+                                                // ->whereNotIn('npiad_deduction_id', $currentDeductionIds)
+                                                // ->delete();
+                                                $ids = NewPayrollIndexAllDed::where('new_payroll_index_id', $payrollIndex->id)
+                                                    ->where('npiad_description', $user_deduction->description)
+                                                    ->whereNotIn('npiad_deduction_id', $currentDeductionIds)
+                                                    ->whereHas('newPayrollIndex', function ($q) use ($datefrom, $dateto) {
+                                                        $q->where('period_covered_from', $datefrom)
+                                                        ->where('period_covered_to', $dateto);
+                                                    })
+                                                    ->pluck('id');
 
+                                                NewPayrollIndexAllDed::whereIn('id', $ids)->delete();
 
 
     
@@ -752,8 +761,6 @@ class ProcessPayrollJobOrderComponent extends Component
                             // ->orWhere('employment_status', 'PERMANENT')
                             ->where('is_less_fifteen', $inputIsLessFifteen);
             });
-
-
 
                 foreach($JOUsers as $key => $JOUser){
                         $JOUser->total_user_deduction = 0;

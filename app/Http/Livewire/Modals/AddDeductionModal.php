@@ -83,34 +83,32 @@ class AddDeductionModal extends Component
             $this->deductionGroup = $this->deductionDescription;
         }
 
-            // $lastSortPosition = Deduction::where('deduction_group', '=', $this->deductionGroup)->orderBy('sort_position', 'desc')->first();
-            // $oldSortPosition = Deduction::find($this->deductionId);
-            // // dd($oldSortPosition->deduction_group, $this->deductionGroup);
-            // if($lastSortPosition && $oldSortPosition->deduction_group != $this->deductionGroup){
-            //     $this->sortPosition = $lastSortPosition->sort_position + 1;
-            // }else if(is_null($lastSortPosition)){
-            //     $this->sortPosition = 1;
-            // }
-
             $oldDeduction = Deduction::find($this->deductionId);
             $lastSortPosition = Deduction::where('deduction_group', $this->deductionGroup)
                 ->orderBy('sort_position', 'desc')
                 ->first();
 
             // Case 1: Deduction changed group
-            if ($oldDeduction->deduction_group != $this->deductionGroup) {
-                // ✅ Shift down old group to close the gap
-                Deduction::where('deduction_group', $oldDeduction->deduction_group)
-                    ->where('sort_position', '>', $oldDeduction->sort_position)
-                    ->decrement('sort_position');
+            if ($oldDeduction != null){
+                if ($oldDeduction->deduction_group != $this->deductionGroup) {
+                    // ✅ Shift down old group to close the gap
+                    Deduction::where('deduction_group', $oldDeduction->deduction_group)
+                        ->where('sort_position', '>', $oldDeduction->sort_position)
+                        ->decrement('sort_position');
 
-                // ✅ Assign new sort position at end of new group
+                    // ✅ Assign new sort position at end of new group
+                    $this->sortPosition = $lastSortPosition
+                        ? $lastSortPosition->sort_position + 1
+                        : 1;
+                } else {
+                    // Case 2: Same group (keep old position)
+                    $this->sortPosition = $oldDeduction->sort_position;
+                }
+            }else{
+                // Case 3: New deduction (assign new position at end of group)
                 $this->sortPosition = $lastSortPosition
                     ? $lastSortPosition->sort_position + 1
                     : 1;
-            } else {
-                // Case 2: Same group (keep old position)
-                $this->sortPosition = $oldDeduction->sort_position;
             }
 
         Deduction::updateOrCreate(['id'=>$this->deductionId], [

@@ -34,6 +34,7 @@ class HdmfRemittancesComponent extends Component
             ['id' => 2, 'description' => 'HDMF M2'],
             ['id' => 3, 'description' => 'HDMF MPL'],
             ['id' => 4, 'description' => 'HDMF CL'],
+            ['id' => 18, 'description' => 'HDMF HL'],
             //5 to 7 used to be GSIS
             ['id' => 5, 'description' => 'GSIS'],
             ['id' => 8, 'description' => 'WHTAX'],
@@ -65,8 +66,8 @@ class HdmfRemittancesComponent extends Component
             'PIMO'   => '000 916 415 050',
             'ASRIS'  => '000 916 415 051',
             'SFDRIS' => '000 916 415 042',
-            'LARIS'  => 'N/A',
-            'ADRIS'  => 'N/A',
+            'LARIS'  => '000 916 415 053',
+            'ADRIS'  => '000 916 415 052',
         ];
 
         //This is used
@@ -111,7 +112,6 @@ class HdmfRemittancesComponent extends Component
         
         $funds = $newPayroll->get()
             ->groupBy(function ($item) {
-                // dd($item);
                 // Combine funding_charges and acct_no for grouping
                 return ($item->funding_charges ?? 'Unknown Fund') . '|' . ($item->fund_acct_no ?? 'N/A');
             })
@@ -166,11 +166,14 @@ class HdmfRemittancesComponent extends Component
                             if ($deduction == 2) {
                                 $plt = 'M2';
                                 $er = 0; // M2 has no employer remittance
-                            } elseif ($deduction == 3) {
+                            } elseif ($deduction == 3 || $deduction == 23) {
                                 $plt = 'ST'; // MPL
                                 $er = 0; // ST has no employer remittance
                             } elseif ($deduction == 4) {
                                 $plt = 'CL'; // CL
+                                $er = 0; // CL has no employer remittance
+                            } elseif ($deduction == 18) {
+                                $plt = 'HL'; // CL
                                 $er = 0; // CL has no employer remittance
                             }
 
@@ -236,7 +239,7 @@ class HdmfRemittancesComponent extends Component
                 $nameConcat = 'premium';
             } elseif($this->deduction == 2) {
                 $nameConcat = 'mp2';
-            } elseif($this->deduction == 3) {
+            } elseif($this->deduction == 3 || $this->deduction == 23) {
                 $nameConcat = 'mpl';
             } elseif($this->deduction == 4) {
                 $nameConcat = 'cl';
@@ -270,13 +273,20 @@ class HdmfRemittancesComponent extends Component
 
         DB::statement("SET SQL_MODE=''"); // Allow GROUP BY
         $deduction = $this->deduction;
-      
+
+        if ($deduction == 3 || $deduction == 23) {
+            $deduction = [3, 23]; // MPL
+        } else {
+            $deduction = [$deduction];
+        }
+        
+        // dd($deduction);
         $newPayroll = User::with([
             'fund',
             'agencyUnit.agencySection',
             'employeeDeductions' => function ($query) use ($deduction) {
                 $query->where('deductions.deduction_group', 'HDMF')
-                      ->where('deductions.id', $deduction)
+                      ->whereIn('deductions.id', $deduction)
                       ->where('active_status', 1);
             },
             'attendances' => function ($query) {
@@ -289,7 +299,7 @@ class HdmfRemittancesComponent extends Component
         // ->where('is_less_fifteen', $isBelowFifteen)
         ->whereHas('employeeDeductions', function ($query) use ($deduction) {
             $query->where('deductions.deduction_group', 'HDMF')
-                  ->where('deductions.id', $deduction)
+                  ->whereIn('deductions.id', $deduction)
                   ->where('active_status', 1);
         })
         ->whereHas('attendances', function ($query) {
@@ -320,6 +330,7 @@ class HdmfRemittancesComponent extends Component
             )
         );
 
+        // dd($newPayroll->get()->toArray());
 
         if ($funds->isNotEmpty()) {
 
@@ -329,10 +340,12 @@ class HdmfRemittancesComponent extends Component
             $nameConcat = 'MC';
         } elseif($this->deduction == 2) {
             $nameConcat = 'M2';
-        } elseif($this->deduction == 3) {
+        } elseif($this->deduction == 3 || $this->deduction == 23) {
             $nameConcat = 'ST';
         } elseif($this->deduction == 4) {
             $nameConcat = 'CL';
+        } elseif($this->deduction == 18) {
+            $nameConcat = 'HL';
         }
 
 
@@ -380,50 +393,64 @@ class HdmfRemittancesComponent extends Component
                             $rt = 'DT';
                             $plt = 'MC';
                             $er = 200;
-                            $deduction;
+                            // $deduction;
 
-                            $deductionRecord = $npiUser->employeeDeductions()
-                            ?->where('deductions.id', $deduction)
-                            ?->where('active_status', 1)
-                            ->first();
+                  
+                            // $deductionRecords = $npiUser->employeeDeductions()
+                            // ?->whereIn('id', $deduction)
+                            // ?->where('pivot.active_status', 1);
+                            // ->get();
 
-                            if ($deduction == 2) {
-                                $plt = 'M2';
-                                $er = 0; // M2 has no employer remittance
-                            } elseif ($deduction == 3) {
-                                $plt = 'ST'; // MPL
-                                $er = 0; // ST has no employer remittance
-                            } elseif ($deduction == 4) {
-                                $plt = 'CL'; // CL
-                                $er = 0; // CL has no employer remittance
-                            }
-        
-                            $amount = $deductionRecord?->pivot?->amount ?? 0;
-                            $application_no = $deductionRecord?->pivot?->application_no ?? null;
+                            // $deductionRecords = $npiUser->employeeDeductions
+                            // ->whereIn('deductions.id', $deduction)
+                            // ->where('active_status', 1)
+                            // ->get();
 
-                            // Insert data for each user
-                            $newSheet->insertNewRowBefore($rowStart);
-                            $newSheet->setCellValue("A{$rowStart}", $rt);
-                            $newSheet->setCellValue("B{$rowStart}", $npiUser?->hdmf);
-                            $newSheet->setCellValue("C{$rowStart}", $application_no);
-                            $newSheet->setCellValue("D{$rowStart}", $npiUser?->last_name);
-                            $newSheet->setCellValue("E{$rowStart}", '=TRIM("' . $npiUser?->first_name . ' ' . $npiUser?->name_extn . '")');
-                            $newSheet->setCellValue("F{$rowStart}", $npiUser?->middle_name);
-                            $newSheet->setCellValue("G{$rowStart}", $amount);
-                            $newSheet->setCellValue("H{$rowStart}", $er);
-                            $newSheet->setCellValue("I{$rowStart}", $plt);
-
-                            $formattedDate = Carbon::parse($npiUser?->period_covered_to)->format('Ym');
-                            $newSheet->setCellValue("J{$rowStart}", $formattedDate . '01');
+                            $deductionRecords = $npiUser->employeeDeductions;
                             
-                            $totalEe += $amount;
+                            foreach($deductionRecords as $deductionRecord) {
+                                $deductionId  = $deductionRecord?->id;
+                                if ($deduction == 2) {
+                                    $plt = 'M2';
+                                    $er = 0; // M2 has no employer remittance
+                                } elseif ($deductionId  == 3 || $deductionId  == 23) {
+                                    $plt = 'ST'; // MPL
+                                    $er = 0; // ST has no employer remittance
+                                } elseif ($deductionId  == 4) {
+                                    $plt = 'CL'; // CL
+                                    $er = 0; // CL has no employer remittance
+                                } elseif ($deductionId  == 18) {
+                                    $plt = 'HL'; // CL
+                                    $er = 0; // CL has no employer remittance
+                                }
+            
+                                $amount = $deductionRecord?->pivot?->amount ?? 0;
+                                $application_no = $deductionRecord?->pivot?->application_no ?? null;
 
-                            $totalEr += $er;
+                                // Insert data for each user
+                                $newSheet->insertNewRowBefore($rowStart);
+                                $newSheet->setCellValue("A{$rowStart}", $rt);
+                                $newSheet->setCellValue("B{$rowStart}", $npiUser?->hdmf);
+                                $newSheet->setCellValue("C{$rowStart}", $application_no);
+                                $newSheet->setCellValue("D{$rowStart}", $npiUser?->last_name);
+                                $newSheet->setCellValue("E{$rowStart}", '=TRIM("' . $npiUser?->first_name . ' ' . $npiUser?->name_extn . '")');
+                                $newSheet->setCellValue("F{$rowStart}", $npiUser?->middle_name);
+                                $newSheet->setCellValue("G{$rowStart}", $amount);
+                                $newSheet->setCellValue("H{$rowStart}", $er);
+                                $newSheet->setCellValue("I{$rowStart}", $plt);
 
-                            $totalRemittance += $amount + $er;
+                                $formattedDate = Carbon::parse($npiUser?->period_covered_to)->format('Ym');
+                                $newSheet->setCellValue("J{$rowStart}", $formattedDate . '01');
+                                
+                                $totalEe += $amount;
 
-                            $rowStart++; // Move to next row
-                            $counter++;
+                                $totalEr += $er;
+
+                                $totalRemittance += $amount + $er;
+
+                                $rowStart++; // Move to next row
+                                $counter++;
+                            }
                         }
 
                     $newSheet->setCellValue('C5', $totalRemittance);
@@ -456,6 +483,8 @@ class HdmfRemittancesComponent extends Component
                         $particularDesc = 'Multi-Purpose Loan (MPL) of ';
                     } elseif($pay_loan_type == 'CL') {
                         $particularDesc = 'Calamity Loan (CL) of ';
+                    } elseif($pay_loan_type == 'HL') {
+                        $particularDesc = 'Housing Loan (HL) of ';
                     }
 
                     $particular = htmlspecialchars($particularDesc . $employees, ENT_QUOTES | ENT_XML1, 'UTF-8');
@@ -546,7 +575,6 @@ class HdmfRemittancesComponent extends Component
                 DB::statement("SET SQL_MODE=''"); // Allow GROUP BY
                 $deduction = $this->deduction;
 
-                // dd($isBelowFifteen);
                 $newPayroll = User::with([
                     'fund',
                     'agencyUnit.agencySection',
@@ -572,8 +600,6 @@ class HdmfRemittancesComponent extends Component
                     $query->where('start_date', $this->payrollDateFrom)
                           ->where('end_date', $this->payrollDateTo);
                 });
-
-                // dd($newPayroll->get());
 
                 if ($filterSection !== null) {
                     $newPayroll->whereHas('agencyUnit.agencySection', function ($q) use ($filterSection) {
@@ -630,6 +656,8 @@ class HdmfRemittancesComponent extends Component
                                 $totalGfal = 0;
                                 $totalMpl = 0;
                                 $totalCpl = 0;
+                                $totalGbk = 0;
+                                $totalGsl = 0;
                                 $counter = 0;
                 
                                 $rowStart = 7; // Start inserting rows at 7
@@ -642,7 +670,6 @@ class HdmfRemittancesComponent extends Component
                                 }
         
                                 foreach($payrollEntries->sortBy(['last_name', 'first_name']) as $npiUser) {
-                                    // dd($npiUser->employeeDeductions()->where('deductions.id', 9)->first()->pivot->amount);
                             
                                     $deduction;
         
@@ -689,7 +716,16 @@ class HdmfRemittancesComponent extends Component
                                     ?->where('deductions.id', 12)
                                     ?->where('deduction_user.active_status', 1)
                                     ->first();
-            
+                                    
+                                    $gbk = $npiUser->employeeDeductions()
+                                    ?->where('deductions.id', 21)
+                                    ?->where('deduction_user.active_status', 1)
+                                    ->first();
+
+                                    $gsl = $npiUser->employeeDeductions()
+                                    ?->where('deductions.id', 25)
+                                    ?->where('deduction_user.active_status', 1)
+                                    ->first();
         
                                     // Insert data for each user
                                     $newSheet->insertNewRowBefore($rowStart);
@@ -712,6 +748,8 @@ class HdmfRemittancesComponent extends Component
                                     $newSheet->setCellValue("Q{$rowStart}", $gfal?->pivot->amount ?? 0);
                                     $newSheet->setCellValue("R{$rowStart}", $mpl?->pivot->amount ?? 0);
                                     $newSheet->setCellValue("S{$rowStart}", $cpl?->pivot->amount ?? 0);
+                                    $newSheet->setCellValue("T{$rowStart}", $gbk?->pivot->amount ?? 0);
+                                    $newSheet->setCellValue("U{$rowStart}", $gsl?->pivot->amount ?? 0);
         
                         
                                     $totalPs += $ps?->pivot->amount ?? 0;
@@ -724,8 +762,18 @@ class HdmfRemittancesComponent extends Component
                                     $totalGfal += $gfal?->pivot->amount ?? 0;
                                     $totalMpl += $mpl?->pivot->amount ?? 0;
                                     $totalCpl += $cpl?->pivot->amount ?? 0;
+                                    $totalGbk += $gbk?->pivot->amount ?? 0;
+                                    $totalGsl += $gsl?->pivot->amount ?? 0;
 
-                                    $totalRemittance += ($ps?->pivot->amount ?? 0) + $gs + $ec + ($consoloan?->pivot->amount ?? 0) + ($mplite?->pivot->amount ?? 0) + ($emergency?->pivot->amount ?? 0) + ($pl?->pivot->amount ?? 0) + ($gfal?->pivot->amount ?? 0) + ($mpl?->pivot->amount ?? 0) + ($cpl?->pivot->amount ?? 0);
+                                    $totalRemittance += ($ps?->pivot->amount ?? 0) + $gs + $ec + ($consoloan?->pivot->amount ?? 0) 
+                                    + ($mplite?->pivot->amount ?? 0) 
+                                    + ($emergency?->pivot->amount ?? 0) 
+                                    + ($pl?->pivot->amount ?? 0) 
+                                    + ($gfal?->pivot->amount ?? 0) 
+                                    + ($mpl?->pivot->amount ?? 0) 
+                                    + ($cpl?->pivot->amount ?? 0)
+                                    + ($gbk?->pivot->amount ?? 0)
+                                    + ($gsl?->pivot->amount ?? 0);
         
                                     $rowStart++; // Move to next row
                                     $counter++;
@@ -741,6 +789,8 @@ class HdmfRemittancesComponent extends Component
                                 $newSheet->setCellValue('Q'. $rowStart, $totalGfal);
                                 $newSheet->setCellValue('R'. $rowStart, $totalMpl);
                                 $newSheet->setCellValue('S'. $rowStart, $totalCpl);
+                                $newSheet->setCellValue('T'. $rowStart, $totalGbk);
+                                $newSheet->setCellValue('U'. $rowStart, $totalGsl);
 
                                 $formattedDate = Carbon::parse($this->payrollDateTo)->format('m/Y');
                                 $newSheet->setCellValue("B3", $formattedDate);
@@ -823,8 +873,6 @@ class HdmfRemittancesComponent extends Component
                         @unlink($xlsx);
                     }
         
-
-                    // dd($bundlePath);
                     // Step 5: Trigger browser download for the final ZIP
                     $this->dispatchBrowserEvent('fileDownload', [
                         'url' => route('download.remittance', ['filename' => basename($bundlePath)])
@@ -930,8 +978,6 @@ class HdmfRemittancesComponent extends Component
                     $newSheet->setTitle($sheetName ?: 'attachment');
 
                     $spreadsheet->addSheet($newSheet);
-                    
-                    // dd($spreadsheet->getSheetNames());
 
                     $totalRemittance = 0;
                     $counter = 1;
@@ -1023,7 +1069,7 @@ class HdmfRemittancesComponent extends Component
 
 
             // Get the template text
-            $templateText = $newSheetBUR->getCell("D19")->getValue();
+            $templateText = $newSheetBUR->getCell("F19")->getValue();
 
             // Replace placeholders with identifiable markers
             $templateText = str_replace(
@@ -1060,12 +1106,16 @@ class HdmfRemittancesComponent extends Component
             }
 
             // Write rich text back into cell
-            $newSheetBUR->getCell("D19")->setValue($richText);
-            $newSheetBUR->setCellValue("D24", $fundName);
-            $newSheetBUR->setCellValue("L7", $fundName);
+            $newSheetBUR->getCell("F19")->setValue($richText);
 
-            $newSheetBUR->setCellValue("N21", $totalGs);
-            $newSheetBUR->setCellValue("N22", $totalEc);
+            $newSheetBUR->setCellValue("F24", $fundName);
+            $newSheetBUR->setCellValue("O9", $fundName);
+
+            // $newSheetBUR->setCellValue("F36", $fundName); //Signatory
+            // $newSheetBUR->setCellValue("F37", $fundName); //Position Title
+
+            $newSheetBUR->setCellValue("P21", $totalGs);
+            $newSheetBUR->setCellValue("P22", $totalEc);
         }
 
     
