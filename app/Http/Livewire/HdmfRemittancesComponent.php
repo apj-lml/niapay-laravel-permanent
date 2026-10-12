@@ -335,7 +335,7 @@ class HdmfRemittancesComponent extends Component
         if ($funds->isNotEmpty()) {
 
         $nameConcat = '';
-
+     
         if($this->deduction == 1) {
             $nameConcat = 'MC';
         } elseif($this->deduction == 2) {
@@ -395,22 +395,11 @@ class HdmfRemittancesComponent extends Component
                             $er = 200;
                             // $deduction;
 
-                  
-                            // $deductionRecords = $npiUser->employeeDeductions()
-                            // ?->whereIn('id', $deduction)
-                            // ?->where('pivot.active_status', 1);
-                            // ->get();
-
-                            // $deductionRecords = $npiUser->employeeDeductions
-                            // ->whereIn('deductions.id', $deduction)
-                            // ->where('active_status', 1)
-                            // ->get();
-
                             $deductionRecords = $npiUser->employeeDeductions;
                             
                             foreach($deductionRecords as $deductionRecord) {
                                 $deductionId  = $deductionRecord?->id;
-                                if ($deduction == 2) {
+                                if ($deductionId == 2) {
                                     $plt = 'M2';
                                     $er = 0; // M2 has no employer remittance
                                 } elseif ($deductionId  == 3 || $deductionId  == 23) {
@@ -420,8 +409,8 @@ class HdmfRemittancesComponent extends Component
                                     $plt = 'CL'; // CL
                                     $er = 0; // CL has no employer remittance
                                 } elseif ($deductionId  == 18) {
-                                    $plt = 'HL'; // CL
-                                    $er = 0; // CL has no employer remittance
+                                    $plt = 'HL'; // HL
+                                    $er = 0; // HL has no employer remittance
                                 }
             
                                 $amount = $deductionRecord?->pivot?->amount ?? 0;
@@ -1175,7 +1164,7 @@ class HdmfRemittancesComponent extends Component
             }else{
                 $tin = $this->listOfBirAccountsCOB[$officeName] ?? 'N/A';
             }
-            $payeeStr = "LBP - URDANETA for the Account of BIR NIA Pangasinan IMO / ".$officeName." - " . $tin;
+            $payeeStr = "LBP - URDANETA for the Account of BIR NIA PPIO " .$fundName. " " .$officeName." - " . $tin;
 
             $newSheetDV->setCellValue("E12", $payeeStr);
 
